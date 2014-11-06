@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Glasgow Memory Server (GMS)</title>
+    <!--meta(name='description', content='website description')-->
+    <!--meta(name='keywords', content='website keywords, website keywords')-->
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <link href="resources/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <!--modernizr enables HTML5 elements and feature detects -->
+    <script src="resources/javascripts/modernizr-1.5.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <div id="bg"><img alt="home" src="resources/images/glasgow.jpg"></div>
+
+    <div id="main">
+        <header>
+            <div id="logo">
+                <div id="logo_text">
+                    <!--class="logo_colour", allows you to change the colour of the text -->
+
+                    <h1><a href="index.html">Glasgow Memory Server
+                    (GMS)</a></h1>
+                </div>
+            </div>
+            
+            <div id="invisible">
+                <div id="invisible_text">
+                    <form class="form-wrapper cf">
+                		<button type="submit">Search</button><input placeholder="Search here..." required="required" type= "text" aligh="right">
+            		  </form>
+                </div>
+            </div>            
+            
+                <div id="menu_container">
+                    <ul id="menu-bar">
+                        <li class="active">
+                            <a href="/">Home</a>
+                        </li>
+
+								<li>
+                            <a href="/today">Today</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/news">News</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/bbc">BBC</a>
+                                </li>
+								<li>
+                                    <a href="/dr">DailyRecord</a>
+                                </li>
+                                <li>
+                                    <a href="/scotsman">The Scotsman</a>
+                                </li>
+
+                                <li>
+                                    <a href="/et">Evening Times</a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/blog">Blog</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/blogger">Blogger</a>
+                                </li>
+
+                                <li>
+                                    <a href="/wordpress">Wordpress</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/image">Image</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/imgur">imgur</a>
+                                </li>
+
+                                <li>
+                                    <a href="/flickr">flickr</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/video">Video</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/bbcvid">BBC</a>
+                                </li>
+
+                                <li>
+                                    <a href="/youtube">Youtube</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/twitter">Twitter</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>            
+        </header>
+
+        <div id="site_content">
+            <div id="sidebar_container">
+                <div class="sidebar">
+                    <h3>Latest News</h3>
+
+                    <h4>News 1.</h4>
+
+                    <h5>News 1.</h5>
+
+                    <p>All other latest news.</p>
+                </div>
+            </div>
+
+            <div class="content">
+                <h1>Glasgow Memory Server (GMS): Detail news</h1>
+
+                <p></p>
+
+                <h4>Detail news follows:</h4>
+                <p>
+            </div>
+
+            <div id="detail_content_container">
+                <div class="details">
+                    <h4 id="h4_detail_content"><strong>Title: {{.Title}}</strong></h4>
+                    <p>Date: {{.TimeStamp}}</p>
+
+                    <p>Main Story:</p>
+					
+					{{.MainStory}}
+
+                    <p>
+                    <hr class="detail_image">
+					{{if .Images}}
+                    	<p>Related Images:</p>
+                    	{{range $index, $element := .Images}}
+                    		<p>
+        						<img alt="{{$element.Caption}}" id="detail_image" src="resources/images/{{$element.Name}}"><br>
+        						{{$element.Caption}}.
+   							</p>	
+                    	{{end}}
+					{{end}}
+                    <hr class="inner">
+                    <h3>Comments:</h3>
+                    <hr class="inner_comment_detail">
+                    {{if .Comments}}                    	
+                    	{{range $index, $element := .Comments}}
+                    		<h4>Comment - {{inc $index}} </h4>
+                    		<p>Name: {{$element.UserName}}</p>
+                    		<p>Date: {{$element.TimeStamp}}</p>
+                    		<p>UpVote: {{$element.UpVote}}</p>
+                    		<p>DownVote: {{$element.DownVote}}</p>
+                    		<p>
+                    			Comment Text: {{$element.CommentBody}}
+                    		</P>
+                    		<hr class="inner_comment_detail_replies">
+                    		{{if $element.Replies}}
+                    			{{range $replyIndex, $reply := $element.Replies}}                    			                    				
+                    				<h4 style="padding-left:20px;">Comment Reply - {{inc $replyIndex}}</h4>
+                    				<p style="padding-left:20px;">Name: {{$reply.UserName}}</p>
+                    				<p style="padding-left:20px;">Date: {{$reply.TimeStamp}}</p>
+                    				<p style="padding-left:20px;">UpVote: {{$reply.UpVote}}</p>
+                    				<p style="padding-left:20px;">DownVote: {{$reply.DownVote}}</p>
+                    				<p style="padding-left:20px;">
+                    					Comment Text: {{$reply.CommentBody}}
+                    				</P>
+                    				<hr class="inner_comment_detail_replies">
+                    				{{if $reply.Replies}}                    					
+                    					{{range $replyIndexLevel2, $replyLevel2 := $reply.Replies}}                    						                    				
+                    						<h4 style="padding-left:40px;">Comment Reply - {{inc $replyIndexLevel2}}</h4>
+                    						<p style="padding-left:40px;">Name: {{$replyLevel2.UserName}}</p>
+                    						<p style="padding-left:40px;">Date: {{$replyLevel2.TimeStamp}}</p>
+                    						<p style="padding-left:40px;">UpVote: {{$replyLevel2.UpVote}}</p>
+                    						<p style="padding-left:40px;">DownVote: {{$replyLevel2.DownVote}}</p>
+                    						<p style="padding-left:40px;">
+                    							Comment Text: {{$replyLevel2.CommentBody}}
+                    						</P>
+                    						<hr class="inner_comment_detail_replies">
+                    						{{if $replyLevel2.Replies}}                    					
+                    							{{range $replyIndexLevel3, $replyLevel3 := $replyLevel2.Replies}}                    								                    				
+                    								<h4 style="padding-left:60px;">Comment Reply - {{inc $replyIndexLevel3}}</h4>
+                    								<p style="padding-left:60px;">Name: {{$replyLevel3.UserName}}</p>
+                    								<p style="padding-left:60px;">Date: {{$replyLevel3.TimeStamp}}</p>
+                    								<p style="padding-left:60px;">UpVote: {{$replyLevel3.UpVote}}</p>
+                    								<p style="padding-left:60px;">DownVote: {{$replyLevel3.DownVote}}</p>
+                    								<p style="padding-left:60px;">
+                    									Comment Text: {{$replyLevel3.CommentBody}}
+                    								</P>
+                    								<hr class="inner_comment_detail_replies">
+                    								{{if $replyLevel3.Replies}}                    					
+                    									{{range $replyIndexLevel4, $replyLevel4 := $replyLevel3.Replies}}                    										                   				
+                    										<h4 style="padding-left:80px;">Comment Reply - {{inc $replyIndexLevel4}}</h4>
+                    										<p style="padding-left:80px;">Name: {{$replyLevel4.UserName}}</p>
+                    										<p style="padding-left:80px;">Date: {{$replyLevel4.TimeStamp}}</p>
+                    										<p style="padding-left:80px;">UpVote: {{$replyLevel4.UpVote}}</p>
+                    										<p style="padding-left:80px;">DownVote: {{$replyLevel4.DownVote}}</p>
+                    										<p style="padding-left:80px;">
+                    											Comment Text: {{$replyLevel4.CommentBody}}
+                    										</P>
+                    										<hr class="inner_comment_detail_replies">
+                    										{{if $replyLevel4.Replies}}                    					
+                    											{{range $replyIndexLevel5, $replyLevel5 := $replyLevel4.Replies}}                    												                   				
+                    												<h4 style="padding-left:100px;" >Comment Reply - {{inc $replyIndexLevel5}}</h4>
+                    												<p style="padding-left:100px;">Name: {{$replyLevel5.UserName}}</p>
+                    												<p style="padding-left:100px;">Date: {{$replyLevel5.TimeStamp}}</p>
+                    												<p style="padding-left:100px;">UpVote: {{$replyLevel5.UpVote}}</p>
+                    												<p style="padding-left:100px;">DownVote: {{$replyLevel5.DownVote}}</p>
+                    												<p style="padding-left:100px;">
+                    													Comment Text: {{$replyLevel5.CommentBody}}
+                    												</P>
+                    											{{end}}
+                    										{{end}}
+                    									{{end}}
+                    								{{end}}                    								
+                    							{{end}}
+                    						{{end}}
+                    					{{end}}
+                    				{{end}}                    				
+                    			{{end}}                    		
+                    		{{end}}                    			
+                    	{{end}}
+                    {{else}}
+                    	<p>This news has no comments!</p>	
+                    {{end}}
+                    <div id="detail_more">
+                        <a href={{.Url}}>
+                        Original Article</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="scroll">
+            <a class="top" href="#" title="Scroll to the top"><img alt="top"
+            src="resources/images/top.png"></a>
+        </div>
+
+        <footer>
+            <p><img alt="twitter" src="resources/images/twitter.png"> <img alt="facebook"
+            src="resources/images/facebook.png"> <img alt="rss" src="resources/images/rss.png"></p>
+
+            <p><a href="/">Home</a>|<a href="/news">News</a>|<a href=
+            "/blog">Blog</a>|<a href="/image">Image</a>|<a href=
+            "/video">Video</a>|<a href="/twitter">Twitter</a>|<a href=
+            "#">Contact Us</a></p>
+        </footer>
+    </div><!--javascript at the bottom for fast page loading --><script src=
+    "resources/javascripts/jquery.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Glasgow Memory Server (GMS)</title>
+    <!--meta(name='description', content='website description')-->
+    <!--meta(name='keywords', content='website keywords, website keywords')-->
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <link href="resources/stylesheets/style.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="/resources/stylesheets/loginButtons.css">
+	<link rel="stylesheet" href="/resources/stylesheets/loginPopup.css">
+    <!--modernizr enables HTML5 elements and feature detects -->
+    <script src="resources/javascripts/modernizr-1.5.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <div id="bg"><img alt="home" src="resources/images/glasgow.jpg"></div>
+
+    <div id="main">
+        <header>
+            <div id="logo">
+                <div id="logo_text">
+                    <!--class="logo_colour", allows you to change the colour of the text -->
+
+                    <h1><a href="index.html">Glasgow Memory Server
+                    (GMS)</a></h1>
+                </div>
+            </div>
+            
+            <div id="invisible">
+                <div id="invisible_text">
+                    <form class="form-wrapper cf">
+                		<button type="submit">Search</button><input placeholder="Search here..." required="required" type= "text" aligh="right">
+            		  </form>
+                </div>
+            </div>            
+            
+                <div id="menu_container">
+                    <ul id="menu-bar">
+                        <li class="active">
+                            <a href="/">Home</a>
+                        </li>
+
+								<li>
+                            <a href="/today">Today</a>
+                        </li>
+                                                
+                        <li>
+                            <a href="/news">News</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/bbc">BBC</a>
+                                </li>
+								<li>
+                                    <a href="/dr">DailyRecord</a>
+                                </li>
+                                <li>
+                                    <a href="/scotsman">The Scotsman</a>
+                                </li>
+
+                                <li>
+                                    <a href="/et">Evening Times</a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/blog">Blog</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/blogger">Blogger</a>
+                                </li>
+
+                                <li>
+                                    <a href="/wordpress">Wordpress</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/image">Image</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/imgur">imgur</a>
+                                </li>
+
+                                <li>
+                                    <a href="/flickr">flickr</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/video">Video</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/bbcvid">BBC</a>
+                                </li>
+
+                                <li>
+                                    <a href="/youtube">Youtube</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/twitter">Twitter</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Contact Us</a>
+                        </li>
+						
+						
+						<li style="float:right">
+							<a href="#loginBox">Log in</a>
+							<div id="loginBox" class="loginDialog">
+								<div>
+									<a href="#close" id="close" title="Close" class="close">X</a>
+									<h3 class="center"> Log in with: </h3>
+									<form action="/login" class="loginDiv">
+										<div>
+										<input type="text" class="email" name="email" placeholder="E-mail Address" required/>
+										</div>
+										<input type="password" class ="email" name="pass" placeholder="Password" required/>
+							
+										<div>
+											<button class="userLoginButton">Login</button>
+										</div>
+									</form>
+									
+									<div style ="display: inline-block;">
+										<form action="/authorizeGoogle" method="POST">
+										<div class="social-wrap c">
+								    			<button class="googleplus" href="/authorizeGoogle">Google</button>
+										</div>
+										</form>
+										
+										<form action="/authorizeFacebook" method="POST">
+										<div class="social-wrap c">
+								    			<button class="facebook" href="/authorizeFacebook">Facebook</button>
+										</div>
+										</form>
+										
+										<form action="/authorizeTwitter" method="POST">
+										<div class="social-wrap c">
+								    			<button class="twitter" href="/authorizeTwitter">Twitter</button>
+										</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</li>
+						
+						<li style="float:right">
+							<a href="#registerBox">Register</a>
+							<div id="registerBox" class="registerDialog">
+								<div style="	margin-left:auto;margin-right:auto;">
+									<a href="#close" id="close" title="Close" class="close">X</a>
+									<h3 class="center" >Register</h3>
+									
+									<form action="/register" class="loginDiv" >
+										<div>
+											<input type="text" class="email" name="email" style="margin-bottom:20px" placeholder="E-mail Address" required/>
+										</div>
+										<div>
+											<input type="text" class="email" name="first" style="margin-bottom:20px" placeholder="First Names" required/>
+										</div>
+							
+										<div>
+											<input type="text" class="email" name="last" style="margin-bottom:20px" placeholder="Last Name" required/>
+										</div>
+											<input type="password" class ="email" name="password" style="margin-bottom:20px" placeholder="Password" required/>
+										<div>
+											<input type="password" class="email" name="confirmPassword" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
+										</div>
+							
+										<div>
+											<button class="userLoginButton" style="margin-left:auto;margin-right:auto;">Register</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</li>
+                    </ul>
+                </div>            
+        </header>
+        <div id="site_content">
+            <!--<div class="sidebar" id="sidebar_container">
+                <h3>Latest News</h3>
+
+                <h4>News 1.</h4>
+
+                <h5>News 1.</h5>
+
+                <p>All other latest news.</p>
+            </div>-->
+
+            <div class="content">
+                <h1>Glasgow Memory Server (GMS): Home Page!</h1>                           
+            </div>                                             		            		
+										            	            	
+            	<form action="/detailNews" id="readMore1" method="post" name="readMore1">
+            	<p></p>
+            	<div class="today_contents" id="today_content_container">
+            			<div class="inner_top">
+            				<div class="inner_top_font">Glasgow Today: Top five news</a></div>
+            				<div class="inner_sort">
+            					Sort News: <a href="#" style="text-decoration:underline" id="todayLatest">Latest</a> | <a href="#" id="todayDiscussed">Most Discussed</a>
+            				</div>
+            				            				
+            				<hr class="inner_separator">            				
+            			</div>            			            			            			
+            			<div id="bbc_today">
+            					<h3>News from BBC:</h3>
+            					<hr class="today_separator">            					
+            					{{range $index, $element := .BBCToday}}
+            						<div id="inner_middle_right_news_first">
+            							<a href="/indiNews?url={{$element.Url}}" class="bbcToday{{$index}}">{{$element.Title}}</a>
+            						</div>            						
+            					{{end}}            														
+            			</div>
+            			<div id="dr_today">
+            					<h3>News from Daily Record:</h3>
+            					<hr class="today_separator">
+            					{{range $index, $element := .DRToday}}
+            						<div id="inner_middle_right_news_first">
+            							<a href="/indiNews?url={{$element.Url}}" class="drToday{{$index}}">{{$element.Title}}</a>
+            						</div>
+            					{{end}}									
+            			</div>
+            			<div id="scot_today">
+									<h3>News from Scotsman:</h3>
+            					<hr class="today_separator">            					
+            					{{range $index, $element := .ScotToday}}
+            						<div id="inner_middle_right_news_first">
+            							<a href="/indiNews?url={{$element.Url}}" class="scotToday{{$index}}">{{$element.Title}}</a>
+            						</div>
+            					{{end}}									
+            			</div>
+            			<div id="et_today">
+									<h3>News from Evening Times:</h3>
+            					<hr class="today_separator">            					
+            					{{range $index, $element := .ETToday}}
+            						<div id="inner_middle_right_news_first">
+            							<a href="/indiNews?url={{$element.Url}}" class="etToday{{$index}}" >{{$element.Title}}</a>
+            						</div>
+            					{{end}}									
+            			</div>            			
+            			<div id="inner_all_news_div">
+            				<hr class="inner_all_news_separator">
+            			</div>
+           				
+            			
+            			<div id="inner_all_news">
+            					<a href="/today">Glasgow Today: All News</a>
+							</div>            			
+        			</div>
+        			<div class="old_news">News based on location:</div>
+        			<hr class="old_news_separator">
+        			<div id="map_canvas"></div>
+        			<div class="old_news">Top Old News:</div>
+        			<hr class="old_news_separator">
+        			<div class="contents" id="content_container">
+            			<div class="inner_top">
+            				<div class="inner_top_font">Top BBC News:</a></div>
+            				<div class="inner_sort">
+            					Sort News: <a href="#" id="bbcLatest" style="text-decoration:underline">Latest</a> | <a href="#" id="bbcDiscussed">Most Discussed</a>
+            				</div>
+            				            				
+            				<hr class="inner_separator">            				
+            			</div>
+            			<div id="inner_left_news">
+            				{{$first := index .BBC 0}}
+            				{{$sec := index .BBC 1}}
+            				{{$third := index .BBC 2}}
+            				{{$fourth := index .BBC 3}}
+            				{{$fifth := index .BBC 4}}            			   	
+            			   	{{if $first.Title}}
+            			   		<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}">{{$first.Title}}</a> </div>            					            					
+            				{{else}}
+            					<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}">{{$first.Description}}</a> </div>
+            				{{end}}
+            				
+            			   	{{if $first.Images}}
+            					{{$images := index $first.Images 0 }}
+            					<img alt= "{{printf "%s" $images.Caption}}" id="inner_left_image" src="resources/images/{{printf "%s" $images.Name}}">
+            				{{else}}
+            					<img alt= "alt" id="inner_left_image" src="resources/images/tryImage.jpg">
+            				{{end}}            				          				            				
+            				<div id="inner_left_descr">{{$first.Description}}</div>
+            			</div>            			            			
+            			<div id="inner_middle_right_news">
+            					<div id="inner_middle_right_news_first">
+            						{{if $sec.Title}}
+            			   				<a href="/indiNews?url={{$sec.Url}}">{{$sec.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$sec.Url}}">{{$sec.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $third.Title}}
+            			   				<a href="/indiNews?url={{$third.Url}}">{{$third.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$third.Url}}">{{$third.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fourth.Title}}
+            			   				<a href="/indiNews?url={{$fourth.Url}}">{{$fourth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fourth.Url}}">{{$fourth.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fifth.Title}}
+            			   				<a href="/indiNews?url={{$fifth.Url}}">{{$fifth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fifth.Url}}">{{$fifth.Description}}</a>
+            						{{end}}            				            						
+            					</div>									
+            			</div>
+            			<div id="inner_all_news_div">
+            				<hr class="inner_all_news_separator">
+            			</div>
+           				
+            			
+            			<div id="inner_all_news">
+            					<a href="/bbc">All BBC News</a>
+							</div>
+            			<!--	<img alt= "alt" id="content_image" src="resources/images/">
+            			
+            			            			
+            			<div id="headline">
+                			Headline
+            			</div>
+
+            			<div id="source">
+                			Date:
+            			</div>
+
+            			<div id="source">
+                			Source:
+            			</div>
+
+            			<div id="more">
+                			<input name="query" type="hidden" value="alt">                			
+                			<a onclick="document.readMore1.submit();" href="#">Read More</a>
+            			</div>-->
+        			</div>
+        			<div class="contents" id="content_container">
+            			<div class="inner_top">
+            				<div class="inner_top_font">Top Daily Record News:</a></div>
+            				<div class="inner_sort">
+            					Sort News: <a href="#" id="drLatest" style="text-decoration:underline">Latest</a> | <a href="#" id="drDiscussed">Most Discussed</a>
+            				</div>
+            				            				
+            				<hr class="inner_separator">            				
+            			</div>
+            			<div id="inner_left_news">
+            				{{$first := index .DR 0}}
+            				{{$sec := index .DR 1}}
+            				{{$third := index .DR 2}}
+            				{{$fourth := index .DR 3}}
+            				{{$fifth := index .DR 4}}
+            			   {{if $first.Title}}
+            			   		<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}">{{$first.Title}}</a> </div>            					            					
+            				{{else}}
+            					<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}">{{$first.Description}}</a> </div>
+            				{{end}}
+            			   {{if $first.Images}}
+            					{{$images := index $first.Images 0 }}
+            					<img alt= "{{printf "%s" $images.Caption}}" id="inner_left_image" src="resources/images/{{printf "%s" $images.Name}}">
+            				{{else}}
+            					<img alt= "alt" id="inner_left_image" src="resources/images/tryImage.jpg">
+            					{{end}}            				          				            				
+            				<div id="inner_left_descr">{{$first.Description}}</div>
+            			</div>            			            			
+            			<div id="inner_middle_right_news">
+            					<div id="inner_middle_right_news_first">
+            						{{if $sec.Title}}
+            			   				<a href="/indiNews?url={{$sec.Url}}">{{$sec.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$sec.Url}}">{{$sec.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $third.Title}}
+            			   				<a href="/indiNews?url={{$third.Url}}">{{$third.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$third.Url}}">{{$third.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fourth.Title}}
+            			   				<a href="/indiNews?url={{$fourth.Url}}">{{$fourth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fourth.Url}}">{{$fourth.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fifth.Title}}
+            			   				<a href="/indiNews?url={{$fifth.Url}}">{{$fifth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fifth.Url}}">{{$fifth.Description}}</a>
+            						{{end}}            				            						
+            					</div>            													
+            			</div>
+            			<div id="inner_all_news_div">
+            				<hr class="inner_all_news_separator">
+            			</div>
+           				
+            			
+            			<div id="inner_all_news">
+            					<a href="/dr">All Daily Record News</a>
+							</div>            			
+        			</div>        			        			
+        			<div class="contents" id="content_container">
+            			<div class="inner_top">
+            				<div class="inner_top_font">Top Scotsman News:</a></div>
+            				<div class="inner_sort">
+            					Sort News: <a id="scotLatest" style="text-decoration:underline">Latest</a> | <a id="scotDiscussed">Most Discussed</a>
+            				</div>
+            				            				
+            				<hr class="inner_separator">            				
+            			</div>
+            			<div id="inner_left_news">
+            				{{$first := index .Scot 0}}
+            				{{$sec := index .Scot 1}}
+            				{{$third := index .Scot 2}}
+            				{{$fourth := index .Scot 3}}
+            				{{$fifth := index .Scot 4}}
+            			   {{if $first.Title}}
+            			   		<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}" id="scotFirstTitle">{{$first.Title}}</a> </div>            					            					
+            				{{else}}
+            					<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}" id="scotFirstTitle">{{$first.Description}}</a> </div>
+            				{{end}}
+            			   {{if $first.Images}}
+            					{{$images := index $first.Images 0 }}
+            					<img alt= "{{printf "%s" $images.Caption}}" id="inner_left_image" class="scotInnerImage" src="resources/images/{{printf "%s" $images.Name}}">
+            			   {{else}}
+            					<img alt= "alt" id="inner_left_image" src="resources/images/tryImage.jpg">
+            			   {{end}}            				          				            				
+            				<div id="inner_left_descr" class="scotFirstDescrition">{{$first.Description}}</div>
+            			</div>            			            			
+            			<div id="inner_middle_right_news">
+            					<div id="inner_middle_right_news_first">
+            						{{if $sec.Title}}
+            			   				<a href="/indiNews?url={{$sec.Url}}" class="scotSecTitle">{{$sec.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$sec.Url}}" class="scotSecTitle">{{$sec.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $third.Title}}
+            			   				<a href="/indiNews?url={{$third.Url}}" class="scotThirdTitle">{{$third.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$third.Url}}" class="scotThirdTitle">{{$third.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fourth.Title}}
+            			   				<a href="/indiNews?url={{$fourth.Url}}" class="scotFourthTitle">{{$fourth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fourth.Url}}" class="scotFourthTitle">{{$fourth.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fifth.Title}}
+            			   				<a href="/indiNews?url={{$fifth.Url}}" class="scotFifthTitle">{{$fifth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fifth.Url}}" class="scotFifthTitle">{{$fifth.Description}}</a>
+            						{{end}}            				            						
+            					</div>									
+            			</div>
+            			<div id="inner_all_news_div">
+            				<hr class="inner_all_news_separator">
+            			</div>
+           				
+            			
+            			<div id="inner_all_news">
+            					<a href="/scotsman">All Scotsman News</a>
+							</div>            			
+        			</div>
+        			
+        			<div class="contents" id="content_container">
+            			<div class="inner_top">
+            				<div class="inner_top_font">Top Evening News:</a></div>
+            				<div class="inner_sort">
+            					Sort News: <a id="etLatest" style="text-decoration:underline">Latest</a> | <a id="etDiscussed">Most Discussed</a>
+            				</div>
+            				            				
+            				<hr class="inner_separator">            				
+            			</div>
+            			<div id="inner_left_news">
+            				{{$first := index .ET 0}}
+            				{{$sec := index .ET 1}}
+            				{{$third := index .ET 2}}
+            				{{$fourth := index .ET 3}}
+            				{{$fifth := index .ET 4}}
+            			   {{if $first.Title}}
+            			   		<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}" id="etFirstTitle">{{$first.Title}}</a> </div>            					            					
+            				{{else}}
+            					<div id="inner_left_headline"><a href="/indiNews?url={{$first.Url}}" id="etFirstTitle">{{$first.Description}}</a> </div>
+            				{{end}}
+            			   {{if $first.Images}}
+            					{{$images := index $first.Images 0 }}
+            					<img alt= "{{printf "%s" $images.Caption}}" id="inner_left_image" class="etInnerImage" src="resources/images/{{printf "%s" $images.Name}}">
+            			   {{else}}
+            					<img alt= "alt" id="inner_left_image" src="resources/images/tryImage.jpg">
+            			   {{end}}            				          				            				
+            				<div id="inner_left_descr" class="etFirstDescrition">{{$first.Description}}</div>
+            			</div>            			            			
+            			<div id="inner_middle_right_news">
+            					<div id="inner_middle_right_news_first">
+            						{{if $sec.Title}}
+            			   				<a href="/indiNews?url={{$sec.Url}}" class="etSecTitle">{{$sec.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$sec.Url}}" class="etSecTitle">{{$sec.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $third.Title}}
+            			   				<a href="/indiNews?url={{$third.Url}}" class="etThirdTitle">{{$third.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$third.Url}}" class="etThirdTitle">{{$third.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fourth.Title}}
+            			   				<a href="/indiNews?url={{$fourth.Url}}" class="etFourthTitle">{{$fourth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fourth.Url}}" class="etFourthTitle">{{$fourth.Description}}</a>
+            						{{end}}            				            						
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						{{if $fifth.Title}}
+            			   				<a href="/indiNews?url={{$fifth.Url}}" class="etFifthTitle">{{$fifth.Title}}</a>            					            					
+            						{{else}}
+            							<a href="/indiNews?url={{$fifth.Url}}" class="etFifthTitle">{{$fifth.Description}}</a>
+            						{{end}}            				            						
+            					</div>									
+            			</div>
+            			<div id="inner_all_news_div">
+            				<hr class="inner_all_news_separator">
+            			</div>
+           				
+            			
+            			<div id="inner_all_news">
+            					<a href="/et">All Evening Times News</a>
+							</div>            			
+        			</div>        			        			       			
+        			       			
+        			<!--<div class="contents" id="content_container">
+            			<div class="inner_top">
+            				<div class="inner_top_font">Top Daily Scotsman News:</a></div>
+            				<div class="inner_sort">
+            					Sort News: <a href="#">Latest</a> | <a href="#">Most Discussed</a>
+            				</div>
+            				            				
+            				<hr class="inner_separator">            				
+            			</div>
+            			<div id="inner_left_news">
+            			   <div id="inner_left_headline"><a href="#">Inner News Inner News Inner NewsInner NewsInner News</a> </div>            				          				
+            				<img alt= "alt" id="inner_left_image" src="resources/images/tryImage.jpg">
+            				<div id="inner_left_descr">Inner News Inner News Inner News</div>
+            			</div>            			
+            			<div id="inner_middle_right_news">
+            					<div id="inner_middle_right_news_first">
+            						<a href="#">First News First News First News</a>
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						<a href="#">Second News Second News Second News</a>
+            					</div>
+									<div id="inner_middle_right_news_first">
+            						<a href="#">Third News Third News Third News</a>
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						<a href="#">Third News Third News Third News</a>
+            					</div>									
+            			</div>
+            			<div id="inner_middle_right_news">
+            					<div id="inner_middle_right_news_first">
+            						<a href="#">First News First News First News</a>
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						<a href="#">Second News Second News Second News</a>
+            					</div>
+									<div id="inner_middle_right_news_first">
+            						<a href="#">Third News Third News Third News</a>
+            					</div>
+            					<div id="inner_middle_right_news_first">
+            						<a href="#">Third News Third News Third News</a>
+            					</div>									
+            			</div>            			
+        			</div>-->
+        			        			
+        			
+    			</form>                
+            
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+				</script>
+
+            <script>
+            
+            
+            //$('#bbcLatest').off('click', function(e) {alert('You pressed BBC Latest'); $('#bbcDiscussed').on('click', false);  return false;})
+				//$('#bbcDiscussed').off('click', function(e) {alert('You pressed BBC Discussed'); $('#bbcLatest').on('click', false);  return false;})				
+            //$('#bbcLatest').bind('click', false);
+            
+            $(document).on("click", "#scotLatest", function(){
+            	//alert('You pressed Scot Latest');
+            	//$('#scotLatest').fadeTo("fast", .5).removeAttr("href");
+            	//$('#scotDiscussed').attr('href', '#');					 
+            	//return false;
+            	$("#scotLatest").css('textDecoration','underline');
+					$("#scotDiscussed").css('textDecoration','none');            	
+            	$.get("/scotLatest", "", function(data, status) {
+            			//alert()
+            			$("#scotFirstTitle").text(data[0].Title);
+            			$("#scotFirstTitle").attr("href","http://localhost:8090/indiNews?url=" + data[0].Url);
+            			$(".scotInnerImage").attr('src', 'resources/images/' + data[0].Images[0].Name);
+							$(".scotInnerImage").attr('alt', 'resources/images/' + data[0].Images[0].Caption);
+							$(".scotFirstDescrition").text(data[0].Description);
+							$(".scotSecTitle").text(data[1].Title);
+							$(".scotSecTitle").attr("href","http://localhost:8090/indiNews?url=" + data[1].Url);
+							$(".scotThirdTitle").text(data[2].Title);
+							$(".scotThirdTitle").attr("href","http://localhost:8090/indiNews?url=" + data[2].Url);
+							$(".scotFourthTitle").text(data[3].Title);
+							$(".scotFourthTitle").attr("href","http://localhost:8090/indiNews?url=" + data[3].Url);
+							$(".scotFifthTitle").text(data[4].Title);
+							$(".scotFifthTitle").attr("href","http://localhost:8090/indiNews?url=" + data[4].Url);
+							            			            		
+                 });
+            });
+            
+            $(document).on("click", "#todayLatest", function(){            	
+            	$("#todayLatest").css('textDecoration','underline');
+					$("#todayDiscussed").css('textDecoration','none');            	
+            	$.get("/todayLatest", "", function(data, status) {
+            			$.each( data, function( index, value ){
+            				if(value.BBCToday.length === 0) {
+            					var divLength = $("#bbc_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".bbcToday"+ i).parent().remove()
+									}
+            				}
+            				else {
+            					var divLength = $("#bbc_today > div").length
+									if(divLength <= value.BBCToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".bbcToday"+ i).text(value.BBCToday[i].Title)
+											$(".bbcToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.BBCToday[i].Url)
+											
+										}
+										for (var i = divLength; i < value.BBCToday.length; i++) {
+											$("#bbc_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url='+ value.BBCToday[i].Url +'" class="bbcToday' + i + '">'+ value.BBCToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.BBCToday.length; i++) {
+											$(".bbcToday"+ i).text(value.BBCToday[i].Title)
+											$(".bbcToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.BBCToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.BBCToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".bbcToday"+ i).parent().remove()
+										} 
+									}
+            				}
+								if(value.ETToday.length === 0) {
+									var divLength = $("#et_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".etToday"+ i).parent().remove()										
+									}
+								}
+								else {
+									var divLength = $("#et_today > div").length
+									if(divLength <= value.ETToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+											$(".etToday"+ i).attr("href", "http://localhost:8090/indiNews?url=" + value.ETToday[i].Url)
+										}
+										for (var i = divLength; i < value.ETToday.length; i++) {
+											$("#et_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url='+ value.ETToday[i].Url +'" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.ETToday.length; i++) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+											$(".etToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ETToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.ETToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".etToday"+ i).parent().remove()
+										} 
+									}									           						
+								}
+								if(value.DRToday.length === 0) {
+									var divLength = $("#dr_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".drToday"+ i).parent().remove()
+									}
+								}
+								else {									
+									var divLength = $("#dr_today > div").length
+									if(divLength <= value.DRToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".drToday"+ i).text(value.DRToday[i].Title)
+											$(".drToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.DRToday[i].Url)
+										}
+										for (var i = divLength; i < value.DRToday.length; i++) {
+											$("#dr_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url='+ value.DRToday[i].Url +'" class="drToday' + i + '">'+ value.DRToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.DRToday.length; i++) {
+											$(".drToday"+ i).text(value.DRToday[i].Title)
+											$(".drToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.DRToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.DRToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".drToday"+ i).parent().remove()
+										} 
+									}
+								}
+								if(value.ScotToday.length === 0) {
+									var divLength = $("#scot_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".scotToday"+ i).parent().remove()
+									}
+								}
+								else {																										            														
+									var divLength = $("#scot_today > div").length									
+									if(divLength <= value.ScotToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".scotToday"+ i).text(value.ScotToday[i].Title)
+											$(".scotToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ScotToday[i].Url)
+										}
+										for (var i = divLength; i < value.ScotToday.length; i++) {
+											$("#scot_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url='+ value.ScotToday[i].Url +'" class="scotToday' + i + '">'+ value.ScotToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.ScotToday.length; i++) {
+											$(".scotToday"+ i).text(value.ScotToday[i].Title)
+											$(".scotToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ScotToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.ScotToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".scotToday"+ i).parent().remove()
+										} 
+									}
+								}            				            			       							
+							});            										            			            		
+                 });
+            });
+            
+            $(document).on("click", "#todayDiscussed", function(){            	
+            	$("#todayDiscussed").css('textDecoration','underline');
+					$("#todayLatest").css('textDecoration','none');            	
+            	$.get("/todayDiscussed", "", function(data, status) {
+            			            					      			
+            			$.each( data, function( index, value ){
+            				if(value.BBCToday.length === 0) {
+            					var divLength = $("#bbc_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".bbcToday"+ i).parent().remove()
+									}
+            				}
+            				else {
+            					var divLength = $("#bbc_today > div").length
+									if(divLength <= value.BBCToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".bbcToday"+ i).text(value.BBCToday[i].Title)
+											$(".bbcToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.bbcToday[i].Url)
+										}
+										for (var i = divLength; i < value.BBCToday.length; i++) {
+											$("#bbc_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url='+ value.BBCToday[i].Url +'" class="bbcToday' + i + '">'+ value.BBCToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.BBCToday.length; i++) {
+											$(".bbcToday"+ i).text(value.BBCToday[i].Title)
+											$(".bbcToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.bbcToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.BBCToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".bbcToday"+ i).parent().remove()
+										} 
+									}
+            				}
+								if(value.ETToday.length === 0) {
+									var divLength = $("#et_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".etToday"+ i).parent().remove()
+									}
+								}
+								else {
+									var divLength = $("#et_today > div").length
+									if(divLength <= value.ETToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+											$(".etToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ETToday[i].Url)
+										}
+										for (var i = divLength; i < value.ETToday.length; i++) {
+											$("#et_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url=' + value.ETToday[i].Url +'" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.ETToday.length; i++) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+											$(".etToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ETToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.ETToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".etToday"+ i).parent().remove()
+										} 
+									}									           						
+								}
+								if(value.DRToday.length === 0) {
+									var divLength = $("#dr_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".drToday"+ i).parent().remove()
+									}
+								}
+								else {									
+									var divLength = $("#dr_today > div").length
+									if(divLength <= value.DRToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".drToday"+ i).text(value.DRToday[i].Title)
+											$(".drToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.DRToday[i].Url)
+										}
+										for (var i = divLength; i < value.DRToday.length; i++) {
+											$("#dr_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url=' + value.DRToday[i].Url + '" class="drToday' + i + '">'+ value.DRToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.DRToday.length; i++) {
+											$(".drToday"+ i).text(value.DRToday[i].Title)
+											$(".drToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.DRToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.DRToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".drToday"+ i).parent().remove()
+										} 
+									}
+								}
+								if(value.ScotToday.length === 0) {
+									//alert("Here")
+									var divLength = $("#scot_today > div").length
+									for (var i = 0; i < divLength; i++) {
+										$(".scotToday"+ i).parent().remove()
+									}
+								}
+								else {																																			            														
+									var divLength = $("#scot_today > div").length
+									if(divLength <= value.ScotToday.length){
+										for (var i = 0; i < divLength; i++) {
+											$(".scotToday"+ i).text(value.ScotToday[i].Title)
+											$(".scotToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ScotToday[i].Url)
+										}
+										for (var i = divLength; i < value.ScotToday.length; i++) {
+											$("#scot_today").append('<div id="inner_middle_right_news_first"><a href="http://localhost:8090/indiNews?url='+ value.ScotToday[i].Url + '" class="scotToday' + i + '">'+ value.ScotToday[i].Title + '</a></div>')
+										}
+									} else {
+										for (var i = 0; i < value.ScotToday.length; i++) {
+											$(".scotToday"+ i).text(value.ScotToday[i].Title)
+											$(".scotToday"+ i).attr("href","http://localhost:8090/indiNews?url=" + value.ScotToday[i].Url)
+										}														
+										/*for ( var i = 0; i < $("#et_today > div").length; i++ ) {
+											$(".etToday"+ i).text(value.ETToday[i].Title)
+										}*/										
+            						for ( var i = value.ScotToday.length; i < divLength; i++ ) {
+    										//$("#et_today").append('<div id="inner_middle_right_news_first"><a href="#" class="etToday' + i + '">'+ value.ETToday[i].Title + '</a></div>')
+    										$(".scotToday"+ i).parent().remove()
+										} 
+									}
+								}            				            			       							
+							});            										            			            		
+                 });
+            });
+            
+            $(document).on("click", "#scotDiscussed", function(){
+            	//alert('You pressed Scot Discussed');
+            	//$('#scotDiscussed').fadeTo("fast", .5).removeAttr("href");
+            	//$('#scotLatest').attr('href', '#');					 
+            	//return false;
+            	$("#scotLatest").css('textDecoration','none');
+					$("#scotDiscussed").css('textDecoration','underline');  
+            	$.get("/scotDiscussed", "", function(data, status) {
+            			$("#scotFirstTitle").text(data[0].Title);
+            			$("#scotFirstTitle").attr("href","http://localhost:8090/indiNews?url=" + data[0].Url);
+            			$(".scotInnerImage").attr('src', 'resources/images/' + data[0].Images[0].Name);
+            			$(".scotInnerImage").attr('alt', 'resources/images/' + data[0].Images[0].Caption);
+            			$(".scotFirstDescrition").text(data[0].Description);
+            			$(".scotSecTitle").text(data[1].Title);
+            			$(".scotSecTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[1].Url);
+							$(".scotThirdTitle").text(data[2].Title);
+							$(".scotThirdTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[2].Url);
+							$(".scotFourthTitle").text(data[3].Title);
+							$(".scotFourthTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[3].Url);
+							$(".scotFifthTitle").text(data[4].Title);
+							$(".scotFifthTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[4].Url);                 		
+                 });
+            });
+            
+            $(document).on("click", "#etLatest", function(){
+            	//alert('You pressed Scot Latest');
+            	//$('#scotLatest').fadeTo("fast", .5).removeAttr("href");
+            	//$('#scotDiscussed').attr('href', '#');					 
+            	//return false;
+            	$("#etLatest").css('textDecoration','underline');
+					$("#etDiscussed").css('textDecoration','none');
+            	$.get("/etLatest", "", function(data, status) {
+            			//alert()
+            			$("#etFirstTitle").text(data[0].Title);
+            			$("#etFirstTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[0].Url);
+            			$(".etInnerImage").attr('src', 'resources/images/' + data[0].Images[0].Name);
+							$(".etInnerImage").attr('alt', 'resources/images/' + data[0].Images[0].Caption);
+							$(".etFirstDescrition").text(data[0].Description);
+							$(".etSecTitle").text(data[1].Title);
+							$(".etSecTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[1].Url);
+							$(".etThirdTitle").text(data[2].Title);
+							$(".etThirdTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[2].Url);
+							$(".etFourthTitle").text(data[3].Title);
+							$(".etFourthTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[3].Url);
+							$(".etFifthTitle").text(data[4].Title);
+							$(".etFifthTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[4].Url);							            			            		
+                 });
+            });
+            
+            $(document).on("click", "#etDiscussed", function(){
+            	//alert('You pressed Scot Discussed');
+            	//$('#etDiscussed').fadeTo("fast", .5).removeAttr("href");
+            	//$('#etLatest').attr('href', '#');					 
+            	//return false;
+            	$("#etLatest").css('textDecoration','none');
+					$("#etDiscussed").css('textDecoration','underline');
+            	$.get("/etDiscussed", "", function(data, status) {
+            			$("#etFirstTitle").text(data[0].Title);
+            			$("#etFirstTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[0].Url);
+            			$(".etInnerImage").attr('src', 'resources/images/' + data[0].Images[0].Name);
+            			$(".etInnerImage").attr('alt', 'resources/images/' + data[0].Images[0].Caption);
+            			$(".etFirstDescrition").text(data[0].Description);
+            			$(".etSecTitle").text(data[1].Title);
+            			$(".etSecTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[1].Url);
+							$(".etThirdTitle").text(data[2].Title);
+							$(".etThirdTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[3].Url);
+							$(".etFourthTitle").text(data[3].Title);
+							$(".etFourthTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[3].Url);
+							$(".etFifthTitle").text(data[4].Title);
+							$(".etFifthTitle").attr("href", "http://localhost:8090/indiNews?url=" + data[4].Url);                 		
+                 });
+            });
+            
+            /*function myFunction() {
+    				$(".inner_top_font").html("Hello jQuery")
+				}
+				$(document).ready(myFunction);*/         
+				
+				function submitform(formName)
+            {
+            alert(formName);
+            document.formName.submit();
+            //document.getElementById(formName).submit();
+            }        
+            </script>
+        </div>
+
+        <div id="scroll">
+            <a class="top" href="#" title="Scroll to the top"><img alt="top"
+            src="resources/images/top.png"></a>
+        </div>
+
+        <footer>
+            <p><img alt="twitter" src="resources/images/twitter.png"> <img alt="facebook"
+            src="resources/images/facebook.png"> <img alt="rss" src="resources/images/rss.png"></p>
+
+            <p><a href="/">Home</a>|<a href="/news">News</a>|<a href=
+            "/blog">Blog</a>|<a href="/image">Image</a>|<a href=
+            "/video">Video</a>|<a href="/twitter">Twitter</a>|<a href=
+            "#">Contact Us</a></p>
+        </footer>
+    </div><!--javascript at the bottom for fast page loading -->
+    <script src="resources/javascripts/jquery.js" type="text/javascript"></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script>
+      function initialize() {
+        var mapCanvas = document.getElementById('map_canvas');
+        var mapOptions = {
+          center: new google.maps.LatLng(55.8580,-4.2590),          
+          zoom: 10,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions)
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</body>
+</html>

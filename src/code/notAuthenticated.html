@@ -1,0 +1,89 @@
+
+<!doctype html>
+
+<html>
+<head>
+
+	<link rel="stylesheet" href="/resources/style.css">
+	<link rel="stylesheet" href="/resources/loginButtons.css">
+	<link rel="stylesheet" href="/resources/loginPopup.css">
+
+
+</head>
+
+
+<body>
+You have currently not given permissions to access your data. Please authenticate this app with the Google OAuth provider.
+
+<a href="#loginBox">Log In</a>
+<div id="loginBox" class="loginDialog">
+	<div>
+		<a href="#close" id="close" title="Close" class="close">X</a>
+		<h2>Log In</h2>
+
+		<form action="/login" class="loginDiv">
+			<div>
+			<input type="text" class="email" name="email" placeholder="E-mail Address" required/>
+			</div>
+			<input type="password" class ="email" name="pass" placeholder="Password" required/>
+
+			<div>
+				<button class="userLoginButton">Login</button>
+			</div>
+		</form>
+		
+		<div class="verticalLine">
+			<form action="/authorizeGoogle" method="POST">
+			<div class="social-wrap c">
+	    			<button class="googleplus" href="/authorizeGoogle">Sign in <em>w/</em> Google</button>
+			</div>
+			</form>
+			
+			<form action="/authorizeFacebook" method="POST">
+			<div class="social-wrap c">
+	    			<button class="facebook" href="/authorizeFacebook">Sign in <em>w/</em> Facebook</button>
+			</div>
+			</form>
+			
+			<form action="/authorizeTwitter" method="POST">
+			<div class="social-wrap c">
+	    			<button class="twitter" href="/authorizeTwitter">Sign in <em>w/</em> Twitter</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<a href="#registerBox">Register</a>
+<div id="registerBox" class="registerDialog">
+	<div style="	margin-left:auto;margin-right:auto;">
+		<a href="#close" id="close" title="Close" class="close">X</a>
+		<h2 style="	margin-left:auto;margin-right:auto;">Register</h2>
+		
+		<form action="/register" class="loginDiv" >
+			<div>
+				<input type="text" class="email" name="email" style="margin-bottom:20px" placeholder="E-mail Address" required/>
+			</div>
+			<div>
+				<input type="text" class="email" name="first" style="margin-bottom:20px" placeholder="First Name" required/>
+			</div>
+
+			<div>
+				<input type="text" class="email" name="last" style="margin-bottom:20px" placeholder="Last Name" />
+			</div>
+				<input type="password" class ="email" name="password" style="margin-bottom:20px" placeholder="Password" required/>
+			<div>
+				<input type="password" class="email" name="confirmPassword" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
+			</div>
+
+			<div>
+				<button class="userLoginButton" style="margin-left:auto;margin-right:auto;">Register</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Glasgow Memory Server (GMS)</title>
+    <!--meta(name='description', content='website description')-->
+    <!--meta(name='keywords', content='website keywords, website keywords')-->
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <link href="resources/stylesheets/style.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="/resources/stylesheets/loginButtons.css">
+	<link rel="stylesheet" href="/resources/stylesheets/loginPopup.css">
+	<link rel="stylesheet" href="/resources/stylesheets/images.css">
+    <!--modernizr enables HTML5 elements and feature detects -->
+    <script src="resources/javascripts/modernizr-1.5.min.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+    <div id="bg"><img alt="home" src="resources/images/glasgow.jpg"></div>
+
+    <div id="main">
+        <header>
+            <div id="logo">
+                <div id="logo_text">
+                    <!--class="logo_colour", allows you to change the colour of the text -->
+
+                    <h1><a href="index.html">Glasgow Memory Server
+                    (GMS)</a></h1>
+                </div>
+            </div>
+            
+            <div id="invisible">
+                <div id="invisible_text">
+                    <form class="form-wrapper cf">
+                		<button type="submit">Search</button><input placeholder="Search here..." required="required" type= "text" aligh="right">
+            		  </form>
+                </div>
+            </div>            
+            
+                <div id="menu_container">
+                    <ul id="menu-bar">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+
+								<li>
+                            <a href="/today">Today</a>
+                        </li>
+                                                
+                        <li>
+                            <a href="/news">News</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/bbc">BBC</a>
+                                </li>
+								<li>
+                                    <a href="/dr">DailyRecord</a>
+                                </li>
+                                <li>
+                                    <a href="/scotsman">The Scotsman</a>
+                                </li>
+
+                                <li>
+                                    <a href="/et">Evening Times</a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/blog">Blog</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/blogger">Blogger</a>
+                                </li>
+
+                                <li>
+                                    <a href="/wordpress">Wordpress</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/image">Image</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/imgur">imgur</a>
+                                </li>
+
+                                <li>
+                                    <a href="/flickr">flickr</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/video">Video</a>
+
+                            <ul>
+                                <li>
+                                    <a href="/bbcvid">BBC</a>
+                                </li>
+
+                                <li>
+                                    <a href="/youtube">Youtube</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="/twitter">Twitter</a>
+                        </li>
+
+                        <li>
+                            <a href="#">Contact Us</a>
+                        </li>
+						
+						<li class="active" style="float:right">
+							<a href="/authenticated">{{.FirstName}}</a>
+							<ul>
+								<li>
+									<a href ="/logout">Log Out</a>
+								</li>
+							</ul>
+						</li>						
+						
+                    </ul>
+                </div>            
+        </header>
+        <div id="site_content" style="min-height:1500px; overflow-y:scroll">
+			<div id="menu_container2" style="float:left;">
+						<ul id="menu-bar2">
+							<li>
+			                     <a href="/authenticated">Profile</a>
+			                 </li>
+							<li class="active">
+			                     <a href="/pictures">Pictures</a>
+			                 </li>
+							<li>
+			                     <a href="/albums">Albums</a>
+			                 </li>
+							<li>
+			                     <a href="/upload">Upload</a>
+			                 </li>
+							
+						</ul>
+			</div>
+			<div style="float:left; margin-left: 20px;">
+				<h3> Welcome, {{.FirstName}} </h3>
+				<img style="margin-top:5px" src="{{.ProfilePicture}}" height=150 width=150 alt="picture" />
+			</div> 
+			
+			<div style="clear:both">
+					{{range $index, $element := .Albums}}
+						{{if $element.Photo}}
+							{{range $index2, $element2 :=$element.Photo}}
+								{{if $element2.URL}}
+									<a href="#lightbox{{$index2}}">
+							          <img src="{{$element2.URL}}" width=150 height=150>
+							        </a>
+
+										<div class="imageDialog" id="lightbox{{$index2}}">
+											<div style="display:inline-block;">
+												<a href="#close" id="close" title="Close" class="close">X</a>
+		
+											<div class="imageContainer" style="border-right: 2px solid #a1a1a1;">
+												<img class="center" src="{{$element2.URL}}" width=80% height=80% />
+											</div>  
+											
+											<div style="float:left; display:inline-block; max-width:350px; padding-left:10px;">
+												<p>Some caption vjbeorhgeorivbnejkrbveh </p>
+												<div>
+													<p style="float:left"> Tags: </p>
+													<a href="/tag" class="tag">snow</a>
+												</div>
+												<div>
+													<!-- display comments -->
+												</div>
+												<div style="clear:both">
+													<form action="/saveComment">
+														<div>
+															<input type="text" class="comment" name="comment" placeholder="Enter Comment..." />
+															<input type="hidden" name="pictureNumber" value="{{$element2}}" />
+															<input type="submit" name="submit" value="submit" />
+														</div>
+													</form>
+												</div>
+											</div>
+											
+
+										</div> 
+									</div>
+								{{end}}
+							{{end}}
+						{{end}}
+					{{end}}
+				</div>
+				
+		</div>
+		
+		
+    </div><!--javascript at the bottom for fast page loading -->
+
+</body>
+</html>
