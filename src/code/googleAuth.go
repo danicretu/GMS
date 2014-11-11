@@ -4,7 +4,7 @@ import (
 	"code.google.com/p/goauth2/oauth"
 	"encoding/json"
 	"fmt"
-
+	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io/ioutil"
 	"net/http"
@@ -96,13 +96,24 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(user.Picture)
 	fmt.Println(user.Locale)
 	fmt.Println(user.Name)
-	fmt.Println("nope")
 
-	albums := createDefaultAlbum()
+	var existing *User
+	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"gId": user.Id}).One(&existing)
 
-	newUser := User{user.Given_Name, user.Family_Name, "", "", user.Picture, albums}
-	add(dbConnection, newUser)
-	currentUser = &newUser
+	fmt.Println(existing)
+
+	if existing != nil {
+		currentUser = existing
+	} else {
+
+		id := bson.NewObjectId()
+		albums := createDefaultAlbum(id.Hex(), user.Given_Name+" "+user.Family_Name, user.Picture)
+
+		newUser := User{id, user.Given_Name, user.Family_Name, "", "", user.Picture, albums, user.Id, "", id.Hex()}
+		add(dbConnection, newUser)
+		currentUser = &newUser
+
+	}
 
 	authenticated, _ := template.ParseFiles("authenticated.html")
 	authenticated.Execute(w, currentUser)

@@ -7,33 +7,45 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
 type User struct {
-	FirstName      string  `bson:"firstname"`
-	LastName       string  `bson:"lastname"`
-	Email          string  `bson:"email"`
-	Password       string  `bson:"password"`
-	ProfilePicture string  `bson:"profilepic"`
-	Albums         []Album `bson:"albums"`
+	UserId         bson.ObjectId `bson:"_id"`
+	FirstName      string        `bson:"firstname"`
+	LastName       string        `bson:"lastname"`
+	Email          string        `bson:"email"`
+	Password       string        `bson:"password"`
+	ProfilePicture string        `bson:"profilepic"`
+	Albums         []Album       `bson:"albums"`
+	GoogleId       string        `bson:"gId"`
+	FacebookId     string        `bson:"fId"`
+	Id             string        `bson:"userId"`
 }
 
 type Album struct {
-	Name       string  `bson:"albumname"`
-	Desciption string  `bson:"description"`
-	Photo      []Photo `bson:"photos"`
+	Id         bson.ObjectId `bson:"_id"`
+	AlbumId    string        `bson:"albumId"`
+	Owner      string        `bson:"owner"`
+	OwnerName  string        `bson:"ownerName"`
+	Name       string        `bson:"albumname"`
+	Desciption string        `bson:"description"`
+	Photo      []Photo       `bson:"photos"`
 }
 
 type Photo struct {
-	Owner       string    `bson:"owner"`
-	URL         string    `bson:"url"`
-	Description string    `bson:"description"`
-	Location    Location  `bson:"location"`
-	Timestamp   string    `bson:"timestamp"`
-	Upvote      int       `bson:"upvote"`
-	Downvote    int       `bson:"downvote"`
-	Tags        []Tag     `bson:"tags"`
-	Comments    []Comment `bson:"comments"`
+	Id          bson.ObjectId  `bson:"_id"`
+	PhotoId     string         `bson:"photoId"`
+	Owner       string         `bson:"owner"`
+	OwnerName   string         `bson:"ownerName"`
+	URL         string         `bson:"url"`
+	Description string         `bson:"description"`
+	Location    Location       `bson:"location"`
+	Timestamp   string         `bson:"timestamp"`
+	Upvote      int            `bson:"upvote"`
+	Downvote    int            `bson:"downvote"`
+	Tags        []Tag          `bson:"tags"`
+	Comments    []PhotoComment `bson:"comments"`
 }
 
 type Location struct {
@@ -44,6 +56,17 @@ type Location struct {
 
 type Tag struct {
 	Tags []string `bson:"tags"`
+}
+
+type PhotoComment struct {
+	User      string `bson:"userName"`
+	UserId    string `bson:"userId"`
+	Body      string `bson:"comment"`
+	Timestamp string `bson:"time"`
+}
+
+type PhotoContainer struct {
+	Categories []Photo
 }
 
 var dbConnection *MongoDBConn
@@ -62,7 +85,8 @@ func login() {
 	http.HandleFunc("/albums", handleAlbums)
 	http.HandleFunc("/upload", handleUpload)
 	http.HandleFunc("/uploadPic", uploadHandler)
-	//http.HandleFunc("/saveComment", handleComments)
+	http.HandleFunc("/saveComment", handleComments)
+	http.HandleFunc("/auth", authenticate)
 	authenticateGoogle()
 	authenticateFacebook()
 
@@ -73,27 +97,35 @@ func login() {
 
 }
 
+func authenticate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------------------------------")
+	authenticated, _ := template.ParseFiles("authenticated.html")
+	authenticated.Execute(w, currentUser)
+}
+
 func handleLogin(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+	r.ParseForm()
 	email := r.FormValue("email")
 	pass := r.FormValue("pass")
-
-	fmt.Println(email, pass)
+	fmt.Println("meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+	fmt.Println(r)
+	fmt.Println(r.Body)
+	fmt.Println(email, pass, "*****************************************************")
 
 	c := find(dbConnection, email)
 
 	if c == nil {
-		authenticated, _ := template.ParseFiles("wrongCredentials.html")
-		authenticated.Execute(w, c)
+		fmt.Fprintf(w, "No")
 	} else {
-
 		if c.Password == pass {
 			currentUser = c
-			authenticated, _ := template.ParseFiles("authenticated.html")
-			authenticated.Execute(w, currentUser)
+			fmt.Fprintf(w, "Yes")
+		} else {
+			fmt.Fprintf(w, "No")
 		}
 	}
-
 }
 
 func handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -104,9 +136,11 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 	pass := r.FormValue("password")
 	pass2 := r.FormValue("confirmPassword")
 
-	albums := createDefaultAlbum()
+	id := bson.NewObjectId()
 
-	newUser := User{fname, lname, email, pass, "", albums}
+	albums := createDefaultAlbum(id.Hex(), fname+" "+lname, "")
+
+	newUser := User{id, fname, lname, email, pass, albums[0].Photo[0].URL, albums, "", "", id.Hex()}
 
 	if pass == pass2 {
 		fmt.Println(email)
@@ -123,7 +157,7 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 //This is where the action happens.
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("heeeeeeereeeeeeeeeeeee")
+	fmt.Println("in upload go")
 
 	switch r.Method {
 	//GET displays the upload form.
@@ -134,10 +168,12 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		//get the multipart reader for the request.
 		reader, err := r.MultipartReader()
+		id := bson.NewObjectId()
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			fmt.Println("no uploaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad")
+			fmt.Fprintf(w, "No")
 		}
 
 		//copy each part to destination.
@@ -151,7 +187,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 			if part.FileName() == "" {
 				continue
 			}
-			fileName := "./resources/images/userUploaded/" + part.FileName()
+
+			fileName := "./resources/images/userUploaded/" + id.Hex()
 
 			dst, err := os.Create(fileName)
 			defer dst.Close()
@@ -165,32 +202,28 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			if currentUser.ProfilePicture == "" {
-				currentUser.ProfilePicture = fileName
-				err = dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"email": currentUser.Email}, bson.M{"$set": bson.M{"profilepic": fileName}})
-				if err != nil {
-					fmt.Println("***************")
-					fmt.Println("error while trying to update")
-				}
-			}
-			uploadToAlbum(fileName)
+
+			uploadToAlbum(fileName, id)
 
 		}
-		authenticated, _ := template.ParseFiles("authenticated.html")
-		authenticated.Execute(w, currentUser)
-		//display success message.
-		//display(w, "upload", "Upload successful.")
+		fmt.Println("uploaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad")
+		fmt.Fprintf(w, "YES")
+		/*
+			authenticated, _ := template.ParseFiles("authenticated.html")
+			authenticated.Execute(w, currentUser)
+			//display success message.
+			//display(w, "upload", "Upload successful.") */
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
-func uploadToAlbum(filename string) {
+func uploadToAlbum(filename string, id bson.ObjectId) {
 
 	user := find(dbConnection, currentUser.Email)
 	location := Location{"Glasgow", "1", "2"}
 
-	photo := Photo{currentUser.FirstName + " " + currentUser.LastName, filename, "feet", location, "", 0, 0, make([]Tag, 1), make([]Comment, 1)}
+	photo := Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, filename, "feet", location, time.Now().Local().Format("2006-01-02"), 0, 0, make([]Tag, 1), make([]PhotoComment, 1)}
 
 	fmt.Println(user)
 
@@ -232,23 +265,54 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	authenticated.Execute(w, currentUser)
 }
 
-/*
 func handleComments(w http.ResponseWriter, r *http.Request) {
-	//comment := r.FormValue("comment")
-	//picture := r.FormValue("pictureNumber")
+	comment := r.FormValue("comment")
+	picture := r.FormValue("pictureNumber")
+	album := r.FormValue("albumNumber")
+	owner := r.FormValue("owner")
 
 	var user *User
+	user = findUser(dbConnection, owner)
 
-	user = find(dbConnection, currentUser.Email)
+	fmt.Println(comment, picture, owner, album)
 
-	fmt.Println("--------")
+	fmt.Println(owner)
+	fmt.Println(comment, picture, owner, album)
+	fmt.Println(user)
+	fmt.Println(comment, picture, owner, album)
 
-	//var photos []Photo
-	//photos = user.Albums[0].Photo
+	var al int
 
-	//var album Album
-	//album = user.Albums[0]
+	for i := range user.Albums {
+		if user.Albums[i].AlbumId == album {
+			al = i
+			break
+		}
+	}
 
-} */
+	var pic int
 
-// Start the authorization process
+	for i := range user.Albums[al].Photo {
+		if user.Albums[al].Photo[i].PhotoId == picture {
+			pic = i
+			break
+		}
+	}
+
+	fmt.Println(al, pic)
+
+	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
+
+	fmt.Println(com)
+
+	user.Albums[al].Photo[pic].Comments = append(user.Albums[al].Photo[pic].Comments, com)
+
+	fmt.Println(user)
+	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"_id": user.UserId}, bson.M{"$set": bson.M{"albums": user.Albums}})
+	if err != nil {
+		panic(err)
+	}
+
+	authenticated, _ := template.ParseFiles("pictures.html")
+	authenticated.Execute(w, currentUser)
+}

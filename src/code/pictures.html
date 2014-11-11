@@ -166,7 +166,7 @@
 												<a href="#close" id="close" title="Close" class="close">X</a>
 		
 											<div class="imageContainer" style="border-right: 2px solid #a1a1a1;">
-												<img class="center" src="{{$element2.URL}}" width=80% height=80% />
+												<img class="center" src="{{$element2.URL}}" width=70% height=70% />
 											</div>  
 											
 											<div style="float:left; display:inline-block; max-width:350px; padding-left:10px;">
@@ -175,17 +175,27 @@
 													<p style="float:left"> Tags: </p>
 													<a href="/tag" class="tag">snow</a>
 												</div>
-												<div>
-													<!-- display comments -->
-												</div>
+												
 												<div style="clear:both">
 													<form action="/saveComment">
 														<div>
 															<input type="text" class="comment" name="comment" placeholder="Enter Comment..." />
-															<input type="hidden" name="pictureNumber" value="{{$element2}}" />
+															<input type="hidden" name="pictureNumber" value="{{$element2.PhotoId}}" />
+															<input type="hidden" name="owner" value="{{$element2.Owner}}" />
 															<input type="submit" name="submit" value="submit" />
 														</div>
 													</form>
+												</div>
+												
+												<div>
+													<!-- display comments -->
+													{{if $element2.Comments}}
+														{{range $indexComment, $elementComment := $element2.Comments}}
+															{{if $elementComment.Body}}
+																<p>{{$elementComment.Body}}</p>
+															{{end}}
+														{{end}}
+													{{end}}
 												</div>
 											</div>
 											

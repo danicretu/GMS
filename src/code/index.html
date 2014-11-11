@@ -9,7 +9,10 @@
 	<link rel="stylesheet" href="/resources/stylesheets/loginButtons.css">
 	<link rel="stylesheet" href="/resources/stylesheets/loginPopup.css">
     <!--modernizr enables HTML5 elements and feature detects -->
+	<script src="resources/javascripts/jquery.js" type="text/javascript"></script>
     <script src="resources/javascripts/modernizr-1.5.min.js" type="text/javascript"></script>
+	<script src="resources/javascripts/login.js" type="text/javascript"></script>
+
 </head>
 
 <body>
@@ -119,17 +122,20 @@
 						<li style="float:right">
 							<a href="#loginBox">Log in</a>
 							<div id="loginBox" class="loginDialog">
-								<div>
+								<div id="login_form">
 									<a href="#close" id="close" title="Close" class="close">X</a>
 									<h3 class="center"> Log in with: </h3>
-									<form action="/login" class="loginDiv">
+									<form action="" class="loginDiv" id="loginForm">
 										<div>
-										<input type="text" class="email" name="email" placeholder="E-mail Address" required/>
+										<input type="text" id="email_label" class="email" name="email" placeholder="E-mail Address" required/>
 										</div>
-										<input type="password" class ="email" name="pass" placeholder="Password" required/>
-							
+										<input type="password" id="password_label" class ="email" name="pass" placeholder="Password" required/>
 										<div>
-											<button class="userLoginButton">Login</button>
+										<label id="errorLabel" ></label>
+										</div>
+										<div>
+											<input id="loginBtn" class="userLoginButton" type="submit" name="submit" value="Login">
+											
 										</div>
 									</form>
 									
