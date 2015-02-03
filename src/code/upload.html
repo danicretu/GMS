@@ -4,8 +4,6 @@
     <title>Glasgow Memory Server (GMS)</title>
     <!--meta(name='description', content='website description')-->
     <!--meta(name='keywords', content='website keywords, website keywords')-->
-	<script src="resources/javascripts/jquery.js" type="text/javascript"></script>
-	<script src="resources/javascripts/scripts.js" type="text/javascript"></script>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <link href="resources/stylesheets/style.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="/resources/stylesheets/loginButtons.css">
@@ -132,50 +130,73 @@
                     </ul>
                 </div>            
         </header>
-        <div id="site_content">
-			<div id="menu_container2" style="float:left">
-					<ul id="menu-bar2">
-						<li >
-		                     <a href="/authenticated">Profile</a>
-		                 </li>
-						<li>
-		                     <a href="/pictures">Pictures</a>
-		                 </li>
-						<li>
-		                     <a href="/albums">Albums</a>
-		                 </li>
-						<li class="active">
-		                     <a href="/upload">Upload</a>
-		                 </li>
-						
-					</ul>
-			</div>
-			<div style="float:left; margin-left: 20px">
-				<h3> Welcome, {{.FirstName}} </h3>
-				<img style="margin-top:5px" src="{{.ProfilePicture}}" height=150 width=150 alt="picture" />
-			</div> 
-		</div>
-		<div id="site_content"  style="min-height:1500px;">
+        <div id="site_content" style="min-height:1500px; position:relative;">
+			<div style="float:left; height:100%; width:150px;">
+				<div id="menu_container2" >
+							<ul id="menu-bar2">
+								<li>
+				                     <a href="/authenticated">Profile</a>
+				                 </li>
+								<li>
+				                     <a href="/pictures">Pictures</a>
+				                 </li>
+								<li>
+				                     <a href="/albums">Albums</a>
+				                 </li>
+								<li class="active">
+				                     <a href="/upload">Upload</a>
+				                 </li>
+								
+							</ul>
+				</div>
+				<div>
+					<p style="font-size:150%;"><u>Popular Tags: </u></p>
+				</div>
+				<div id="cloud">
 				
-				 <form action="/uploadPic" id ="uploadForm" method="post" enctype="multipart/form-data">
-					<label for="file">Filename:</label>
-					<input type="file" name="file" id="imgInp">
-					<div id="photoDetails" style="visibility:hidden">
-						<img id="blah" style="visibility:hidden" src="#" alt="your image" />
-						<div>
-							<input type="text" name="caption" id="caption" placeholder="Say something about this photo..."/>
-						</div>
-						<div>
-							<input type="text" name="tag" id="enterTag" placeholder="Add a tag..."/>
-						</div>
-						<div id ="displayTags" style="visibility:hidden">
-							
-						</div>
-						<input style="visibility:hidden" id="submit" type="submit" name="submit" value="Submit">
+				</div>
+			</div>
+			<div style="margin-left:150px;">
+				<div style="height:150px; margin-left:20px;">
+					<div style="float:left; width:150px; height:150px;">
+						<img  src="{{.ProfilePicture}}" height=150 width=150 alt="picture" />
 					</div>
-				</form>
+					<div style="margin-left:160px;">
+						<h3> Welcome, {{.FirstName}} </h3>
+					</div>
+				</div>
+				<div style="margin-top: 20px;border-style: solid;border-width: 1px;border-radius: 25px;border-color: #C0C0C0;background-color: #E8E8E8;margin-right: 5px;">
+					<form action="/uploadPic" id ="uploadForm" method="post" enctype="multipart/form-data" style="padding: 10px;">
+						<label for="file" style="font-size:150%;">Filename:</label>
+						<input type="file" name="file" id="imgInp">
+						<div id="photoDetails" style="visibility:hidden">
+							<img id="blah" style="visibility: hidden;height: 200px; padding-top: 10px;padding-bottom: 10px;" src="#" alt="your image" />
+							<div>
+								<input type="text" name="caption" class="email" style="width:250px; margin-bottom:10px;" id="caption" placeholder="Say something about this photo..."/>
+							</div>
+							<div>
+								<input type="text" name="tag" class="email" style="width:250px;" id="enterTag" placeholder="Add a tag..."/>
+							</div>
+							<div id ="displayTags" style="visibility:hidden; margin-bottom: 20px; margin-top: 10px">
+								
+							</div>
+							<p style="clear:both">Suggested Tags: </p>
+							<div id ="suggestedTags" style="clear:both;visibility:hidden; word-wrap: break-word;margin-top:20px" >
+								
+							</div>
+							<div style = "clear:both; text-align:center;">
+								<input style="visibility:hidden; height:50px; width:180px;" class="userLoginButton" id="submit" type="submit" name="submit" value="Submit">
+							</div>
+							<input type="hidden" name="tagList" id="tagList"/>
+						</div>
+					</form>
+				</div>
+			</div>
+			<script>
+    					tagCloud();
+			</script>	
 		</div>
-
+		
 		
     </div><!--javascript at the bottom for fast page loading -->
 

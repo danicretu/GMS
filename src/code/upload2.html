@@ -1,0 +1,310 @@
+	
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="utf-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <meta name="description" content="">
+       <meta name="author" content="Md Sadek Ferdous" >
+	
+       <title>Glasgow Memories Server: Home</title>
+	
+       <!-- Bootstrap core CSS -->
+       <link href="resources/stylesheets/bootstrap.min.css" rel="stylesheet">
+	
+       <!-- Custom styles for this template -->
+       <link href="resources/stylesheets/sticky-footer-navbar.css" rel="stylesheet">
+       <link href="resources/stylesheets/clndr.css" rel="stylesheet">
+       <link href="resources/stylesheets/cal.css" rel="stylesheet">
+       <link href="resources/stylesheets/selection.css" rel="stylesheet">
+		 <link href="resources/stylesheets/arrow.css" rel="stylesheet">
+		 <link href="resources/stylesheets/harvest-navbar.css" rel="stylesheet">
+		 <link href="resources/stylesheets/simple-navbar.css" rel="stylesheet">
+		 <link href="resources/stylesheets/my-navbar.css" rel="stylesheet">
+       <link href="resources/stylesheets/radio.css" rel="stylesheet">
+		<link href="resources/stylesheets/loginPopup.css" rel="stylesheet">
+		<link href="resources/stylesheets/images.css" rel="stylesheet">
+       <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+       <link rel="stylesheet" type="text/css" media="all" href="resources/stylesheets/daterangepicker-bs3.css" />	
+       <script src="resources/javascripts/ie-emulation-modes-warning.js"></script>
+     </head>
+	
+     <body>
+       <!--<div class="loader"></div>-->
+       <!-- Fixed navbar -->
+       <nav class="navbar navbar-my navbar-fixed-top" role="navigation">
+         <div class="container">
+           <div class="navbar-header">
+             
+             <a class="navbar-brand" href="#" style="font-size: 38px">               
+             	GMS:Glasgow Memories Server
+             </a>
+           </div>
+           <div id="navbar" class="collapse navbar-collapse navbar-my-text">
+             <ul class="nav navbar-nav">
+               <li><a href="/">Home</a></li>
+               <li><a href="#about">Today</a></li>
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">News <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="#">BBC</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">Daily Record</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">The Scotsman</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">Evening Times</a></li>                   
+                 </ul>
+               </li>
+               <!--<li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Blog <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="#">Blogger</a></li>
+                   <li><a href="#">Wordpress</a></li>
+                 </ul>
+               </li>-->
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Image <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">                   
+                   <li><a href="#">flickr</a></li>
+                 </ul>
+               </li>
+               <!--<li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Video <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="#">BBC</a></li>
+                   <li><a href="#">Youtube</a></li>
+                 </ul>
+               </li>-->
+               <!--<li><a href="#about">Twitter</a></li>-->
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Statistics <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="/stat">Glasgow</a></li>
+                   <li class="active"><a href="/statScotland">Scotland</a></li>
+                 </ul>
+               </li> 
+			  <li class="dropdown">
+                 <a href="/authenticated2" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{.FirstName}} <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+				  <li><a href="/authenticated">Profile</a></li>
+                   <li><a href="/logout">Log Out</a></li>                 
+                 </ul>
+               </li>            		
+             </ul>
+           </div><!--/.nav-collapse -->
+         </div>
+       </nav>
+	
+       <!-- Begin page content -->
+       <h1>&nbsp</h1>			
+		<section id="intro" data-speed="6" data-type="background">
+	       <div class="container">         
+	        <div class="container-fluid">
+			  <div class="row">
+			  	<div class="col-md-3">
+				    <ul class="nav nav-pills nav-stacked">
+				      <li><a href="/authenticated">Home</a></li>
+				      <li><a href="/pictures">Pictures</a></li>
+				      <li><a href="/albums">Albums</a></li>
+				      <li class="active"><a href="/upload">Upload</a></li>
+				    </ul>
+				    <hr>
+				    <div class="panel mypanel">
+				      	<div class="row">
+				            <div class="col-md-8">
+				              		<a href="http://ubdc.ac.uk/"><img src="resources/images/ubdc_logo.png" class="img-responsive" height="20%" alt="Cinque Terre"/></a>
+				            </div>                                          
+						</div>
+						<hr>
+						<div class="row">                           
+					        <div class="col-md-8">
+					        		<a href="http://www.esrc.ac.uk/"><img src="resources/images/esrc_logo.png" class="img-responsive" alt="Cinque Terre"/></a>
+					        </div>              
+						</div>       	      	
+					</div>
+			    </div>    
+			   	<div class="col-md-9">
+			        <div class="panel mypanel">
+			            	<div class="panel-heading">
+			            		<h2 class="panel-title" style="font-size: 24px">Upload Picture</h2>
+			            	</div>
+						<div class="panel-body headText" > 
+							<div id="uploadDiv" class="uploadDiv">
+								<h3>Choose a file to upload: </h3>
+								<button id="chooseFile">
+									<input type="file" name="file" id="imgInp"> 
+									<span>File: </span>
+								</button>
+								<input id="submit" class="btn submitButton" type="submit" name="submit" value="Submit">            	
+			            		</div>
+							
+						</div>
+								               
+			        </div>          
+			    </div>    
+		  	  </div>
+			</div>
+		  </div>
+		</section>
+
+       <!--<footer class="footer">
+         <div class="container">
+           <p class="text-muted">Place sticky footer content here.</p>
+         </div>
+       </footer>-->
+	
+	
+       <!-- Bootstrap core JavaScript
+       ================================================== -->
+       <!-- Placed at the end of the document so the pages load faster -->
+       <!--<script src="resources/javascripts/jquery.min.js"></script>-->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="resources/javascripts/bootstrap.min.js"></script>
+       <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="resources/javascripts/ie10-viewport-bug-workaround.js"></script>
+    <script src="resources/javascripts/underscore.js"></script>
+    <script src= "resources/javascripts/moment.js"></script>
+    <script src="resources/javascripts/clndr.js"></script>
+    <script src="resources/javascripts/Chart.min.js"></script>
+    <script src="resources/javascripts/daterangepicker.js"></script>
+	<script src="resources/javascripts/jquery.easing.min.js"></script>
+	<script src="resources/javascripts/jquery.scrollTo.js"></script>
+	<script src="resources/javascripts/jquery.form.js"></script>			           
+    <script src="resources/javascripts/main.js"></script>
+    <script src="resources/javascripts/retina.js"></script>          
+    <script src="resources/javascripts/waypoints.min.js"></script>                        		     	 	                   
+    <script src="resources/javascripts/owl.carousel.min.js"></script>
+   	<script src="resources/javascripts/nivo-lightbox.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+	<script src="resources/javascripts/jquery.geocomplete.js"></script>
+	<script src="resources/javascripts/login.js"></script> 
+	<script src="resources/javascripts/scripts.js"></script>
+	
+    <script type="text/javascript">
+                  $(document).ready(function() {
+                     $('#reservation').daterangepicker(null, function(start, end, label) {
+                       console.log(start.toISOString(), end.toISOString(), label);
+                     });
+                     $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+                        window.location.href = "/statRangeScotland?startDate=" + picker.startDate.format('YYYY-MM-DD') + "&endDate=" + picker.endDate.format('YYYY-MM-DD') 
+                        console.log(picker.startDate.format('YYYY-MM-DD'));
+                        console.log(picker.endDate.format('YYYY-MM-DD'));
+                     });
+                  });                  
+                  </script>
+     
+	  
+     <script>               	            
+	            
+	        $(document).ready(function(){
+   // cache the window object
+   $window = $(window);
+ 
+   $('section[data-type="background"]').each(function(){
+     // declare the variable to affect the defined data-type
+     var $scroll = $(this);
+                     
+      $(window).scroll(function() {
+        // HTML5 proves useful for helping with creating JS functions!
+        // also, negative value because we're scrolling upwards                             
+        var yPos = -($window.scrollTop() / $scroll.data('speed')); 
+         
+        // background position
+        var coords = '50% '+ yPos + 'px';
+ 
+        // move the background
+        $scroll.css({ backgroundPosition: coords });    
+      }); // end window scroll
+   });  // end section function
+}); // close out script    
+           </script>
+           <script type="text/javascript">
+               $(window).load(function() {
+                  $(".loader").fadeOut("slow");
+               })
+         </script>             
+    
+	
+		<div id="uploadForm" class="uploadForm" style="display:none;">
+			<form action="/uploadPic" id ="uploadForm" method="post" style="padding: 10px; background-color:#EAEAEA;">
+					<input type="hidden" name="imageURL" id="imageURL"/>
+					<div class="row">
+						<h3 style="float:left;" class="col-md-5">Uploaded image </h3>
+						<img style="float:left; width:40%;" id="blah" class="img-thumbnail col-md-7" src="#" alt="your image" />
+					</div>
+					<div class="row" style="clear:both; padding-top:1%;">
+						<p class="col-md-5" style="float:left;">Add a description</p>
+						<input type="text" name="caption" class="email col-md-7" style="width:250px; margin-bottom:10px; border-radius:4px;" id="caption" placeholder="Description"/>
+					</div>
+					<div class="row">
+						<p class="col-md-5" style="padding-right:3%; float:left;">Add this picture to an album</p>
+						<select id="albumSelect" name="albumSelect" class="albumSelect col-md-3">
+							{{range $index, $element := .Albums}}
+								<option value="{{$element.AlbumId}}">{{$element.Name}}</option>
+							{{end}}
+						</select>
+						<a href="#" data-toggle="modal" data-target="#albumModal" style="float:right;" class="col-md-4"> Or create a new album...</a>
+						
+					</div>
+						<div style="clear:both; padding-top:2%;" class="row">
+							<p style="float:left; padding-right:1%;" class="col-md-5"> Where was this picture taken? </p>
+							<input type="text" name="location" id="imageLocation" placeholder="Where was the picture taken?" style="float:left; padding-right:3%; border-radius:4px;" class="col-md-6">
+							<input id="find" value="find" type="button" style="height:auto; display:none;"/>
+							<input id="lng" type="hidden" name="lng" value="" data-geo="lng">
+							<input id="lat" type="hidden" name="lat" value="" data-geo="lat">
+							<input id="locality" type="hidden" name="locality" value="" data-geo="locality">
+							<input id="formatted_address" type="hidden" name="formatted_address" value="" data-geo="formatted_address">
+						</div>
+					<div style="clear:both;" class="row">
+						<p style="float:left;" class="col-md-5">Add a tag</p>
+						<input type="text" name="tag" class="email col-md-6" style="border-radius:4px;" id="enterTag" placeholder="Add a tag..."/>
+					</div>
+					<div id ="displayTags" style="visibility:hidden; margin-bottom: 20px; margin-top: 10px">
+													
+					</div>
+					<p style="clear:both">Suggested Tags: </p>
+					<p style="visibility:hidden; font-size:small;" id="tagsLabel">Gathering similar tags...</p>
+					<div id ="suggestedTags" style="clear:both;visibility:hidden; word-wrap: break-word;margin-top:20px" >
+											
+					</div>
+					<div style = "clear:both; text-align:center; padding-top:5%;">
+						<input style="width:180px; font-size:120%; padding-top:0;" class="btn submitButton" id="submit" type="submit" name="submit" value="Submit">
+					</div>
+					<input type="hidden" name="tagList" id="tagList"/>
+			</form>
+		</div>
+		<script>
+			$(function(){
+				$("#imageLocation").geocomplete({
+					details:"form",
+					detailsAttribute:"data-geo",
+				});
+				$("#find").click(function(){
+					$("#imageLocation").trigger("geocode");
+				});
+			});
+		</script>
+			 
+     </body>
+   </html>
+
+<div class="modal fade" id="albumModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header login_modal_header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		</div>
+		<div class="modal-body login-modal" >
+			<form action="#">
+				<input type="text" name="albumName" class="email" style="width:250px;" id="albumName" placeholder="Album Name..."/>
+				<input type="text" name="albumDescription" class="email" style="width:250px;" id="albumDescription" placeholder="Enter a description..."/>
+				<button type="button" class="btn" id="albumSubmit">Submit</button>
+			</form>
+		</div>
+		</div>
+	</div>
+</div>
+
+

@@ -1,152 +1,32 @@
-	.loginDialog {
-		position: fixed;
-		font-family: Arial, Helvetica, sans-serif;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		background: rgba(0,0,0,0.8);
-		z-index: 99999;
-		opacity:0;
-		-webkit-transition: opacity 400ms ease-in;
-		-moz-transition: opacity 400ms ease-in;
-		transition: opacity 400ms ease-in;
-		pointer-events: none;
-	}
-	
-	.loginDialog:target {
-		opacity:1;
-		pointer-events: auto;
-	}
-	
-	.loginDialog > div {
-		width: 600px;
-		position: relative;
-		margin: 10% auto;
-		padding: 5px 20px 13px 20px;
-		border-radius: 10px;
-		background: #fff;
-		background: -moz-linear-gradient(#A9A9A9, #7A7A7A);
-		background: -webkit-linear-gradient(#A9A9A9, #7A7A7A);
-		background: -o-linear-gradient(#A9A9A9, #7A7A7A);
-	}
-	
-	
-	.close {
-		background: #606061;
-		color: #FFFFFF;
-		line-height: 25px;
-		position: absolute;
-		right: -12px;
-		text-align: center;
-		top: -10px;
-		width: 24px;
-		text-decoration: none;
-		font-weight: bold;
-		-webkit-border-radius: 12px;
-		-moz-border-radius: 12px;
-		border-radius: 12px;
-
-	}
-	
-	.close:hover { background: #FA6A09; }
-	
-	.registerDialog {
-		position: fixed;
-		font-family: Arial, Helvetica, sans-serif;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		background: rgba(0,0,0,0.8);
-		z-index: 99999;
-		opacity:0;
-		-webkit-transition: opacity 400ms ease-in;
-		-moz-transition: opacity 400ms ease-in;
-		transition: opacity 400ms ease-in;
-		pointer-events: none;
-	}
-	
-	.registerDialog:target {
-		opacity:1;
-		pointer-events: auto;
-	}
-	
-	.registerDialog > div {
-		width: 300px;
-		position: relative;
-		margin: 10% auto;
-		padding: 5px 20px 13px 20px;
-		border-radius: 10px;
-		background: #fff;
-		background: -moz-linear-gradient(#fff, #999);
-		background: -webkit-linear-gradient(#fff, #999);
-		background: -o-linear-gradient(#fff, #999);
-	}
-	
-	
-	
-	.verticalLine {
-	    border-left: 2px solid #a1a1a1;
-		padding-left:5px;
-		margin-left:auto;
-		margin-right:auto;
-		display: inline-block;
-	
-	}
-	
-	.userLoginButton {
-		font-weight: bold;
-		font-family: arial;
-		font-style: normal;
-		font-size: 12px;
-		color: #999;
-		width: 50px;
-		border:none;
-		border-radius: 10px;
-		margin-top: 15px;
-		height: 30px;
-		width: 80px;
-	
-	}
-	
-	.userLoginButton:hover {
-		background: #000;
-		background: linear-gradient(top,  #EBEBEB,  #A1A1A1);
-		  background: -ms-linear-gradient(top,  #EBEBEB,  #A1A1A1);
-		  background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));
-		  background: -moz-linear-gradient(top,  #EBEBEB,  #A1A1A1);
-		  color: #444444;
-		  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-		  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-		  box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-		  text-shadow: 2px 2px 3px #FFFFFF;
-	}
-	
-	.email {
-		font: bold 15px "lucida sans","trebuchet MS","Tahoma";
-		border:2px solid #a1a1a1;
-		border-radius: 10px;
-		width: 150px;
-		height: 30px;
-		padding: 5px 30px;
-	}
-	
-	.email2 {
-		border:2px solid #a1a1a1;
-		border-radius: 10px;
-		width: 150px;
-		height: 30px;
-		padding: 5px 30px;
-		margin-bottom:20px;
-	}
-	
-	.loginDiv {
-		
-		display:inline-block; 
-		padding-right: 50px;
-		padding-left:40px;
-		margin-left : auto;
-		margin-right:auto;
-		margin-top:0px;
+.login_modal_footer{margin-top:5px;}
+.login_modal_header .modal-title {text-align: center;font-family:'Philosopher',sans-serif; }
+.form-group{position: relative;}
+.form-group .login-field-icon {
+    font-size: 20px;
+    position: absolute;
+    right: 15px;
+    top: 3px;
+    transition: all 0.25s ease 0s;
+    padding-top: 2%;
 }
+.login-modal{
+    width:100%;
+    padding-bottom:20px;
+}
+.login_modal_header, .login_modal_footer {background: #0D77B6 !important; color:white;}
+.modal-register-btn{width:100%; clear: both; padding-top: 8%;}
+.login-modal input{height:40px; box-shadow: none; border:1px solid #ddd; margin-top:2%; }
+.modal-body-left{float:left; width:50%; padding-right:4%; border-right:4px solid #ddd;}
+.modal-body-right{float:right; width:47%;}
+.login-link{padding:0 20%;}
+.modal-social-icons{padding:0 10%;}
+.facebook, .twitter, .google, .linkedin {width:100%;height:40px; padding-top:2%; margin-top:2%;}
+.modal-icons{margin-left: -10px; margin-right: 20px;}
+.google, .google:hover{background-color:#dd4b39;border:2px solid #dd4b39;color:#fff;}
+.twitter, .twitter:hover{ background-color: #00aced; border:2px solid #00aced;color: #fff;}
+.facebook, .facebook:hover{background-color: #3b5999; border:2px solid #3b5999;color:#fff;}
+.linkedin, .linkedin:hover{background-color: #007bb6; border: 2px solid #007bb6; color:#fff;}
+#social-icons-container{position: relative;}
+#center-line{position: absolute;  right: 265.7px;top: 80px;background:#ddd;  border: 4px solid #DDDDDD;border-radius: 20px;}
+.modal-login-btn{width:100%;height:40px; margin-bottom:10px;background:#0D77B6; color:white;}
+#modal-launcher{margin: 30% 0 0 30%; }

@@ -86,7 +86,7 @@ var funcMap = template.FuncMap{
 	},
 }
 
-var templates = template.Must(template.New("test").Funcs(funcMap).ParseFiles("index.html", "news.html", "detailNews.html", "today.html"))
+var templates = template.Must(template.New("test").Funcs(funcMap).ParseFiles("index.html", "news.html", "detailNews.html", "today.html", "gmsHome.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *TopPage) {
 	// Execute the template for each recipient.
@@ -150,6 +150,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer session.Close()
 
+	fmt.Println("index")
+
 	// Optional. Switch the session to a monotonic behavior.
 	session.SetMode(mgo.Monotonic, true)
 
@@ -200,35 +202,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	err = c.Find(bson.M{"$and": []bson.M{{"source": "http://www.scotsman.com"}, {"timeStamp": bson.M{"$regex": currenttime.Format("02/01/2006"), "$options": "i"}}}}).Limit(5).All(&scotTodayResult)
 
 	previousDate := currenttime.AddDate(0, 0, -1).Format("02/01/2006")
-
-	//fmt.Printf("BBC Length : %d\n", len(bbcResult))
-	//db.gmsNews.find({$and:[{source:'http://www.bbc.co.uk'},{timeStamp:{$regex:'29/09/2014', $options:'i'}}]}).limit(5).pretty()
-	//c.Find(bson.M{"$and": bson.M{"source": "http://www.bbc.co.uk", "timeStamp":bson.M{"$regex":"29/09/2014", "$options":"i"}}}).Limit(5).All(&bbcResult)
-
-	/*scotSortResult := []Page{}
-
-	operations := []bson.M{o1, o2, o3, o4, o5}
-
-	pipe := c.Pipe(operations)
-
-	results := []bson.M{}
-	err1 := pipe.All(&results)
-
-	if err1 != nil {
-		fmt.Printf("ERROR : %s\n", err1.Error())
-		//return
-	}
-
-	for i := 0; i < 5; i++ {
-		tmpPage := []Page{}
-		url := results[i]["_id"]
-		err = c.Find(bson.M{"url": url}).All(&tmpPage)
-		if utf8.RuneCountInString(tmpPage[0].Description) > 150 {
-			tmpPage[0].Description = tmpPage[0].Description[:140] + "..."
-		}
-
-		scotSortResult = append(scotSortResult, tmpPage[0])
-	}*/
 
 	bbcResult := []Page{}
 	err = c.Find(bson.M{"$and": []bson.M{{"source": "http://www.bbc.co.uk"}, {"timeStamp": bson.M{"$regex": previousDate, "$options": "i"}}}}).Limit(5).All(&bbcResult)
@@ -338,7 +311,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	indexPage := IndexPage{"Top 5 contents from each source are shown below:", bbcTodayResult, drTodayResult, scotTodayResult, etTodayResult, bbcResult, drResult, scotResult, etResult}
 
-	renderIndexTemplate(w, "index", &indexPage)
+	renderIndexTemplate(w, "gmsHome", &indexPage)
 }
 
 func etHandler(w http.ResponseWriter, r *http.Request) {
@@ -1132,7 +1105,7 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 
 func main() {
 	flag.Parse()
-	http.HandleFunc("/", makeHandler(indexHandler))
+	//http.HandleFunc("/", makeHandler(indexHandler))
 	http.HandleFunc("/et", makeHandler(etHandler))
 	http.HandleFunc("/scotsman", makeHandler(scotmanHandler))
 	http.HandleFunc("/bbc", makeHandler(bbcHandler))

@@ -10,8 +10,9 @@
 	<link rel="stylesheet" href="/resources/stylesheets/loginPopup.css">
 	<link rel="stylesheet" href="/resources/stylesheets/images.css">
     <!--modernizr enables HTML5 elements and feature detects -->
+	<script src="resources/javascripts/jquery.js" type="text/javascript"></script>
     <script src="resources/javascripts/modernizr-1.5.min.js" type="text/javascript"></script>
-
+	<script src="resources/javascripts/scripts.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -129,75 +130,96 @@
                     </ul>
                 </div>            
         </header>
-        <div id="site_content" style="min-height:1500px; overflow-y:scroll">
-			<div id="menu_container2" style="float:left;">
-						<ul id="menu-bar2">
-							<li>
-			                     <a href="/authenticated">Profile</a>
-			                 </li>
-							<li class="active">
-			                     <a href="/pictures">Pictures</a>
-			                 </li>
-							<li>
-			                     <a href="/albums">Albums</a>
-			                 </li>
-							<li>
-			                     <a href="/upload">Upload</a>
-			                 </li>
-							
-						</ul>
+        <div id="site_content" style="min-height:1500px; position:relative;">
+			<div style="float:left; height:100%; width:150px;">
+				<div id="menu_container2" >
+							<ul id="menu-bar2">
+								<li>
+				                     <a href="/authenticated">Profile</a>
+				                 </li>
+								<li class="active">
+				                     <a href="/pictures">Pictures</a>
+				                 </li>
+								<li>
+				                     <a href="/albums">Albums</a>
+				                 </li>
+								<li>
+				                     <a href="/upload">Upload</a>
+				                 </li>
+								
+							</ul>
+				</div>
+				<div>
+					<p style="font-size:150%;"><u>Popular Tags: </u></p>
+				</div>
+				<div id="cloud">
+				
+				</div>
 			</div>
-			<div style="float:left; margin-left: 20px;">
-				<h3> Welcome, {{.FirstName}} </h3>
-				<img style="margin-top:5px" src="{{.ProfilePicture}}" height=150 width=150 alt="picture" />
-			</div> 
-			
-			<div style="clear:both">
+			<div style="margin-left:150px;">
+				<div style="height:150px; margin-left:20px;">
+					<div style="float:left; width:150px; height:150px;">
+						<img  src="{{.ProfilePicture}}" height=150 width=150 alt="picture" />
+					</div>
+					<div style="margin-left:160px;">
+						<h3> Welcome, {{.FirstName}} </h3>
+					</div>
+				</div>
+				<div style="margin-top:20px;">
 					{{range $index, $element := .Albums}}
 						{{if $element.Photo}}
 							{{range $index2, $element2 :=$element.Photo}}
 								{{if $element2.URL}}
-									<a href="#lightbox{{$index2}}">
-							          <img src="{{$element2.URL}}" width=150 height=150>
-							        </a>
+									<div style="height:160px; max-width:150px; padding:5px 5px 5px 5px; float:left;">
+										<a href="#lightbox{{$index2}}">
+								          <img style="max-width:100%; " src="{{$element2.URL}}">
+								        </a>
+									</div>
 
-										<div class="imageDialog" id="lightbox{{$index2}}">
-											<div style="display:inline-block;">
+										<div class="imageDialog"  id="lightbox{{$index2}}">
+											<div>
 												<a href="#close" id="close" title="Close" class="close">X</a>
 		
-											<div class="imageContainer" style="border-right: 2px solid #a1a1a1;">
-												<img class="center" src="{{$element2.URL}}" width=70% height=70% />
-											</div>  
+												<div style="max-width:600px; float:left; padding:10px;">
+													<img  src="{{$element2.URL}}" class="imageClass"/>
+												</div>  
 											
-											<div style="float:left; display:inline-block; max-width:350px; padding-left:10px;">
-												<p>Some caption vjbeorhgeorivbnejkrbveh </p>
-												<div>
-													<p style="float:left"> Tags: </p>
-													<a href="/tag" class="tag">snow</a>
-												</div>
+												<div style="float:left; padding-left:5px; padding-right:5px; text-align:left;">
+													<p style="float:left;">{{$element2.OwnerName}}</p>
+													<p style="float:right;">{{$element2.Timestamp}}</p>
+													<p style="clear:both;">{{$element2.Description}}</p>
+													<div>
+														<p> Tags: </p>
+														{{range $indexTag, $elementTag := $element2.Tags}}
+															<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
+															<!-- <button type="button" id="{{$elementTag}}" class="tag">{{$elementTag}}</button> -->
+														{{end}}
+													</div>
 												
-												<div style="clear:both">
-													<form action="/saveComment">
-														<div>
-															<input type="text" class="comment" name="comment" placeholder="Enter Comment..." />
-															<input type="hidden" name="pictureNumber" value="{{$element2.PhotoId}}" />
-															<input type="hidden" name="owner" value="{{$element2.Owner}}" />
-															<input type="submit" name="submit" value="submit" />
-														</div>
-													</form>
-												</div>
+													<div>
+														<form action="/saveComment">
+															<div>
+																<input type="text" class="comment" name="comment" placeholder="Enter Comment..." />
+																<input type="hidden" name="pictureNumber" value="{{$element2.PhotoId}}" />
+																<input type="hidden" name="owner" value="{{$element2.Owner}}" />
+																<input type="submit" name="submit" value="submit" />
+															</div>
+														</form>
+													</div>
 												
-												<div>
-													<!-- display comments -->
-													{{if $element2.Comments}}
-														{{range $indexComment, $elementComment := $element2.Comments}}
-															{{if $elementComment.Body}}
-																<p>{{$elementComment.Body}}</p>
+													<div>
+														<!-- display comments -->
+														{{if $element2.Comments}}
+															{{range $indexComment, $elementComment := $element2.Comments}}
+																{{if $elementComment.Body}}
+																	<div class="inner_comment_detail">
+																	<p>{{$elementComment.Body}}</p>
+																	</div>
+																{{end}}
 															{{end}}
 														{{end}}
-													{{end}}
+													</div>
 												</div>
-											</div>
 											
 
 										</div> 
@@ -207,7 +229,10 @@
 						{{end}}
 					{{end}}
 				</div>
-				
+			</div>
+			<script>
+    					tagCloud();
+			</script>	
 		</div>
 		
 		
