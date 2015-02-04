@@ -3,7 +3,6 @@ package main
 import (
 	"code.google.com/p/goauth2/oauth"
 	"encoding/json"
-	"fmt"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io/ioutil"
@@ -41,9 +40,6 @@ type UserG struct {
 	Name        string
 	Given_Name  string
 	Family_Name string
-	Link        string
-	Picture     string
-	Locale      string
 }
 
 //This is the URL that Google has defined so that an authenticated application may obtain the user's info in json format
@@ -59,8 +55,6 @@ func authenticateGoogle() {
 func handleAuthorizeG(w http.ResponseWriter, r *http.Request) {
 	//Get the Google URL which shows the Authentication page to the user
 	url := oauthCfgG.AuthCodeURL("")
-
-	fmt.Print(url)
 
 	//redirect user to that page
 	http.Redirect(w, r, url, http.StatusFound)
@@ -87,34 +81,24 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 
-	fmt.Print(string(body))
-
 	json.Unmarshal(body, &user)
-	fmt.Println(user.Id)
-	fmt.Println(user.Given_Name)
-	fmt.Println(user.Family_Name)
-	fmt.Println(user.Picture)
-	fmt.Println(user.Locale)
-	fmt.Println(user.Name)
 
 	var existing *User
 	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"gId": user.Id}).One(&existing)
-
-	fmt.Println(existing)
 
 	if existing != nil {
 		currentUser = existing
 	} else {
 
 		id := bson.NewObjectId()
-		albums := createDefaultAlbum(id.Hex(), user.Given_Name+" "+user.Family_Name, user.Picture)
+		albums := createDefaultAlbum(id.Hex(), user.Given_Name+" "+user.Family_Name, "")
 
-		newUser := User{id, user.Given_Name, user.Family_Name, "", "", user.Picture, albums, user.Id, "", id.Hex()}
+		newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", albums, user.Id, "", "", id.Hex()}
 		add(dbConnection, newUser)
 		currentUser = &newUser
 
 	}
 
-	authenticated, _ := template.ParseFiles("authenticated.html")
+	authenticated, _ := template.ParseFiles("authenticated2.html")
 	authenticated.Execute(w, currentUser)
 }

@@ -11,7 +11,7 @@
 .commentList li > div {display: table-cell;}
 .commentText p {margin:0; padding-left:5px;}
 .under {color:#aaa; font-size: 15px;}
-.commentBox {border-top:1px dotted #bbb; padding:10px; padding-left:0px;}
+.commentBox {padding:10px; padding-left:0px;}
 .submitButton {height:40px; margin-bottom:10px;background:#0D77B6; color:white;}
 #chooseFile {position:relative; overflow:hidden;}
 #chooseFile input{position:aboslute; opacity:0.001;}
@@ -23,3 +23,34 @@
     font-size: 100%;
 }
 .tagUpload {margin-bottom:10px;background:#0D77B6; color:white; border-radius:4px; padding:3px; margin-right:5px;}
+.size8{
+	font-size:200%;
+	color:#002B6B;
+	float:left;	
+	margin-right:3%;
+}
+.size7{
+	font-size:180%;
+	color:#002B6B;
+	float:left;
+	margin-right:3%;
+}
+.size6{
+	font-size:150%;
+	color:#1959BA;
+	float:left;
+	margin-right:3%;
+}
+.size4{
+	font-size:120%;
+	color:#477AC8;
+	float:left;
+	margin-right:3%;
+}
+.size2 {
+	font-size:90%;
+	color:#477AC8;
+	float:left;
+	margin-right:3%;
+	
+}

@@ -18,15 +18,16 @@ public class Recommendation {
 	public static void main(String args[]){
 		Connection connect = null;
 		
-		String url="jdbc:mysql://localhost:3306/testDB";
+		String url="jdbc:mysql://localhost:3306/tagdatabase";
 		String user="root";
 		String password="";
 		String topFiveTags="";
 		String startTag="";
 		Map<String, Double> frequencyMap = new HashMap<String, Double>();
+		String[] argTags = args[0].split(",");
 		
-		if (args.length == 1) {
-			startTag=args[0].trim();		
+		if (argTags.length == 1) {
+			startTag=argTags[0].trim();		
 			try{
 				connect = DriverManager.getConnection(url, user, password);
 				Statement st= connect.createStatement();
@@ -55,11 +56,11 @@ public class Recommendation {
 						String tag = sorted.get(sorted.size()-i-1).getKey();
 						rs = st.executeQuery("Select tag from tags where pos='"+tag+"'");
 						if (rs.next()) {
-							topFiveTags+=rs.getString(1)+" ";
+							topFiveTags+=rs.getString(1)+",";
 						}
 					}
 					
-					System.out.println(topFiveTags);
+					System.out.println(topFiveTags.substring(0, topFiveTags.length()-1));
 					
 				}
 				
@@ -68,11 +69,11 @@ public class Recommendation {
 				System.out.println("SQL Exception ");
 				e.printStackTrace();
 			}
-		} else if (args.length > 1) {
-			for (int i = 0; i<args.length; i++) {
+		} else if (argTags.length > 1) {
+			for (int i = 0; i<argTags.length; i++) {
 				try {
 				connect = DriverManager.getConnection(url, user, password);
-				System.out.println(processMultipleTags(args, connect));
+				System.out.println(processMultipleTags(argTags, connect));
 				
 				
 				
@@ -137,8 +138,6 @@ public class Recommendation {
 			}
 		}
 		
-		System.out.println("main size: "+main.size());
-		
 		for (String key : main.keySet()) {
 			boolean isAll = true;
 			for (Map<String, Double> map:tagList){
@@ -157,22 +156,18 @@ public class Recommendation {
 		}
 		
 		if (allHit.size() > 5) {
-			System.out.println("allHit size: "+allHit.size());
 			ResultSet rs = null;
 			String topFiveTags = "";
-			System.out.println(allHit);
 			allHit = multiplyIDF(allHit, st);
-			System.out.println(allHit);
 			List<Map.Entry<String, Double>> sorted = sort(allHit);
 			for (int i = 0; i < 5; i++) {
 				String tag = sorted.get(sorted.size()-i-1).getKey();
-				System.out.println(tag);
 				rs = st.executeQuery("Select tag from tags where pos='"+tag+"'");
 				if (rs.next()) {
-					topFiveTags+=rs.getString(1)+" ";
+					topFiveTags+=rs.getString(1)+",";
 				}
 			}
-			return topFiveTags;
+			return topFiveTags.substring(0, topFiveTags.length()-1);
 			
 		} else {
 			allHit = multiplyIDF(allHit, st);

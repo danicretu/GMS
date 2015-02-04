@@ -43,7 +43,7 @@ func addTags(m *MongoDBConn, tags []string, photo Photo) {
 		result := Tag{}
 		err := c.Find(bson.M{"tag": tags[tag]}).One(&result)
 		if err != nil {
-			fmt.Println("error while finding tag", tags[tag])
+			fmt.Println("error while finding tag", tags[tag], "-inserting new tag in database")
 			result.Name = tags[tag]
 			result.Photos = make([]Photo, 1)
 			result.Photos[0] = photo
@@ -72,7 +72,6 @@ func findByTag(m *MongoDBConn, tag string) *Tag {
 		fmt.Println(err)
 		return nil
 	}
-	fmt.Println(result)
 	return &result
 }
 
@@ -86,14 +85,12 @@ func getAllTags(m *MongoDBConn) []Tag {
 		return nil
 	}
 
-	fmt.Println(result)
 	return result
 }
 
 func find(m *MongoDBConn, email string) *User {
 	result := User{}
 	c := m.session.DB("gmsTry").C("user")
-	fmt.Println(email)
 	err := c.Find(bson.M{"email": email}).One(&result)
 	if err != nil {
 		return nil
@@ -105,7 +102,6 @@ func find(m *MongoDBConn, email string) *User {
 func findUser(m *MongoDBConn, id string) *User {
 	result := User{}
 	c := m.session.DB("gmsTry").C("user")
-	fmt.Println(id)
 	err := c.Find(bson.M{"userId": id}).One(&result)
 	if err != nil {
 		return nil

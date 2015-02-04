@@ -111,19 +111,10 @@
 				      <li><a href="/upload">Upload</a></li>
 				    </ul>
 				    <hr>
-				    <div class="panel mypanel">
-				      	<div class="row">
-				            <div class="col-md-8">
-				              		<a href="http://ubdc.ac.uk/"><img src="resources/images/ubdc_logo.png" class="img-responsive" height="20%" alt="Cinque Terre"/></a>
-				            </div>                                          
-						</div>
-						<hr>
-						<div class="row">                           
-					        <div class="col-md-8">
-					        		<a href="http://www.esrc.ac.uk/"><img src="resources/images/esrc_logo.png" class="img-responsive" alt="Cinque Terre"/></a>
-					        </div>              
-						</div>       	      	
-					</div>
+				    <div class="panel mypanel" style="width:auto; margin:0;">
+				      	<div class="row" id="cloud" style="width:auto; margin:0;">
+				        </div>            	      	
+				    </div>
 			    </div>    
 			   	<div class="col-md-9">
 			        <div class="panel mypanel">
@@ -176,6 +167,10 @@
     <script src="resources/javascripts/owl.carousel.min.js"></script>
    	<script src="resources/javascripts/nivo-lightbox.min.js"></script>
 	<script src="resources/javascripts/login.js"></script> 
+	<script src="resources/javascripts/scripts.js"></script> 
+	<script>
+		tagCloud();
+	</script>
     <script type="text/javascript">
                   $(document).ready(function() {
                      $('#reservation').daterangepicker(null, function(start, end, label) {

@@ -25,11 +25,9 @@ $(document).ready(function() {
 	});
 	
 	$("#submit").click(function(){
-		console.log("in submit")
 		
 		file=$('#imgInp')[0].files[0];
 		var form = new FormData();
-		console.log(file);
 		form.append("uploadData", file);
 		
 		$.ajax({
@@ -50,7 +48,6 @@ $(document).ready(function() {
 					}
 					$("#uploadDiv").replaceWith($("#uploadForm"));
 					document.getElementById('uploadForm').style.display = 'block';
-					console.log("after getElement");
 				} else {
 					console.log("fail upload");
 				}
@@ -70,8 +67,6 @@ $(document).ready(function() {
 		  //Enter key
 		if (e.which == 13) {
 			var tag = $("input#enterTag").val();
-			console.log("entering tag");
-			console.log(tag);
 			
 			if (tag != "" && tag != " ") {
 				if (document.getElementById('tagsLabel').style.visibility == 'hidden'){
@@ -84,7 +79,7 @@ $(document).ready(function() {
 				}
 
 				flickrRelatedTags(tag);
-				tagAlgo(tag)
+				//tagAlgo(tag)
 				
 			}
 			$('#enterTag').val("");
@@ -96,16 +91,15 @@ $(document).ready(function() {
 		var picture=$("input#pictureNumber").val();
 		var album=$("input#albumNumber").val();
 		var owner=$("input#owner").val();
-		console.log(comment+" "+picture+" "+album+" "+owner);
 		$.ajax({
 			type:"POST",
 			url:"/saveComment",
 			data:{"comment" : comment, "pic" : picture, "album":album, "owner":owner},
 			success: function(html) {
-				console.log(html);
 				var t=html.split('_');
 				if (t[0]=='Yes') {
-					$('#commentList').append("<li>"+
+					$('#comment').val("");
+					$('#commentList').prepend("<li>"+
 									"<div class='commentText'>"+
 									"<p>"+t[1]+"</p>"+
 									"<a class='user under' href='/user?"+t[2]+"'>"+t[2]+"</a>"+
@@ -148,18 +142,13 @@ function addTag(t, tagDiv) {
 }
 
 function removeTag(list) {
-	console.log("in remove");
-	console.log(list);
 	var text = $(event.target).text();
 	var index = jQuery.inArray(text,tags);
 	var tagList = document.getElementById(list);
 	var tag = document.getElementById(event.target.id);
 	tagList.removeChild(tag);
 	if (index != -1) {
-		console.log(event.target.id);	
-		console.log(index);
 		tags.splice(index, 1);
-		console.log(tags);	
 		updateTagList();
 	}
 }
@@ -185,18 +174,9 @@ function updateTagList() {
 	tagsForHTML.setAttribute('value', tags);
 }
 
-function tagAlgo(tag) {
-	$.ajax({
-		url: "/tagAlgo?"+tag,
-		type: "GET",
-		success: function(data) {
-			console.log(data);
-		}
-	});
-}
+
 
 function flickrRelatedTags(tag) {
-	console.log(tag)
 	var url1 = "https://api.flickr.com/services/rest/?method=flickr.tags.getRelated&api_key=ef72e911f885e924a460b98a4801ff14&tag=";
 	var url2 = "&per_page=5&format=json";
 	$.ajax({
@@ -212,9 +192,7 @@ function flickrRelatedTags(tag) {
             processFlickrTags(data)
         },
             error: function(data) {
-                console.log("Error flickr");
                 var err = ("(" + xhr.responseText + ")");
-                console.log(data);
             }
     });
 }
@@ -223,7 +201,6 @@ function processFlickrTags(tags) {
 	var indivTags = tags.split(',');
 	indivTags.pop();
 
-	console.log(indivTags);
 	indivTags = indivTags.slice(0,10)
 	addTag(indivTags, "suggestedTags")
 
@@ -238,8 +215,7 @@ function processFlickrTags(tags) {
 
 
 function readURL(input) {
-		console.log("///////////////////////////////////////")
-		console.log(input);
+
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             
@@ -247,7 +223,6 @@ function readURL(input) {
                 $('#blah').attr('src', e.target.result);
 				document.getElementById('blah').style.visibility='visible';
 				document.getElementById('photoDetails').style.visibility='visible';
-				console.log(e.target.result);
             }
             
             reader.readAsDataURL(input.files[0]);
@@ -260,24 +235,22 @@ function tagCloud() {
         url: "/tagCloud",
         type: "GET",
         success: function (data) {
-			console.log(data);
+
 			var t=data.split(',');
 			var max = parseInt(t.pop().split(' ')[1]);
-			console.log(max);
 			for (i=0; i<t.length; i++) {
 				var split=t[i].split(' ');
 				tagMap[split[0]]=parseInt(split[1]);
 			}
-			console.log(tagMap);
 			for (var m in tagMap){
 				if(tagMap[m] > 0){
-					console.log(tagMap+"***************************");
-					console.log(max/tagMap[m]+"max");
+
 					if(tagMap[m]/max == 1) size = 8;
-					else if(tagMap[m]/max == 0.5) size = 6;
-					else if ((0.3<tagMap[m]/max) && (tagMap[m]/max<0.5)) size = 4;
+					else if((1>tagMap[m]/max) && (tagMap[m]/max>0.7)) size = 7;
+					else if((0.7>tagMap[m]/max) && (tagMap[m]/max>0.5)) size = 6;
+					else if ((0.5>tagMap[m]/max) && (tagMap[m]/max>0.3)) size = 4;
 					else size = 2;
-					$('#cloud').append("<a class='size-"+size+"' href='/tag?"+m+"'>"+m+"</a>");
+					$('#cloud').append("<a class='size"+size+"' href='/tag?"+m+"'>"+m+"</a>");
 				}
 			}
 			
@@ -289,22 +262,36 @@ function tagCloud() {
 }
 
 function checkIfLoggedIn() {
-	console.log("check log In");
 	$.ajax({
 			type:"GET",
 			url:"/checkLogIn",
 			success: function(html) {
 				var t=html.split(',');
 				if (t[0]=='Yes') {
-					console.log("yes");
 					$('#loggedIn').attr('class', 'dropdown');
 					document.getElementById('loggedIn').innerHTML='<a href="/authenticated2" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">'+t[1]+'<span class="caret"></span></a>'+
 																'<ul class="dropdown-menu" role="menu">'+
 																	'<li><a href="/authenticated">Profile</a></li>'+
-																	'<li><a href="/logOut">Log Out</a></li></ul>';
+																	'<li><a href="/logout">Log Out</a></li></ul>';
 				} else {
 					document.getElementById('loggedIn').innerHTML='<a href="#" data-toggle="modal" data-target="#loginModal">Log In</a>';
 				}
 			}
 		});
+}
+
+function carousel() {
+	var ul = document.getElementsByName("lia");
+	for (m=0; m<ul.length; m++) {
+		if (m==ul.length-1){
+			document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[0].id);
+			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
+		} else if (m==0){
+			document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
+			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[ul.length-1].id);
+		} else {
+			document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
+			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
+		}
+	}
 }

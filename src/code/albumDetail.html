@@ -111,19 +111,10 @@
 				      <li><a href="/upload">Upload</a></li>
 				    </ul>
 				    <hr>
-				    <div class="panel mypanel">
-				      	<div class="row">
-				            <div class="col-md-8">
-				              		<a href="http://ubdc.ac.uk/"><img src="resources/images/ubdc_logo.png" class="img-responsive" height="20%" alt="Cinque Terre"/></a>
-				            </div>                                          
-						</div>
-						<hr>
-						<div class="row">                           
-					        <div class="col-md-8">
-					        		<a href="http://www.esrc.ac.uk/"><img src="resources/images/esrc_logo.png" class="img-responsive" alt="Cinque Terre"/></a>
-					        </div>              
-						</div>       	      	
-					</div>
+				    <div class="panel mypanel" style="width:auto; margin:0;">
+				      	<div class="row" id="cloud" style="width:auto; margin:0;">
+				        </div>            	      	
+				    </div>
 			    </div>    
 			   	<div class="col-md-9">
 			        <div class="panel mypanel">
@@ -136,12 +127,12 @@
 											{{range $index2, $element2 :=$element.Photo}}
 												{{if $element2.URL}}
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a href="#" data-toggle="modal" data-target="#picModal{{$index2}}">
+														<a id="{{$index2}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
 													</li>
 															
-													<div class="modal fade" id="picModal{{$index2}}" tabindex="-1" role="dialog" aria-hidden="true">
+													<div class="modal" id="picModal{{$index2}}" tabindex="-1" role="dialog" aria-hidden="true">
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
 															      		<div class="modal-header login_modal_header">
@@ -149,15 +140,18 @@
 															      		</div>
 															      		<div class="modal-body login-modal row" >
 																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
-																	      		<img style="width:100%; height:100%;" src="{{$element2.URL}}" />
-																				<span style="position:relative;">&#8680;</span>
+																	      		<img style="width:100%; height:100%;" src="{{$element2.URL}}" />																				
+																				<a href="#"  data-toggle="modal" data-dismiss="modal" data-target="" id="prev{{$index2}}">Prev</a>
+																				<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}">Next</a>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
 																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
 																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-																				<div style="clear:both;" class="row">
+																				<div style="clear:both; padding-top:7%;" class="row">
 																					<p style="float:left;" class="col-md-6">{{$element2.Description}}</p>
-																					<p style="float:left; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																					{{if $element2.Location.Name}}
+																						<p style="float:left; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																					{{end}}
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Tags}}
@@ -169,7 +163,7 @@
 																						<div>
 																							<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
 																							<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
-																							<input type="hidden" id="albumNumber" value="{{$element.AlbumId}}" />
+																							<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
 																							<input type="hidden" id="owner" value="{{$element2.Owner}}" />
 																							<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																						</div>
@@ -196,7 +190,7 @@
 															      		</div>	
 															    </div>
 														    	</div>
-													</div>				
+													</div>
 												{{end}}
 											{{end}}
 										
@@ -282,7 +276,13 @@
                $(window).load(function() {
                   $(".loader").fadeOut("slow");
                })
-         </script>             
+         </script>     
+		<script>
+				tagCloud();
+			</script>   
+			<script>
+				carousel();
+			</script>           
     
 			 
      </body>
