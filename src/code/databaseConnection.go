@@ -136,3 +136,24 @@ func createAlbum(name string, description string, email string, m *MongoDBConn) 
 	}
 	return id.Hex()
 }
+
+func updateTagDB(photo Photo, m *MongoDBConn) {
+	tags := photo.Tags
+	for tag := range tags {
+		query := bson.M{
+			"tag":            tags[tag],
+			"photos.photoId": photo.PhotoId,
+		}
+
+		update := bson.M{
+			"$set": bson.M{
+				"photos.$.comments": photo.Comments,
+			},
+		}
+
+		err := m.session.DB("gmsTry").C("tags").Update(query, update)
+		if err != nil {
+			fmt.Println("could not update comments in tag db")
+		}
+	}
+}

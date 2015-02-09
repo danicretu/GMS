@@ -71,7 +71,7 @@ $(document).ready(function() {
 });
 
 function go_to_userPage() {
-	window.location="/auth"
+	window.location="/authenticated"
 }
 
 function registerBox() {
