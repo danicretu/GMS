@@ -132,13 +132,20 @@ $(document).ready(function() {
 		return false;
 	});
 	
-	var imgList = document.getElementsByName("lia")
+	var imgList = document.getElementsByName("lia");
 	for (var i = 0; i < imgList.length; i++)
 	{
-	    imgList[i].addEventListener("click",test);
+		assign(imgList[i]);
+		//var idl = imgList[i]
+		//console.log(idl.id);
+	    //imgList[i].addEventListener("click",function(data){ test(data); },idl.id);
 	}
 
 });
+
+function assign(data) {
+	data.addEventListener("click",function(){ test(data.id);});
+}
 
 
 function addTag(t, tagDiv) {
@@ -308,16 +315,37 @@ function checkIfLoggedIn() {
 
 function carousel() {
 	var ul = document.getElementsByName("lia");
-	for (m=0; m<ul.length; m++) {
-		if (m==ul.length-1){
-			document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[0].id);
-			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
-		} else if (m==0){
-			document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
-			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[ul.length-1].id);
-		} else {
-			document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
-			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
+	if (ul.length > 1) {
+		for (m=0; m<ul.length; m++) {
+
+			if (m==ul.length-1){
+				var next = ul[0]
+				var prev = ul[m-1]
+				console.log(next.id+" 1next")
+				console.log(prev.id+" 1prev")
+				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[0].id);
+				document.getElementById("next"+ul[m].id).addEventListener("click",function(){ test(next.id); });
+				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
+				document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ test(prev.id); });
+			} else if (m==0){
+				var next1 = ul[m+1]
+				var prev1 = ul[ul.length-1]
+				console.log(next1.id+" 2next")
+				console.log(prev1.id+" 2prev")
+				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
+				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[ul.length-1].id);
+				document.getElementById("next"+ul[m].id).addEventListener("click",function(){ test(next1.id); });
+				document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ test(prev1.id); });
+			} else {
+				var next2 = ul[m+1]
+				var prev2 = ul[m-1]
+				console.log(next2.id+" 3next")
+				console.log(prev2.id+" 3prev")
+				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
+				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
+				document.getElementById("next"+ul[m].id).addEventListener("click",function(){ test(next2.id); });
+				document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ test(prev2.id); });
+			}
 		}
 	}
 	
@@ -336,10 +364,11 @@ function carousel() {
 	}
 }
 
-function test() {
-	var picId =$("input#picId").val();
-		var albumId=$("input#picAlbumId").val();
-		var picOwner =$("input#picOwner").val();
+function test(id) {
+		console.log(id)
+		var picId =$("input#picId"+id).val();
+		var albumId=$("input#picAlbumId"+id).val();
+		var picOwner =$("input#picOwner"+id).val();
 		$.ajax({
 			url:"/upvote",
 			type:"POST",
@@ -347,7 +376,7 @@ function test() {
 			success: function(html){
 				var t=html.split('_');
 				if (t[0] == 'Yes') {
-					document.getElementById("upvotep").innerHTML = t[1];
+					document.getElementById("upvotep"+id).innerHTML = t[1];
 				}
 				
 			}

@@ -125,13 +125,7 @@
 							<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 											{{range $index2, $element2 :=.T.Photos}}
 												{{if $element2.URL}}
-													<div style="display:none">
-														<form id="details">
-															<input type="hidden" id="picId" value="{{$element2.PhotoId}}" />
-															<input type="hidden" id="picAlbumId" value="{{$element2.AlbumId}}" />
-															<input type="hidden" id="picOwner" value="{{$element2.Owner}}" />
-														</form>
-													</div>
+													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 														<a id="{{$index2}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
@@ -139,6 +133,13 @@
 													</li>
 															
 													<div class="modal" id="picModal{{$index2}}" tabindex="-1" role="dialog" aria-hidden="true">
+															<div style="display:none">
+																<form id="details" name={{$index2}}>
+																	<input type="hidden" id="picId{{$index2}}" value="{{$element2.PhotoId}}" />
+																	<input type="hidden" id="picAlbumId{{$index2}}" value="{{$element2.AlbumId}}" />
+																	<input type="hidden" id="picOwner{{$index2}}" value="{{$element2.Owner}}" />
+																</form>
+															</div>
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
 															      		<div class="modal-header login_modal_header">
@@ -161,7 +162,7 @@
 																						<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
 																					{{end}}
 																					
-																					<p id= "upvotep" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
+																					<p id= "upvotep{{$index2}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
 																					<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
 																				</div>
 																				<div style="clear:both;">

@@ -160,22 +160,55 @@ func updateTagDB(photo Photo, m *MongoDBConn) {
 }
 
 func updateMostViewed(photo Photo, m *MongoDBConn) {
-	var photos []Photo
-	err := m.session.DB("gmsTry").C("mostViewed").Find(nil).All(&photos)
-	if err != nil {
-		fmt.Println("could not get all users")
-	} else {
-		fmt.Println("////////////////////////////////")
-		fmt.Println(photos)
-		if len(photos) == 0 {
-			c := m.session.DB("gmsTry").C("mostViewed")
-			err := c.Insert(photo)
-			if err != nil {
-				fmt.Println("could not insert photo into most viewed")
-			}
-		} else if len(photos) < 5 && len(photos) > 0 {
+	var p DisplayPhotos
+	c := m.session.DB("gmsTry").C("displayPhotos")
+	err := c.Find(bson.M{"name": "views"}).One(&p)
 
+	if err != nil {
+		p.Name = "views"
+		p.Photos = make([]Photo, 1)
+		p.Photos[0] = photo
+		err = c.Insert(p)
+		if err != nil {
+			fmt.Println("could not insert photo into most recent")
+			fmt.Println(err)
 		}
+		return
+	} else if len(p.Photos) < 5 {
+		flag := false
+		for m := range p.Photos {
+			if p.Photos[m].PhotoId == photo.PhotoId {
+				p.Photos[m].Views = photo.Views
+				flag = true
+			}
+		}
+		if flag == false {
+			p.Photos = append(p.Photos, photo)
+		}
+	} else {
+		flag := false
+		low := p.Photos[0].Views
+		index := 0
+		for m := range p.Photos {
+			if p.Photos[m].PhotoId == photo.PhotoId {
+				p.Photos[m].Views = photo.Views
+				flag = true
+			}
+
+			if p.Photos[m].Views < low {
+				low = p.Photos[m].Views
+				index = m
+			}
+		}
+		if flag == false {
+			if photo.Views > p.Photos[index].Views {
+				p.Photos[index] = photo
+			}
+		}
+	}
+	err = c.Update(bson.M{"name": "views"}, bson.M{"$set": bson.M{"photos": p.Photos}})
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
