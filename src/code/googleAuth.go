@@ -87,7 +87,7 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"gId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
 	if existing != nil {
-		session.Values["user"] = existing
+		session.Values["user"] = existing.Id
 		session.Save(r, w)
 	} else {
 
@@ -96,11 +96,11 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 
 		newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", albums, user.Id, "", "", id.Hex()}
 		add(dbConnection, newUser)
-		session.Values["user"] = newUser
+		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
 	authenticated, _ := template.ParseFiles("authenticated2.html")
-	authenticated.Execute(w, session.Values["user"])
+	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
 }

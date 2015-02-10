@@ -1,6 +1,6 @@
 .pic-body-left{width:50%; padding-right:4%;float:left;}
 .pic-body-right{float:right; width:47%;}
-.tag{background-color:#337ab7; color:white; font-size:smaller; border-radius:10px; padding:5px;}
+.tag{background-color:#337ab7; color:white; font-size:small; border-radius:10px; padding:5px;}
 .comment{float:left; height:25px; width:70%; font-size:medium;}
 .submitComment{height:25px; font-size:medium;}
 .panel-heading{background-color: #0D77B6;color: white;border-radius: 4px;}
@@ -9,8 +9,8 @@
 .commentList {padding: 0; list-style:none; max-height: 200px; overflow:auto;}
 .commentList li {margin:0; margin-top:10px; background-color:#EAEAEA;}
 .commentList li > div {display: table-cell;}
-.commentText p {margin:0; padding-left:5px;}
-.under {color:#aaa; font-size: 15px;}
+.commentText p {margin:0; padding-left:5px;font-size:smaller;}
+.under {color:#aaa; font-size: small;}
 .commentBox {padding:10px; padding-left:0px;}
 .submitButton {height:40px; margin-bottom:10px;background:#0D77B6; color:white;}
 #chooseFile {position:relative; overflow:hidden;}

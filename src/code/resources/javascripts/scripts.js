@@ -24,6 +24,25 @@ $(document).ready(function() {
 		
 	});
 	
+	$("#upvote").click(function(){
+		var picId =$("input#picId").val();
+		var albumId=$("input#picAlbumId").val();
+		var picOwner =$("input#picOwner").val();
+		$.ajax({
+			url:"/upvote",
+			type:"POST",
+			data:{"picId" : picId, "albumId" : albumId, "picOwner" : picOwner},
+			success: function(html){
+				var t=html.split('_');
+				if (t[0] == 'Yes') {
+					document.getElementById("upvotep").innerHTML = t[1];
+				}
+				
+			}
+		}); 
+		
+	});
+	
 	$("#submit").click(function(){
 		
 		file=$('#imgInp')[0].files[0];
@@ -112,6 +131,13 @@ $(document).ready(function() {
 		});
 		return false;
 	});
+	
+	var imgList = document.getElementsByName("lia")
+	for (var i = 0; i < imgList.length; i++)
+	{
+	    imgList[i].addEventListener("click",test);
+	}
+
 });
 
 
@@ -294,4 +320,38 @@ function carousel() {
 			document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
 		}
 	}
+	
+	var ul2 = document.getElementsByName("liaOwn");
+	for (m=0; m<ul2.length; m++) {
+		if (m==ul2.length-1){
+			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[0].id);
+			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m-1].id);
+		} else if (m==0){
+			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m+1].id);
+			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[ul2.length-1].id);
+		} else {
+			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m+1].id);
+			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m-1].id);
+		}
+	}
+}
+
+function test() {
+	var picId =$("input#picId").val();
+		var albumId=$("input#picAlbumId").val();
+		var picOwner =$("input#picOwner").val();
+		$.ajax({
+			url:"/upvote",
+			type:"POST",
+			data:{"picId" : picId, "albumId" : albumId, "picOwner" : picOwner},
+			success: function(html){
+				var t=html.split('_');
+				if (t[0] == 'Yes') {
+					document.getElementById("upvotep").innerHTML = t[1];
+				}
+				
+			}
+	}); 
+	console.log("in test function");
+
 }

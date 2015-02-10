@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -53,7 +52,7 @@ type Photo struct {
 	Description string         `bson:"description"`
 	Location    Location       `bson:"location"`
 	Timestamp   string         `bson:"timestamp"`
-	Upvote      int            `bson:"upvote"`
+	Views       int            `bson:"views"`
 	Downvote    int            `bson:"downvote"`
 	Tags        []string       `bson:"tags"`
 	Comments    []PhotoComment `bson:"comments"`
@@ -78,6 +77,11 @@ type PhotoContainer struct {
 
 type Tag struct {
 	Name   string  `bson:"tag"`
+	Photos []Photo `bson:"photos"`
+}
+
+type DisplayPhotos struct {
+	Name   string  `bson:"name"`
 	Photos []Photo `bson:"photos"`
 }
 
@@ -125,6 +129,7 @@ func main() {
 	router.HandleFunc("/saveFile", handleSaveImage)
 	router.HandleFunc("/createAlbum", handleCreateAlbum)
 	router.HandleFunc("/user", handleUserProfile)
+	router.HandleFunc("/upvote", handleUpvote)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
@@ -132,12 +137,49 @@ func main() {
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connect()
 
-	gob.Register(&User{})
-
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", nil)
+}
+
+func handleUpvote(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	picId := r.FormValue("picId")
+	albumId := r.FormValue("albumId")
+	owner := r.FormValue("picOwner")
+
+	user := findUser(dbConnection, owner)
+
+	var al int
+
+	for i := range user.Albums {
+		if user.Albums[i].AlbumId == albumId {
+			al = i
+			break
+		}
+	}
+
+	var pic int
+
+	for i := range user.Albums[al].Photo {
+		if user.Albums[al].Photo[i].PhotoId == picId {
+			pic = i
+			break
+		}
+	}
+
+	user.Albums[al].Photo[pic].Views = user.Albums[al].Photo[pic].Views + 1
+	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"_id": user.UserId}, bson.M{"$set": bson.M{"albums": user.Albums}})
+	updateTagDB(user.Albums[al].Photo[pic], dbConnection)
+	//updateMostViewed(user.Albums[al].Photo[pic], dbConnection)
+	if err != nil {
+		fmt.Println("could not update comments in tag db")
+		fmt.Println(err)
+		fmt.Fprintf(w, "No")
+	}
+	fmt.Fprintf(w, "Yes_"+strconv.Itoa(user.Albums[al].Photo[pic].Views))
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -151,7 +193,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if c.Password == pass {
 			session, _ := store.Get(r, "cookie")
-			session.Values["user"] = c
+			session.Values["user"] = c.Id
 			session.Save(r, w)
 			fmt.Fprintf(w, "Yes")
 		} else {
@@ -162,10 +204,8 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-	u := find(dbConnection, currentUser.Email)
-	session.Values["user"] = u
-	session.Save(r, w)
+	currentUser := session.Values["user"].(string)
+	u := findUser(dbConnection, currentUser)
 
 	authenticated, _ := template.ParseFiles("authenticated2.html")
 	authenticated.Execute(w, u)
@@ -183,18 +223,12 @@ func tagAlgo(u string) string {
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
-	fmt.Println(session.Values["user"], " ****************************************+handleIndex user")
 	if session.Values["user"] == nil {
-		session.Values["user"] = &User{}
+		session.Values["user"] = ""
 		session.Save(r, w)
-
-	} else {
-		currentUser := session.Values["user"].(*User)
-		fmt.Println(currentUser, " ****************************************+handleIndex")
-
 	}
 	authenticated, _ := template.ParseFiles("gmsHome.html")
-	authenticated.Execute(w, session.Values["user"].(*User))
+	authenticated.Execute(w, session.Values["user"])
 
 }
 
@@ -203,10 +237,8 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	user := findUser(dbConnection, u)
 
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-
-	fmt.Println(user, "user*******************************")
-	fmt.Println(currentUser, "currentUser***************************")
+	u = session.Values["user"].(string)
+	currentUser := findUser(dbConnection, u)
 
 	data := struct {
 		U   User
@@ -228,14 +260,10 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
+	currentUser := session.Values["user"].(string)
+	c := findUser(dbConnection, currentUser)
 
-	albumId := createAlbum(name, description, currentUser.Email, dbConnection)
-
-	c := find(dbConnection, currentUser.Email)
-
-	session.Values["user"] = c
-	session.Save(r, w)
+	albumId := createAlbum(name, description, c.Email, dbConnection)
 
 	fmt.Fprintf(w, albumId)
 }
@@ -302,23 +330,21 @@ func handleSaveImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleLogout(w http.ResponseWriter, r *http.Request) {
-	//currentUser = nil
-	//clearSession(w)
+
 	session, _ := store.Get(r, "cookie")
-	session.Values["user"] = nil
+	session.Values["user"] = ""
 	session.Save(r, w)
 	logout, _ := template.ParseFiles("gmsHome.html")
-	logout.Execute(w, nil)
+	logout.Execute(w, session.Values["user"])
 }
 
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 
-	//fmt.Println(session.Values["user"], "**********checkLoggedIn")
-	if session.Values["user"] == nil {
+	if session.Values["user"].(string) == "" {
 		fmt.Fprintf(w, "No")
 	} else {
-		message := "Yes," + session.Values["user"].(*User).FirstName
+		message := "Yes," + findUser(dbConnection, session.Values["user"].(string)).FirstName
 		fmt.Fprintf(w, message)
 	}
 }
@@ -342,9 +368,8 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.RawQuery
 	tag := findByTag(dbConnection, url)
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-
-	fmt.Println(currentUser, "**********handleTag")
+	u := session.Values["user"].(string)
+	currentUser := findUser(dbConnection, u)
 
 	data := struct {
 		T Tag
@@ -426,9 +451,8 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		session, _ := store.Get(r, "cookie")
-		session.Values["user"] = c
+		session.Values["user"] = c.Id
 		session.Save(r, w)
-		fmt.Println(session.Values["user"], "**********handleRegister")
 		fmt.Fprintf(w, "Yes")
 	}
 
@@ -453,20 +477,16 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	tags := r.FormValue("tagList")
 
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-	fmt.Println(currentUser, "**********************uploadHandler")
+	currentUser := session.Values["user"].(string)
 
 	c := uploadToAlbum(image, caption, album, lng, lat, streetN+", "+locationN, tags, currentUser)
 
-	session.Values["user"] = c
-	session.Save(r, w)
 	authenticated, _ := template.ParseFiles("authenticated2.html")
 	authenticated.Execute(w, c)
 }
 
-func uploadToAlbum(filename string, caption string, album string, lng string, lat string, loc string, tags string, currentUser *User) *User {
+func uploadToAlbum(filename string, caption string, album string, lng string, lat string, loc string, tags string, user string) *User {
 
-	fmt.Println(currentUser, "********************uploadToAlbum")
 	var location = *new(Location)
 	if loc != "" && lat != "" && lng != "" {
 		location = Location{loc, lat, lng}
@@ -477,6 +497,7 @@ func uploadToAlbum(filename string, caption string, album string, lng string, la
 		t = parseTags(tags, filename)
 	}
 
+	currentUser := findUser(dbConnection, user)
 	id := bson.NewObjectId()
 	var al int
 	for i := range currentUser.Albums {
@@ -488,12 +509,14 @@ func uploadToAlbum(filename string, caption string, album string, lng string, la
 
 	photo := Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, currentUser.Albums[al].AlbumId, filename, caption, location, time.Now().Local().Format("2006-01-02"), 0, 0, t, make([]PhotoComment, 1)}
 	addTags(dbConnection, t, photo)
+
 	currentUser.Albums[al].Photo = append(currentUser.Albums[al].Photo, photo)
 	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"email": currentUser.Email}, bson.M{"$set": bson.M{"albums": currentUser.Albums}})
 	if err != nil {
 
 		fmt.Println("error while trying to update in upload to album")
 	}
+	updateMostRecent(photo, dbConnection)
 	return currentUser
 
 }
@@ -507,13 +530,11 @@ func parseTags(tags string, filename string) []string {
 
 func handlePictures(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-	u := find(dbConnection, currentUser.Email)
-	session.Values["user"] = u
-	session.Save(r, w)
-	fmt.Println(currentUser, "********************handlePictures")
+	currentUser := session.Values["user"].(string)
+	u := findUser(dbConnection, currentUser)
+
 	authenticated, _ := template.ParseFiles("pictures2.html")
-	authenticated.Execute(w, session.Values["user"].(*User))
+	authenticated.Execute(w, u)
 
 }
 
@@ -521,11 +542,8 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.RawQuery
 
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-	u := find(dbConnection, currentUser.Email)
-	session.Values["user"] = u
-
-	fmt.Println(currentUser, "********************handleAlbums")
+	user := session.Values["user"].(string)
+	currentUser := findUser(dbConnection, user)
 
 	if query == "" {
 		authenticated, _ := template.ParseFiles("albums.html")
@@ -549,8 +567,6 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			*currentUser,
 		}
 
-		session.Save(r, w)
-
 		authenticated, _ := template.ParseFiles("albumDetail.html")
 		authenticated.Execute(w, data)
 
@@ -560,11 +576,9 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-	u := find(dbConnection, currentUser.Email)
-	session.Values["user"] = u
-	session.Save(r, w)
-	fmt.Println(currentUser, "********************handleUpload")
+	u := session.Values["user"].(string)
+	currentUser := findUser(dbConnection, u)
+
 	authenticated, _ := template.ParseFiles("upload2.html")
 	authenticated.Execute(w, currentUser)
 }
@@ -581,8 +595,7 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	user = findUser(dbConnection, owner)
 
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(*User)
-	fmt.Println(currentUser, "********************handleComment")
+	user2 := session.Values["user"].(string)
 
 	var al int
 
@@ -601,7 +614,7 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-
+	currentUser := findUser(dbConnection, user2)
 	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
 
 	user.Albums[al].Photo[pic].Comments = append(user.Albums[al].Photo[pic].Comments, com)
@@ -614,9 +627,6 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	photo = user.Albums[al].Photo[pic]
 	updateTagDB(photo, dbConnection)
 
-	currentUser = findUser(dbConnection, currentUser.Id)
-	session.Values["user"] = currentUser
-	session.Save(r, w)
 	response := com.Body + "_" + com.User + "_" + com.Timestamp
 	fmt.Fprintf(w, "Yes_"+response)
 }

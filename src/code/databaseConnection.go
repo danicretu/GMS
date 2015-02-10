@@ -148,6 +148,7 @@ func updateTagDB(photo Photo, m *MongoDBConn) {
 		update := bson.M{
 			"$set": bson.M{
 				"photos.$.comments": photo.Comments,
+				"photos.$.views":    photo.Views,
 			},
 		}
 
@@ -155,5 +156,54 @@ func updateTagDB(photo Photo, m *MongoDBConn) {
 		if err != nil {
 			fmt.Println("could not update comments in tag db")
 		}
+	}
+}
+
+func updateMostViewed(photo Photo, m *MongoDBConn) {
+	var photos []Photo
+	err := m.session.DB("gmsTry").C("mostViewed").Find(nil).All(&photos)
+	if err != nil {
+		fmt.Println("could not get all users")
+	} else {
+		fmt.Println("////////////////////////////////")
+		fmt.Println(photos)
+		if len(photos) == 0 {
+			c := m.session.DB("gmsTry").C("mostViewed")
+			err := c.Insert(photo)
+			if err != nil {
+				fmt.Println("could not insert photo into most viewed")
+			}
+		} else if len(photos) < 5 && len(photos) > 0 {
+
+		}
+	}
+}
+
+func updateMostRecent(photo Photo, m *MongoDBConn) {
+	var p DisplayPhotos
+	c := m.session.DB("gmsTry").C("displayPhotos")
+	err := c.Find(bson.M{"name": "recent"}).One(&p)
+
+	if err != nil {
+		p.Name = "recent"
+		p.Photos = make([]Photo, 1)
+		p.Photos[0] = photo
+		err = c.Insert(p)
+		if err != nil {
+			fmt.Println("could not insert photo into most recent")
+			fmt.Println(err)
+		}
+		return
+
+	} else if len(p.Photos) < 5 {
+		fmt.Println(p.Photos)
+		p.Photos = append(p.Photos, photo)
+	} else {
+		p.Photos = p.Photos[1:]
+		p.Photos = append(p.Photos, photo)
+	}
+	err = c.Update(bson.M{"name": "recent"}, bson.M{"$set": bson.M{"photos": p.Photos}})
+	if err != nil {
+		fmt.Println(err)
 	}
 }

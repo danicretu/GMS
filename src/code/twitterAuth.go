@@ -92,7 +92,7 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"tId": user.Id_Str}).One(&existing)
 	session, _ := store.Get(r, "cookie")
 	if existing != nil {
-		session.Values["user"] = existing
+		session.Values["user"] = existing.Id
 		session.Save(r, w)
 	} else {
 
@@ -101,11 +101,11 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 
 		newUser := User{id, user.Name, "", "", "", "", albums, "", "", user.Id_Str, id.Hex()}
 		add(dbConnection, newUser)
-		session.Values["user"] = newUser
+		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
 	authenticated, _ := template.ParseFiles("authenticated2.html")
-	authenticated.Execute(w, session.Values["user"])
+	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
 }

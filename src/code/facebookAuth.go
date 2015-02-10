@@ -90,7 +90,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	if existing != nil {
 
-		session.Values["user"] = existing
+		session.Values["user"] = existing.Id
 		session.Save(r, w)
 	} else {
 
@@ -100,12 +100,12 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", albums, "", user.Id, "", id.Hex()}
 		add(dbConnection, newUser)
 
-		session.Values["user"] = newUser
+		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
 	authenticated, _ := template.ParseFiles("authenticated2.html")
-	authenticated.Execute(w, session.Values["user"].(*User))
+	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
 
 }
