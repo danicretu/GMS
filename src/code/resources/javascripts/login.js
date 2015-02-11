@@ -34,6 +34,7 @@ $(document).ready(function() {
 	});
 	$("#registerButton").click(function(){
 		$("#modalBody").replaceWith($("#registerDiv"));
+		document.getElementById('registerDiv').style.display='block';
 		document.getElementById('modalLabel').innerHTML='Register for an Account';
 	});
 	
@@ -71,7 +72,7 @@ $(document).ready(function() {
 });
 
 function go_to_userPage() {
-	window.location="/authenticated"
+	window.location="/pictures"
 }
 
 function registerBox() {

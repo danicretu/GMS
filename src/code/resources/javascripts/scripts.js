@@ -295,19 +295,34 @@ function tagCloud() {
 }
 
 function checkIfLoggedIn() {
+	console.log("in check log in")
 	$.ajax({
 			type:"GET",
 			url:"/checkLogIn",
 			success: function(html) {
+				console.log("success");
 				var t=html.split(',');
 				if (t[0]=='Yes') {
+					console.log("yes");
 					$('#loggedIn').attr('class', 'dropdown');
 					document.getElementById('loggedIn').innerHTML='<a href="/authenticated2" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">'+t[1]+'<span class="caret"></span></a>'+
 																'<ul class="dropdown-menu" role="menu">'+
 																	'<li><a href="/authenticated">Profile</a></li>'+
 																	'<li><a href="/logout">Log Out</a></li></ul>';
+					
 				} else {
+					console.log("no ******************************");
 					document.getElementById('loggedIn').innerHTML='<a href="#" data-toggle="modal" data-target="#loginModal">Log In</a>';
+					var uls = document.getElementsByName('logP');
+					for (var i = 0; i < uls.length; i++){
+						
+						uls[i].style.display='none';
+					}
+					var uls1 = document.getElementsByName('logR');
+					for (var i = 0; i < uls1.length; i++){
+						
+						uls1[i].style.display='none';
+					}
 				}
 			}
 		});

@@ -1,0 +1,297 @@
+	
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="utf-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <meta name="description" content="">
+       <meta name="author" content="Md Sadek Ferdous" >
+	
+       <title>Glasgow Memories Server: Home</title>
+	
+       <!-- Bootstrap core CSS -->
+       <link href="resources/stylesheets/bootstrap.min.css" rel="stylesheet">
+	
+       <!-- Custom styles for this template -->
+       <link href="resources/stylesheets/sticky-footer-navbar.css" rel="stylesheet">
+       <link href="resources/stylesheets/clndr.css" rel="stylesheet">
+       <link href="resources/stylesheets/cal.css" rel="stylesheet">
+       <link href="resources/stylesheets/selection.css" rel="stylesheet">
+		 <link href="resources/stylesheets/arrow.css" rel="stylesheet">
+		 <link href="resources/stylesheets/harvest-navbar.css" rel="stylesheet">
+		 <link href="resources/stylesheets/simple-navbar.css" rel="stylesheet">
+		 <link href="resources/stylesheets/my-navbar.css" rel="stylesheet">
+       <link href="resources/stylesheets/radio.css" rel="stylesheet">
+		<link href="resources/stylesheets/loginPopup.css" rel="stylesheet">
+		<link href="resources/stylesheets/images.css" rel="stylesheet">
+       <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+       <link rel="stylesheet" type="text/css" media="all" href="resources/stylesheets/daterangepicker-bs3.css" />	
+       <script src="resources/javascripts/ie-emulation-modes-warning.js"></script>
+     </head>
+	
+     <body>
+       <!--<div class="loader"></div>-->
+       <!-- Fixed navbar -->
+       <nav class="navbar navbar-my navbar-fixed-top" role="navigation">
+         <div class="container">
+           <div class="navbar-header">
+             
+             <a class="navbar-brand" href="/" style="font-size: 38px">               
+             	GMS:Glasgow Memories Server
+             </a>
+           </div>
+           <div id="navbar" class="collapse navbar-collapse navbar-my-text">
+             <ul class="nav navbar-nav">
+               <li><a href="/cmsHome">Home</a></li>
+               <li><a href="#about">Today</a></li>
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">News <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="#">BBC</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">Daily Record</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">The Scotsman</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">Evening Times</a></li>                   
+                 </ul>
+               </li>
+               <!--<li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Blog <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="#">Blogger</a></li>
+                   <li><a href="#">Wordpress</a></li>
+                 </ul>
+               </li>-->
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Image <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">                   
+                   <li><a href="#">flickr</a></li>
+                 </ul>
+               </li>
+               <!--<li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Video <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="#">BBC</a></li>
+                   <li><a href="#">Youtube</a></li>
+                 </ul>
+               </li>-->
+               <!--<li><a href="#about">Twitter</a></li>-->
+               <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Statistics <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                   <li><a href="/stat">Glasgow</a></li>
+                   <li class="active"><a href="/statScotland">Scotland</a></li>
+                 </ul>
+               </li> 
+			  <li class="dropdown">
+                 <a href="/authenticated2" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{.FirstName}} <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+				  <li><a href="/authenticated">Profile</a></li>
+                   <li><a href="/logout">Log Out</a></li>                 
+                 </ul>
+               </li>            		
+             </ul>
+           </div><!--/.nav-collapse -->
+         </div>
+       </nav>
+	
+       <!-- Begin page content -->
+       <h1>&nbsp</h1>			
+		<section id="intro" data-speed="6" data-type="background">
+	       <div class="container">         
+	        <div class="container-fluid">
+			  <div class="row">
+			  	<div class="col-md-3">
+				    <ul class="nav nav-pills nav-stacked">
+				      <li><a href="/pictures">Pictures</a></li>
+					  <li><a href="/videos">Videos</a></li>	
+				      <li><a href="/albums">Albums</a></li>
+				      <li><a href="/upload">Upload</a></li>
+					  <li class="active"><a href="/flickrNews">Flickr News</a></li>
+				    </ul>
+				    <hr>
+				    <div class="panel mypanel" style="width:auto; margin:0;">
+      					<div class="row" id="cloud" style="width:auto; margin:0;">
+        					</div>            	      	
+      				</div>
+			    </div>    
+			   	<div class="col-md-9">
+			        <div class="panel mypanel">
+			            	<div class="panel-heading">
+			            		<h2 class="panel-title" style="font-size: 24px">Flickr News</h2>
+			            	</div>
+						<div class="panel-body headText"> 
+							<ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+									{{range $index, $element := .Albums}}
+										{{if $element.Photo}}
+											{{range $index2, $element2 :=$element.Photo}}
+												{{if $element2.URL}}
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
+														<a id="{{$element2.PhotoId}}" name="liaOwn" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
+								          					<img class="img-thumbnail" src="{{$element2.URL}}">
+								        					</a>
+													</li>
+															
+													<div class="modal" id="picModal{{$element2.PhotoId}}" tabindex="-1" role="dialog" aria-hidden="true">
+															
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																	      		<img style="width:100%; height:100%;" src="{{$element2.URL}}" />
+																				<div style="display:block; text-align:center;">																		
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.PhotoId}}">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.PhotoId}}">Next</a>
+																				</div>
+																			</div>
+																			<div class="col-md-4" style="padding:0;">
+																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
+																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
+																				<div style="clear:both; padding-top:7%;" class="row">
+																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																					{{if $element2.Location.Name}}
+																						<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																					{{end}}
+																					<p style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
+																					<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+																				</div>
+																				<div style="clear:both;padding-top:4%;">
+																					{{range $indexTag, $elementTag := $element2.Tags}}
+																						<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
+																					{{end}}
+																				</div>
+																				<div style="padding-top:5px;">
+																					<form id="commentForm">
+																						<div>
+																							<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																							<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
+																							<input type="hidden" id="albumNumber" value="{{$element.AlbumId}}" />
+																							<input type="hidden" id="owner" value="{{$element2.Owner}}" />
+																							<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																						</div>
+																					</form>
+																				</div>
+																				<div class="commentBox">
+																					<ul class="commentList" id="commentList">
+																						{{if $element2.Comments}}
+																							{{range $indexComment, $elementComment := $element2.Comments}}
+																								{{if $elementComment.Body}}
+																									<li>
+																										<div class="commentText">
+																											<p>{{$elementComment.Body}}</p>																									
+																											<a class="user under" href="/user?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
+																											<span class="date under">on {{$elementComment.Timestamp}}</span>
+																										</div>
+																									</li>
+																								{{end}}
+																							{{end}}
+																						{{end}}
+																					</ul>
+																				</div>
+																			</div>
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>				
+												{{end}}
+											{{end}}
+										{{end}}
+									{{end}}
+							</ul>          	
+			                		              	
+			            	</div>			               
+			        </div>          
+			    </div>    
+		  	  </div>
+			</div>
+		  </div>
+		</section>
+
+       <!--<footer class="footer">
+         <div class="container">
+           <p class="text-muted">Place sticky footer content here.</p>
+         </div>
+       </footer>-->
+	
+	
+       <!-- Bootstrap core JavaScript
+       ================================================== -->
+       <!-- Placed at the end of the document so the pages load faster -->
+       <!--<script src="resources/javascripts/jquery.min.js"></script>-->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="resources/javascripts/bootstrap.min.js"></script>
+       <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="resources/javascripts/ie10-viewport-bug-workaround.js"></script>
+    <script src="resources/javascripts/underscore.js"></script>
+    <script src= "resources/javascripts/moment.js"></script>
+    <script src="resources/javascripts/clndr.js"></script>
+    <script src="resources/javascripts/Chart.min.js"></script>
+    <script src="resources/javascripts/daterangepicker.js"></script>
+	<script src="resources/javascripts/jquery.easing.min.js"></script>
+	<script src="resources/javascripts/jquery.scrollTo.js"></script>
+	<script src="resources/javascripts/jquery.form.js"></script>			           
+    <script src="resources/javascripts/main.js"></script>
+    <script src="resources/javascripts/retina.js"></script>          
+    <script src="resources/javascripts/waypoints.min.js"></script>                        		     	 	                   
+    <script src="resources/javascripts/owl.carousel.min.js"></script>
+   	<script src="resources/javascripts/nivo-lightbox.min.js"></script>
+	<script src="resources/javascripts/login.js"></script> 
+	<script src="resources/javascripts/scripts.js"></script>
+    <script type="text/javascript">
+                  $(document).ready(function() {
+                     $('#reservation').daterangepicker(null, function(start, end, label) {
+                       console.log(start.toISOString(), end.toISOString(), label);
+                     });
+                     $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+                        window.location.href = "/statRangeScotland?startDate=" + picker.startDate.format('YYYY-MM-DD') + "&endDate=" + picker.endDate.format('YYYY-MM-DD') 
+                        console.log(picker.startDate.format('YYYY-MM-DD'));
+                        console.log(picker.endDate.format('YYYY-MM-DD'));
+                     });
+                  });                  
+                  </script>
+     
+	  
+     <script>               	            
+	            
+	        $(document).ready(function(){
+   // cache the window object
+   $window = $(window);
+ 
+   $('section[data-type="background"]').each(function(){
+     // declare the variable to affect the defined data-type
+     var $scroll = $(this);
+                     
+      $(window).scroll(function() {
+        // HTML5 proves useful for helping with creating JS functions!
+        // also, negative value because we're scrolling upwards                             
+        var yPos = -($window.scrollTop() / $scroll.data('speed')); 
+         
+        // background position
+        var coords = '50% '+ yPos + 'px';
+ 
+        // move the background
+        $scroll.css({ backgroundPosition: coords });    
+      }); // end window scroll
+   });  // end section function
+}); // close out script    
+           </script>
+           <script type="text/javascript">
+               $(window).load(function() {
+                  $(".loader").fadeOut("slow");
+               })
+         </script>  	
+			<script>
+				tagCloud();
+			</script>   
+			<script>
+				carousel();
+			</script>        
+    
+			 
+     </body>
+   </html>

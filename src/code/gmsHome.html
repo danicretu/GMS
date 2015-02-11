@@ -176,9 +176,7 @@
                    <li><a href="/stat">Glasgow</a></li>
                    <li class="active"><a href="/statScotland">Scotland</a></li>
                  </ul>
-               </li> 
-				<li id="loggedIn">
-				</li>              		
+               </li>              		
              </ul>
            </div><!--/.nav-collapse -->
          </div>
@@ -392,23 +390,11 @@
                  <h2 class="panel-title" style="font-size: 24px; color:white">User-Generated Contents</h2>
                </div>
                <div class="panel-body bodyText">            	
-                  <p>Glasgow Memories Server (GMS) is a 12 months project, part of an ongoing ESRC funded Urban Big Data Centre (UBDC) project, which archives 12 months publicly
-                  available data about the Glasgow city from multiple sources, which includes (but is not limited to):                  
-						<ol>
-  							<li>online news archives;</li>
-  							<li>social media posts from Twitter;</li>
-  							<li>user blogs from Tumblr;</li>
-  							<li>photographs from image sharing websites such as Flickr, and</li>
-  							<li> data from wearable sensors like Autographer and GPS devices.</li>
-						</ol>
-						</p> 
-                  <p>
-                  We are piloting with 100 Autographer units to capture lifelogs of user experiences about the Greater Glasgow area on a daily basis for around 12 months.
-                  This is a unique multi-modal data set about a city and encodes experiences from multiple user perspectives and has enormous potential in exploiting for public benefit.
-                  </p>
-                  <p>
-                  It is expected that in the nearby future, digitally active participants will capture personal experiences using lifeloggers and/or with smartphone apps and will share their experience through avenues like GMS.
-                  </p>
+                 <p>The Citizen Memory Server is a part of the bigger Glasgow Memories Server project, which aims to                                    
+				allow users to upload their own photos to the system, specify where they were taken, tag them and browse images with the same or similar tags.	
+				</p> 
+				
+				<a href="/cmsHome">Proceed to the website</a>
 	              	
                </div>
              </div>          
@@ -451,11 +437,6 @@
     <script src="resources/javascripts/owl.carousel.min.js"></script>
     <script src="resources/javascripts/nivo-lightbox.min.js"></script>
 	<script src="resources/javascripts/login.js"></script>
-	<script src="resources/javascripts/scripts.js" type="text/javascript"></script>
-	
-	<script>
-			checkIfLoggedIn();
-	</script> 
 	  
                   <script type="text/javascript">
                   $(document).ready(function() {
@@ -505,59 +486,3 @@
 	
      </body>
    </html>
-
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-    	<div class="modal-content">
-      		<div class="modal-header login_modal_header">
-        		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        		<h2 class="modal-title" id="modalLabel">Login to Your Account</h2>
-      		</div>
-      		<div id="modalBody" class="modal-body login-modal">
-      			<div class="clearfix"></div>
-      			<div id='social-icons-container'>
-		        		<div class='modal-body-left'>
-						<form id="loginForm">
-				             <input type="text" id="email_label" placeholder="Enter your name" value="" class="form-control login-field">
-						    	<input type="password" id="password_label" placeholder="Password" value="" class="form-control login-field">
-							<label id="errorLabel"></label>
-				            	<input style="color:white;" type="submit" name="submit" value="Login" class="btn modal-login-btn">
-						</form>
-		        		</div>
-	        	
-		        		<div class='modal-body-right'>
-		        			<div class="modal-social-icons">
-		        				<a href='/authorizeFacebook' class="btn btn-default facebook"> <i class="fa fa-facebook modal-icons"></i> Sign In with Facebook </a>
-		        				<a href='/authorizeTwitter' class="btn btn-default twitter"> <i class="fa fa-twitter modal-icons"></i> Sign In with Twitter </a>
-		        				<a href='/authorizeGoogle' class="btn btn-default google"> <i class="fa fa-google-plus modal-icons"></i> Sign In with Google </a>
-		        			</div> 
-		        		</div>	
-
-	        		</div>																												
-        			<div class="clearfix"></div>
-        		
-        			<div class="form-group modal-register-btn">
-        				<button id="registerButton" class="btn modal-login-btn" style="color:white;"> New User Please Register</button>
-        			</div>
-      		</div>
-    	</div>
-  	</div>
-</div>
-
-<div id="registerDiv">
-	<div id="modalBody" class="modal-body login-modal">
-      	<div class="clearfix"></div>
-      	<div id='social-icons-container'>
-			<form id="registerForm" class="loginDiv" >
-				<input type="text" class="form-control login-field" id="email" style="margin-bottom:20px" placeholder="E-mail Address" required/>
-				<input type="text" class="form-control login-field" id="first" style="margin-bottom:20px" placeholder="First Names" required/>
-				<input type="text" class="form-control login-field" id="last" style="margin-bottom:20px" placeholder="Last Name" required/>
-				<input type="password" class="form-control login-field" id="password" style="margin-bottom:20px" placeholder="Password" required/>
-				<input type="password" class="form-control login-field" id="confirmPassword" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
-				<label id="errorLabel"></label>
-				<input style="color:white;" type="submit" name="submit" value="Register" class="btn modal-login-btn">
-			</form>	
-		</div>		        		
-    </div>
-</div>
-

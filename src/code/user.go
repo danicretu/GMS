@@ -118,6 +118,8 @@ func main() {
 	router.HandleFunc("/register", handleRegister)
 	router.HandleFunc("/authenticated", handleAuthenticated)
 	router.HandleFunc("/pictures", handlePictures)
+	router.HandleFunc("/videos", handleVideos)
+	router.HandleFunc("/flickrNews", handleFlickrNews)
 	router.HandleFunc("/albums", handleAlbums)
 	router.HandleFunc("/upload", handleUpload)
 	router.HandleFunc("/uploadPic", uploadHandler)
@@ -130,6 +132,7 @@ func main() {
 	router.HandleFunc("/createAlbum", handleCreateAlbum)
 	router.HandleFunc("/user", handleUserProfile)
 	router.HandleFunc("/upvote", handleUpvote)
+	router.HandleFunc("/cmsHome", handleCms)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
@@ -141,6 +144,63 @@ func main() {
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", nil)
+}
+
+func handleVideos(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	currentUser := session.Values["user"].(string)
+	u := findUser(dbConnection, currentUser)
+
+	authenticated, _ := template.ParseFiles("videos.html")
+	authenticated.Execute(w, u)
+
+}
+
+func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	currentUser := session.Values["user"].(string)
+	u := findUser(dbConnection, currentUser)
+
+	authenticated, _ := template.ParseFiles("flickrNews.html")
+	authenticated.Execute(w, u)
+
+}
+
+func handleCms(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	currentUser := session.Values["user"].(string)
+	u := findUser(dbConnection, currentUser)
+
+	if u == nil {
+		u = &User{}
+	}
+
+	var p DisplayPhotos
+	c := dbConnection.session.DB("gmsTry").C("displayPhotos")
+	err := c.Find(bson.M{"name": "views"}).One(&p)
+	if err != nil {
+		fmt.Println("could not get most viewed photos")
+	}
+
+	var recent DisplayPhotos
+	c = dbConnection.session.DB("gmsTry").C("displayPhotos")
+	err = c.Find(bson.M{"name": "recent"}).One(&recent)
+	if err != nil {
+		fmt.Println("could not get most viewed photos")
+	}
+
+	data := struct {
+		P DisplayPhotos
+		R DisplayPhotos
+		U User
+	}{
+		p,
+		recent,
+		*u,
+	}
+
+	authenticated, _ := template.ParseFiles("cmsHome.html")
+	authenticated.Execute(w, data)
 }
 
 func handleUpvote(w http.ResponseWriter, r *http.Request) {
@@ -214,7 +274,7 @@ func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	currentUser := session.Values["user"].(string)
 	u := findUser(dbConnection, currentUser)
 
-	authenticated, _ := template.ParseFiles("authenticated2.html")
+	authenticated, _ := template.ParseFiles("pictures2.html")
 	authenticated.Execute(w, u)
 }
 
@@ -234,8 +294,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		session.Values["user"] = ""
 		session.Save(r, w)
 	}
+
 	authenticated, _ := template.ParseFiles("gmsHome.html")
-	authenticated.Execute(w, session.Values["user"])
+	authenticated.Execute(w, session.Values["user"].(string))
 
 }
 
@@ -341,8 +402,12 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	session.Values["user"] = ""
 	session.Save(r, w)
-	logout, _ := template.ParseFiles("gmsHome.html")
-	logout.Execute(w, session.Values["user"])
+	u := findUser(dbConnection, session.Values["user"].(string))
+
+	if u == nil {
+		u = &User{}
+	}
+	http.Redirect(w, r, "/cmsHome", http.StatusFound)
 }
 
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
