@@ -212,8 +212,6 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 
 	user := findUser(dbConnection, owner)
 
-	fmt.Println(picId, "*****************in handle upvote")
-
 	var al int
 
 	for i := range user.Albums {
@@ -232,11 +230,7 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(user.Albums[al].Photo[pic], "*****************in handle upvote")
-
 	user.Albums[al].Photo[pic].Views = user.Albums[al].Photo[pic].Views + 1
-
-	fmt.Println(user.Albums[al].Photo[pic].Views, "*****************in handle upvote views")
 
 	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"_id": user.UserId}, bson.M{"$set": bson.M{"albums": user.Albums}})
 	updateTagDB(user.Albums[al].Photo[pic], dbConnection)

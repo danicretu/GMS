@@ -136,15 +136,13 @@ $(document).ready(function() {
 	for (var i = 0; i < imgList.length; i++)
 	{
 		assign(imgList[i]);
-		//var idl = imgList[i]
-		//console.log(idl.id);
-	    //imgList[i].addEventListener("click",function(data){ test(data); },idl.id);
+		
 	}
 
 });
 
 function assign(data) {
-	data.addEventListener("click",function(){ test(data.id);});
+	data.addEventListener("click",function(){ upview(data.id);});
 }
 
 
@@ -295,15 +293,12 @@ function tagCloud() {
 }
 
 function checkIfLoggedIn() {
-	console.log("in check log in")
 	$.ajax({
 			type:"GET",
 			url:"/checkLogIn",
 			success: function(html) {
-				console.log("success");
 				var t=html.split(',');
 				if (t[0]=='Yes') {
-					console.log("yes");
 					$('#loggedIn').attr('class', 'dropdown');
 					document.getElementById('loggedIn').innerHTML='<a href="/authenticated2" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">'+t[1]+'<span class="caret"></span></a>'+
 																'<ul class="dropdown-menu" role="menu">'+
@@ -311,7 +306,6 @@ function checkIfLoggedIn() {
 																	'<li><a href="/logout">Log Out</a></li></ul>';
 					
 				} else {
-					console.log("no ******************************");
 					document.getElementById('loggedIn').innerHTML='<a href="#" data-toggle="modal" data-target="#loginModal">Log In</a>';
 					var uls = document.getElementsByName('logP');
 					for (var i = 0; i < uls.length; i++){
@@ -336,30 +330,29 @@ function carousel() {
 			if (m==ul.length-1){
 				var next = ul[0]
 				var prev = ul[m-1]
-				console.log(next.id+" 1next")
-				console.log(prev.id+" 1prev")
-				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[0].id);
-				document.getElementById("next"+ul[m].id).addEventListener("click",function(){ test(next.id); });
-				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
-				document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ test(prev.id); });
+				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+next.id);
+				//document.getElementById("next"+ul[m].id).addEventListener("click",function(){ print(next.id); });
+				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+prev.id);
+				//document.getElementById("prev"+ul[m].id).addEventListener("click",function(){print(prev.id); });
+				addListener(ul[m].id, next.id, prev.id)();
 			} else if (m==0){
+				
 				var next1 = ul[m+1]
 				var prev1 = ul[ul.length-1]
-				console.log(next1.id+" 2next")
-				console.log(prev1.id+" 2prev")
-				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
-				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[ul.length-1].id);
-				document.getElementById("next"+ul[m].id).addEventListener("click",function(){ test(next1.id); });
-				document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ test(prev1.id); });
+				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+next1.id);
+				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+prev1.id);
+				//document.getElementById("next"+ul[m].id).addEventListener("click",function(){ print(next1.id); });
+				//document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ print(prev1.id); });
+				addListener(ul[m].id, next1.id, prev1.id)();
 			} else {
+				
 				var next2 = ul[m+1]
 				var prev2 = ul[m-1]
-				console.log(next2.id+" 3next")
-				console.log(prev2.id+" 3prev")
-				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+ul[m+1].id);
-				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+ul[m-1].id);
-				document.getElementById("next"+ul[m].id).addEventListener("click",function(){ test(next2.id); });
-				document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ test(prev2.id); });
+				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+next2.id);
+				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+prev2.id);
+				//document.getElementById("next"+ul[m].id).addEventListener("click",function(){ print(next2.id); });
+				//document.getElementById("prev"+ul[m].id).addEventListener("click",function(){ print(prev2.id); });
+				addListener(ul[m].id, next2.id, prev2.id)();
 			}
 		}
 	}
@@ -379,8 +372,15 @@ function carousel() {
 	}
 }
 
-function test(id) {
-		console.log(id)
+
+function addListener(element, next, prev){
+	return function() {
+		document.getElementById("next"+element).addEventListener("click",function(){ upview(next); });
+		document.getElementById("prev"+element).addEventListener("click",function(){ upview(prev); });
+	}
+}
+
+function upview(id) {
 		var picId =$("input#picId"+id).val();
 		var albumId=$("input#picAlbumId"+id).val();
 		var picOwner =$("input#picOwner"+id).val();
@@ -396,6 +396,6 @@ function test(id) {
 				
 			}
 	}); 
-	console.log("in test function");
+
 
 }
