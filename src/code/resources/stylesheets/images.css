@@ -3,7 +3,7 @@
 .tag{background-color:#337ab7; color:white; font-size:small; border-radius:10px; padding:5px;}
 .comment{float:left; height:25px; width:70%; font-size:medium;}
 .submitComment{height:25px; font-size:medium;}
-.panel-heading{background-color: #0D77B6;color: white;border-radius: 4px;}
+/*.panel-heading{background-color: #0D77B6;color: white;border-radius: 4px;} */
 .uploadDiv{padding-top: 30px;width: 100%;}
 .modal-dialog {max-width: 900px; width:auto;}
 .commentList {padding: 0; list-style:none; max-height: 200px; overflow:auto;}

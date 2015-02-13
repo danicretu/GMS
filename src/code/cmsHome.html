@@ -209,10 +209,11 @@
          <div class="container-fluid">
   <div class="row">
   	<div class="col-md-3">
-      <ul class="nav nav-pills nav-stacked">
-        <li class="active"><a href="#">User Images</a></li>
+      <ul  id = "main-nav" class="nav nav-pills nav-stacked">
+        <li class="active"><a href="#"  class="scroll-link" data-id="images">User Images</a></li>
+		<li><a href="#" class="scroll-link" data-id="video">Videos</a></li>
         <li><a href="#">Flickr + News</a></li>
-        <li><a href="#">Videos</a></li>
+        
       </ul>
       <hr>
       <div class="panel mypanel">
@@ -235,19 +236,7 @@
                <div class="panel-heading">
                  <h2 class="panel-title" style="font-size: 24px">GMS: Home</h2>
                </div>
-               <!--<div class="row">
-               	<div class="col-md-6"></div>
-               	
-               	<div class="col-md-3">
-               		<img src="resources/images/ubdc_logo.png" class="img-responsive" height="40%" alt="Cinque Terre">
-               	</div>
-               	<div class="col-md-3">
-               		<img src="resources/images/esrc_logo.png" class="img-responsive" height="60%" alt="Cinque Terre">
-               	</div>
-               </div>
-               
-      			<div class="row">-->
-      				<div class="panel-body headText">            	
+      			<div class="panel-body headText">            	
                   <p>Glasgow Memories Server (GMS) is a 12 months project, part of an ongoing ESRC funded Urban Big Data Centre (UBDC) project, which archives 12 months publicly
                   available data about the Glasgow city from multiple sources, which includes (but is not limited to):                                   
 						<ol>
@@ -283,6 +272,7 @@
 </section>
 <!-- Section #2 -->
 	<section id="newsToday" data-speed="4" data-type="background">
+	<div id="images" class="page-section">
 	<div class="container">                  
 		  <div class="row">
 		    <div>
@@ -307,6 +297,7 @@
 																	<input type="hidden" id="picId{{$element2.PhotoId}}{{$.P.Name}}" value="{{$element2.PhotoId}}" />
 																	<input type="hidden" id="picAlbumId{{$element2.PhotoId}}{{$.P.Name}}" value="{{$element2.AlbumId}}" />
 																	<input type="hidden" id="picOwner{{$element2.PhotoId}}{{$.P.Name}}" value="{{$element2.Owner}}" />
+																	<input type="hidden" id="contentType{{$element2.PhotoId}}{{$.P.Name}}" value="image" />
 																</form>
 															</div>
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
@@ -344,6 +335,7 @@
 																						<form id="commentForm">
 																							<div>
 																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																								<input type="hidden" id="cType" value="image" />
 																								<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
@@ -382,7 +374,7 @@
 		             </div>          
 		           </div>
 		  </div>
-		
+		</div>
 	</section>
    <section class="blue_arrows_box">
     <div class="arrows">
@@ -419,6 +411,7 @@
 																	<input type="hidden" id="picId{{$element3.PhotoId}}{{$.R.Name}}" value="{{$element3.PhotoId}}" />
 																	<input type="hidden" id="picAlbumId{{$element3.PhotoId}}{{$.R.Name}}" value="{{$element3.AlbumId}}" />
 																	<input type="hidden" id="picOwner{{$element3.PhotoId}}{{$.R.Name}}" value="{{$element3.Owner}}" />
+																	<input type="hidden" id="contentType{{$element3.PhotoId}}{{$.R.Name}}" value="image" />
 																</form>
 															</div>
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
@@ -504,38 +497,241 @@
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
+	<!-- section4 -->
 	<section id="userGenerated" data-speed="4" data-type="background">
+	<div id="video" class="page-section">
 	<div class="container">                  
   <div class="row">
     <div>
              <div class="panel newsPanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px; color:white">User-Generated Contents</h2>
+                 <h2 class="panel-title" style="font-size: 24px; color:white">Most Popular Videos</h2>
                </div>
                <div class="panel-body bodyText">            	
-                  <p>Glasgow Memories Server (GMS) is a 12 months project, part of an ongoing ESRC funded Urban Big Data Centre (UBDC) project, which archives 12 months publicly
-                  available data about the Glasgow city from multiple sources, which includes (but is not limited to):                  
-						<ol>
-  							<li>online news archives;</li>
-  							<li>social media posts from Twitter;</li>
-  							<li>user blogs from Tumblr;</li>
-  							<li>photographs from image sharing websites such as Flickr, and</li>
-  							<li> data from wearable sensors like Autographer and GPS devices.</li>
-						</ol>
-						</p> 
-                  <p>
-                  We are piloting with 100 Autographer units to capture lifelogs of user experiences about the Greater Glasgow area on a daily basis for around 12 months.
-                  This is a unique multi-modal data set about a city and encodes experiences from multiple user perspectives and has enormous potential in exploiting for public benefit.
-                  </p>
-                  <p>
-                  It is expected that in the nearby future, digitally active participants will capture personal experiences using lifeloggers and/or with smartphone apps and will share their experience through avenues like GMS.
-                  </p>
+                  <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+											{{range $index2, $element2 :=.P.Videos}}
+												{{if $element2.URL}}
+													
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px; width:20%;">
+														<a id="{{$element2.VideoId}}{{$.P.Name}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}{{$.P.Name}}">
+								          					<video class="img-thumbnail">
+																<source src="{{$element2.URL}}" type="video/mp4">
+  																<source src="{{$element2.URL}}" type="video/ogg">
+																Your browser does not support the video tag.
+															</video>
+								        					</a>
+													</li>
+															
+													<div class="modal" id="picModal{{$element2.VideoId}}{{$.P.Name}}" tabindex="-1" role="dialog" aria-hidden="true">
+															<div style="display:none">
+																<form id="details" name={{$element2.VideoId}}{{$.P.Name}}>
+																	<input type="hidden" id="picId{{$element2.VideoId}}{{$.P.Name}}" value="{{$element2.VideoId}}" />
+																	<input type="hidden" id="picAlbumId{{$element2.VideoId}}{{$.P.Name}}" value="{{$element2.AlbumId}}" />
+																	<input type="hidden" id="picOwner{{$element2.VideoId}}{{$.P.Name}}" value="{{$element2.Owner}}" />
+																	<input type="hidden" id="contentType{{$element2.VideoId}}{{$.P.Name}}" value="video" />
+																</form>
+															</div>
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																	      		<video style="width:100%; height:100%;" controls>
+																					<source src="{{$element2.URL}}" type="video/mp4"></source>
+					  																<source src="{{$element2.URL}}" type="video/ogg"></source>
+																					Your browser does not support the video tag.
+																				</video>		
+																				<div style="display:block; text-align:center;">																		
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.VideoId}}{{$.P.Name}}">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.VideoId}}{{$.P.Name}}">Next</a>
+																				</div>
+																			</div>
+																			<div class="col-md-4" style="padding:0;">
+																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
+																				<p style="float:right; font-size:medium; color:black;">{{$element2.Timestamp}}</p>
+																				<div style="clear:both; padding-top:7%;" class="row">
+																					<p style="float:left; font-size:90%;color:black;" class="col-md-6">{{$element2.Description}}</p>
+																					{{if $element2.Location.Name}}
+																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																					{{end}}
+																					
+																					<p id= "upvotep{{$element2.VideoId}}{{$.P.Name}}" style="float:left;clear:both; font-size:smaller;color:black;" class="col-md-2">{{$element2.Views}}</p>
+																					<p style="float:left; font-size:small; padding-top:1.3%;color:black;">Views</p>
+																				</div>
+																				<div style="clear:both;">
+																					{{range $indexTag, $elementTag := $element2.Tags}}
+																						<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
+																					{{end}}
+																				</div>
+																				<div name="logP">
+																					<div style="padding-top:5px;">
+																						<form id="commentForm">
+																							<div>
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																								<input type="hidden" id="cType" value="image" />
+																								<input type="hidden" id="pictureNumber" value="{{$element2.VideoId}}" />
+																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
+																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																							</div>
+																						</form>
+																					</div>
+																					<div class="commentBox">
+																						<ul class="commentList" id="commentList">
+																							{{if $element2.Comments}}
+																								{{range $indexComment, $elementComment := $element2.Comments}}
+																									{{if $elementComment.Body}}
+																										<li>
+																											<div class="commentText">
+																												<p>{{$elementComment.Body}}</p>																									
+																												<a class="user under" href="/user?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
+																												<span class="date under">on {{$elementComment.Timestamp}}</span>
+																											</div>
+																										</li>
+																									{{end}}
+																								{{end}}
+																							{{end}}
+																						</ul>
+																					</div>
+																				</div>
+																			</div>
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>				
+												{{end}}
+											{{end}}
+							</ul>
 	              	
                </div>
              </div>          
            </div>
+		</div>
   </div>		
 	</section>
+	<section class="arrows_box">
+    <div class="arrows">
+        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
+	<section id="lifeLog" data-speed="2" data-type="background">
+			<div class="container">         
+	         <div class="container-fluid">
+	  <div class="row">
+	    <div>
+	             <div class="panel mypanel">
+	               <div class="panel-heading">
+	                 <h2 class="panel-title" style="font-size: 24px">Recently Uploaded Videos</h2>
+	               </div>
+	               <div class="panel-body bodyText">            	
+	                  <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+												{{range $index3, $element3 :=.R.Videos}}
+													{{if $element3.URL}}
+														
+														<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px; width:20%;">
+															<a id="{{$element3.VideoId}}{{$.R.Name}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element3.VideoId}}{{$.R.Name}}">
+									          					<video class="img-thumbnail">
+																<source src="{{$element3.URL}}" type="video/mp4">
+  																<source src="{{$element3.URL}}" type="video/ogg">
+																Your browser does not support the video tag.
+															</video>
+									        					</a>
+														</li>
+																
+														<div class="modal" id="picModal{{$element3.VideoId}}{{$.R.Name}}" tabindex="-1" role="dialog" aria-hidden="true">
+																<div style="display:none">
+																	<form id="details" name={{$element3.VideoId}}{{$.R.Name}}>
+																		<input type="hidden" id="picId{{$element3.VideoId}}{{$.R.Name}}" value="{{$element3.VideoId}}" />
+																		<input type="hidden" id="picAlbumId{{$element3.VideoId}}{{$.R.Name}}" value="{{$element3.AlbumId}}" />
+																		<input type="hidden" id="picOwner{{$element3.VideoId}}{{$.R.Name}}" value="{{$element3.Owner}}" />
+																		<input type="hidden" id="contentType{{$element3.VideoId}}{{$.R.Name}}" value="video" />
+																	</form>
+																</div>
+																<div class="modal-dialog" style="width: auto; max-width: 900px;">
+																    	<div class="modal-content">
+																      		<div class="modal-header login_modal_header">
+																        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+																      		</div>
+																      		<div class="modal-body login-modal row" >
+																				<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																		      		<video style="width:100%; height:100%;" controls>
+																						<source src="{{$element3.URL}}" type="video/mp4"></source>
+						  																<source src="{{$element3.URL}}" type="video/ogg"></source>
+																						Your browser does not support the video tag.
+																					</video>		
+																					<div style="display:block; text-align:center;">																		
+																						<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element3.VideoId}}{{$.R.Name}}">Prev</a>
+																						<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element3.VideoId}}{{$.R.Name}}">Next</a>
+																					</div>
+																				</div>
+																				<div class="col-md-4" style="padding:0;">
+																					<a style="float:left; font-size:medium;" href="/user?{{$element3.Owner}}">{{$element3.OwnerName}}</a>
+																					<p style="float:right; font-size:medium; color:black;">{{$element3.Timestamp}}</p>
+																					<div style="clear:both; padding-top:7%;" class="row">
+																						<p style="float:left; font-size:90%;color:black;" class="col-md-6">{{$element3.Description}}</p>
+																						{{if $element3.Location.Name}}
+																							<p style="clear:both; font-size:small;color:black;" class="col-md-6"> -at {{$element3.Location.Name}}</p> 
+																						{{end}}
+																						
+																						<p id= "upvotep{{$element3.VideoId}}{{$.R.Name}}" style="float:left;clear:both; font-size:smaller;color:black;" class="col-md-2">{{$element3.Views}}</p>
+																						<p style="float:left; font-size:small; padding-top:1.3%;color:black;">Views</p>
+																					</div>
+																					<div style="clear:both;">
+																						{{range $indexTag1, $elementTag2 := $element3.Tags}}
+																							<a class="tag" href="/tag?{{$elementTag2}}">{{$elementTag2}}</a>
+																						{{end}}
+																					</div>
+																					<div name="logR">
+																						<div style="padding-top:5px;">
+																							<form id="commentForm">
+																								<div>
+																									<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																									<input type="hidden" id="pictureNumber" value="{{$element3.VideoId}}" />
+																									<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
+																									<input type="hidden" id="owner" value="{{$element3.Owner}}" />
+																									<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																								</div>
+																							</form>
+																						</div>
+																						<div class="commentBox">
+																							<ul class="commentList" id="commentList">
+																								{{if $element3.Comments}}
+																									{{range $indexComment1, $elementComment1 := $element3.Comments}}
+																										{{if $elementComment1.Body}}
+																											<li>
+																												<div class="commentText">
+																													<p>{{$elementComment1.Body}}</p>																									
+																													<a class="user under" href="/user?{{$elementComment1.UserId}}">{{$elementComment1.User}}</a>
+																													<span class="date under">on {{$elementComment1.Timestamp}}</span>
+																												</div>
+																											</li>
+																										{{end}}
+																									{{end}}
+																								{{end}}
+																							</ul>
+																						</div>
+																					</div>
+																				</div>
+																      		</div>	
+																    </div>
+															    	</div>
+														</div>				
+													{{end}}
+												{{end}}
+								</ul> 
+		              	
+	               </div>
+	             </div>          
+	           </div>
+	  </div>
+	</div>
+	</section>
+	
 	<section class="blue_arrows_box">
     <div class="arrows">        
         <svg viewBox="0 0 32 32" class="arrow_up" id="ugc_arrow_back">

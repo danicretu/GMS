@@ -120,14 +120,20 @@
 			   	<div class="col-md-9">
 			        <div class="panel mypanel">
 			            	<div class="panel-heading">
-			            		<h2 class="panel-title" style="font-size: 24px">Upload Picture</h2>
+			            		<h2 class="panel-title" style="font-size: 24px">Upload Content</h2>
 			            	</div>
 						<div class="panel-body headText" > 
-							<div id="uploadDiv" class="uploadDiv">
-								<h3>Choose a file to upload: </h3>
-								<input style="float:left;" type="file" name="file" id="imgInp"> 
-								<input id="submit" class="btn submitButton" type="submit" name="submit" value="Submit">            	
-			            		</div>
+							
+								<div id="uploadDiv" class="uploadDiv">
+									<form action="#" id="contentForm">
+										<input type="radio" name="optradio" class="radio-inline" value="image">Image
+										<input type="radio" name="optradio" class="radio-inline" value="video" required>Video
+										<h3>Choose a file to upload: </h3>
+										<input style="float:left;" type="file" name="file" id="imgInp" required> 
+										<input id="submit" class="btn submitButton" type="submit" name="submit" value="Submit">            	
+									</form>
+									
+				            		</div>
 							
 						</div>
 								               
@@ -223,7 +229,8 @@
 		<div id="uploadForm" class="uploadForm" style="display:none;">
 			<form action="/uploadPic" id ="uploadForm" method="post" style="padding: 10px; background-color:#EAEAEA;">
 					<input type="hidden" name="imageURL" id="imageURL"/>
-					<div class="row">
+					<input type="hidden" name="contentType" id="contentType">
+					<div id="preview" class="row">
 						<h3 style="float:left;" class="col-md-5">Uploaded image </h3>
 						<img style="float:left; width:40%;" id="blah" class="img-thumbnail col-md-7" src="#" alt="your image" />
 					</div>

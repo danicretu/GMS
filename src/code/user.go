@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/rwcarlsen/goexif/exif"
+	//"gopkg.in/mgo.v2"
+	"bytes"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io"
@@ -40,6 +42,7 @@ type Album struct {
 	Name        string        `bson:"albumname"`
 	Description string        `bson:"description"`
 	Photo       []Photo       `bson:"photos"`
+	Video       []Video       `bson:"albums"`
 }
 
 type Photo struct {
@@ -53,7 +56,21 @@ type Photo struct {
 	Location    Location       `bson:"location"`
 	Timestamp   string         `bson:"timestamp"`
 	Views       int            `bson:"views"`
-	Downvote    int            `bson:"downvote"`
+	Tags        []string       `bson:"tags"`
+	Comments    []PhotoComment `bson:"comments"`
+}
+
+type Video struct {
+	Id          bson.ObjectId  `bson:"_id"`
+	VideoId     string         `bson:"videoId"`
+	Owner       string         `bson:"owner"`
+	OwnerName   string         `bson:"ownerName"`
+	AlbumId     string         `bson:"albumId"`
+	URL         string         `bson:"url"`
+	Description string         `bson:"description"`
+	Location    Location       `bson:"location"`
+	Timestamp   string         `bson:"timestamp"`
+	Views       int            `bson:"views"`
 	Tags        []string       `bson:"tags"`
 	Comments    []PhotoComment `bson:"comments"`
 }
@@ -78,11 +95,13 @@ type PhotoContainer struct {
 type Tag struct {
 	Name   string  `bson:"tag"`
 	Photos []Photo `bson:"photos"`
+	Videos []Video `bson:"videos"`
 }
 
 type DisplayPhotos struct {
 	Name   string  `bson:"name"`
 	Photos []Photo `bson:"photos"`
+	Videos []Video `bson:"videos"`
 }
 
 type FlickrTag struct {
@@ -105,8 +124,6 @@ var encKey = []byte("nckdajKBDSY6778FDV891bdf")
 var store = sessions.NewCookieStore(authKey, encKey)
 
 var dbConnection *MongoDBConn
-
-//var currentUser *User
 
 //add(dbConnection, name, password) ->add to db
 //find(dbConnection, name) ->find in db
@@ -133,6 +150,8 @@ func main() {
 	router.HandleFunc("/user", handleUserProfile)
 	router.HandleFunc("/upvote", handleUpvote)
 	router.HandleFunc("/cmsHome", handleCms)
+	router.HandleFunc("/flickrTest", handleFlickrTest)
+	router.HandleFunc("/delete", handleDelete)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
@@ -144,6 +163,108 @@ func main() {
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", nil)
+}
+
+func handleDelete(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	fmt.Println("in delete")
+
+	picture := r.FormValue("pic")
+	album := r.FormValue("album")
+	owner := r.FormValue("owner")
+	cType := r.FormValue("cType")
+
+	fmt.Println("in delete", picture, " ", album, " ", cType)
+
+	user := findUser(dbConnection, owner)
+
+	var al int
+	photo := Photo{}
+	video := Video{}
+	for i := range user.Albums {
+		if user.Albums[i].AlbumId == album {
+			al = i
+			break
+		}
+	}
+
+	if cType == "image" {
+		var pic int
+
+		for i := range user.Albums[al].Photo {
+			if user.Albums[al].Photo[i].PhotoId == picture {
+				pic = i
+				break
+			}
+		}
+		photo = user.Albums[al].Photo[pic]
+		user.Albums[al].Photo = append(user.Albums[al].Photo[:pic], user.Albums[al].Photo[pic+1:]...)
+
+	} else {
+		var vid int
+
+		for i := range user.Albums[al].Video {
+			if user.Albums[al].Video[i].VideoId == picture {
+				vid = i
+				break
+			}
+		}
+		video = user.Albums[al].Video[vid]
+		user.Albums[al].Video = append(user.Albums[al].Video[:vid], user.Albums[al].Video[vid+1:]...)
+
+	}
+	deleteFromOthers(dbConnection, photo, video)
+
+	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"_id": user.UserId}, bson.M{"$set": bson.M{"albums": user.Albums}})
+	if err != nil {
+		fmt.Fprintf(w, "No")
+	}
+	fmt.Println(picture)
+	resp := "Yes_" + picture
+
+	fmt.Fprintf(w, resp)
+
+}
+
+func handleFlickrTest(w http.ResponseWriter, r *http.Request) {
+	data := struct {
+		Name string
+	}{
+		"George",
+	}
+
+	var doc bytes.Buffer
+	t, _ := template.ParseFiles("test.html")
+	t.Execute(&doc, data)
+	s := doc.String()
+
+	//fmt.Println(s)
+	fmt.Fprintf(w, s)
+
+	/*session2, err := mgo.Dial("localhost:27018")
+	//DialWithTimeout(fwd.localAddr, 10*time.Minute)
+	//mongodb://imdcserv1.dcs.gla.ac.uk/gmsTry
+	if err != nil {
+		fmt.Println(err)
+	}
+	//defer session2.Close()
+	fmt.Println(session2)
+	admindb := session2.DB("gmsTry")
+	fmt.Println(admindb)
+	/*
+		err = admindb.Login("gms", "rdm$248")
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		coll := session2.DB("gmsTry").C("gmsNewsScottish")
+		var result string
+		err = coll.Find(bson.M{"source": "http://www.theguardian.com", "url": "http://www.theguardian.com/sport/2014/aug/04/australian-athletes-funding-commonwealth-games"}).One(&result)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(result) */
 }
 
 func handleVideos(w http.ResponseWriter, r *http.Request) {
@@ -209,10 +330,13 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 	picId := r.FormValue("picId")
 	albumId := r.FormValue("albumId")
 	owner := r.FormValue("picOwner")
+	cType := r.FormValue("cType")
 
 	user := findUser(dbConnection, owner)
 
 	var al int
+	photo := Photo{}
+	video := Video{}
 
 	for i := range user.Albums {
 		if user.Albums[i].AlbumId == albumId {
@@ -221,29 +345,48 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var pic int
+	if cType == "image" {
+		var pic int
 
-	for i := range user.Albums[al].Photo {
-		if user.Albums[al].Photo[i].PhotoId == picId {
-			pic = i
-			break
+		for i := range user.Albums[al].Photo {
+			if user.Albums[al].Photo[i].PhotoId == picId {
+				pic = i
+				break
+			}
 		}
+
+		user.Albums[al].Photo[pic].Views = user.Albums[al].Photo[pic].Views + 1
+		photo = user.Albums[al].Photo[pic]
+	} else {
+		var vid int
+
+		for i := range user.Albums[al].Video {
+			if user.Albums[al].Video[i].VideoId == picId {
+				vid = i
+				break
+			}
+		}
+		user.Albums[al].Video[vid].Views = user.Albums[al].Video[vid].Views + 1
+		video = user.Albums[al].Video[vid]
 	}
 
-	user.Albums[al].Photo[pic].Views = user.Albums[al].Photo[pic].Views + 1
-
 	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"_id": user.UserId}, bson.M{"$set": bson.M{"albums": user.Albums}})
-	updateTagDB(user.Albums[al].Photo[pic], dbConnection)
-	updateMostViewed(user.Albums[al].Photo[pic], dbConnection)
+	updateTagDB(photo, video, dbConnection)
+	updateMostViewed(photo, video, dbConnection)
 	if err != nil {
 		fmt.Println("could not update comments in tag db")
 		fmt.Println(err)
 		fmt.Fprintf(w, "No")
 	}
-	fmt.Fprintf(w, "Yes_"+strconv.Itoa(user.Albums[al].Photo[pic].Views))
+	if cType == "image" {
+		fmt.Fprintf(w, "Yes_"+strconv.Itoa(photo.Views))
+	} else {
+		fmt.Fprintf(w, "Yes_"+strconv.Itoa(video.Views))
+	}
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("in login")
 	r.ParseForm()
 	email := r.FormValue("email")
 	pass := r.FormValue("pass")
@@ -420,10 +563,11 @@ func createTagCloud(w http.ResponseWriter, r *http.Request) {
 	var tags string
 	var max = 0
 	for tag := range result {
-		if len(result[tag].Photos) > max {
-			max = len(result[tag].Photos)
+		if len(result[tag].Photos)+len(result[tag].Videos) > max {
+			max = len(result[tag].Photos) + len(result[tag].Videos)
 		}
-		tags += result[tag].Name + " " + strconv.Itoa(len(result[tag].Photos)) + ","
+
+		tags += result[tag].Name + " " + strconv.Itoa(len(result[tag].Photos)+len(result[tag].Videos)) + ","
 	}
 	tags += "maximum " + strconv.Itoa(max)
 	fmt.Fprintf(w, tags)
@@ -527,6 +671,7 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	image := r.FormValue("imageURL")
 	caption := r.FormValue("caption")
+	cType := r.FormValue("contentType")
 	album := r.FormValue("albumSelect")
 	location := r.FormValue("location")
 	lng := r.FormValue("lng")
@@ -545,13 +690,13 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
 
-	c := uploadToAlbum(image, caption, album, lng, lat, streetN+", "+locationN, tags, currentUser)
+	c := uploadToAlbum(cType, image, caption, album, lng, lat, streetN+", "+locationN, tags, currentUser)
 
-	authenticated, _ := template.ParseFiles("authenticated2.html")
+	authenticated, _ := template.ParseFiles("pictures2.html")
 	authenticated.Execute(w, c)
 }
 
-func uploadToAlbum(filename string, caption string, album string, lng string, lat string, loc string, tags string, user string) *User {
+func uploadToAlbum(cType string, filename string, caption string, album string, lng string, lat string, loc string, tags string, user string) *User {
 
 	var location = *new(Location)
 	if loc != "" && lat != "" && lng != "" {
@@ -566,6 +711,8 @@ func uploadToAlbum(filename string, caption string, album string, lng string, la
 	currentUser := findUser(dbConnection, user)
 	id := bson.NewObjectId()
 	var al int
+	p := Photo{}
+	v := Video{}
 	for i := range currentUser.Albums {
 		if currentUser.Albums[i].AlbumId == album {
 			al = i
@@ -573,16 +720,23 @@ func uploadToAlbum(filename string, caption string, album string, lng string, la
 		}
 	}
 
-	photo := Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, currentUser.Albums[al].AlbumId, filename, caption, location, time.Now().Local().Format("2006-01-02"), 0, 0, t, make([]PhotoComment, 1)}
-	addTags(dbConnection, t, photo)
+	if cType == "image" {
+		p = Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, currentUser.Albums[al].AlbumId, filename, caption, location, time.Now().Local().Format("2006-01-02"), 0, t, make([]PhotoComment, 1)}
+		currentUser.Albums[al].Photo = append(currentUser.Albums[al].Photo, p)
+		addTags(dbConnection, t, p, Video{})
+	} else {
+		v = Video{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, currentUser.Albums[al].AlbumId, filename, caption, location, time.Now().Local().Format("2006-01-02"), 0, t, make([]PhotoComment, 1)}
+		currentUser.Albums[al].Video = append(currentUser.Albums[al].Video, v)
+		addTags(dbConnection, t, Photo{}, v)
+	}
 
-	currentUser.Albums[al].Photo = append(currentUser.Albums[al].Photo, photo)
 	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"email": currentUser.Email}, bson.M{"$set": bson.M{"albums": currentUser.Albums}})
 	if err != nil {
 
 		fmt.Println("error while trying to update in upload to album")
 	}
-	updateMostRecent(photo, dbConnection)
+
+	updateMostRecent(p, v, dbConnection)
 	return currentUser
 
 }
@@ -656,6 +810,7 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	picture := r.FormValue("pic")
 	album := r.FormValue("album")
 	owner := r.FormValue("owner")
+	cType := r.FormValue("cType")
 
 	var user *User
 	user = findUser(dbConnection, owner)
@@ -663,7 +818,12 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	user2 := session.Values["user"].(string)
 
+	currentUser := findUser(dbConnection, user2)
+	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
+
 	var al int
+	photo := Photo{}
+	video := Video{}
 
 	for i := range user.Albums {
 		if user.Albums[i].AlbumId == album {
@@ -672,26 +832,36 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var pic int
+	if cType == "image" {
+		var pic int
 
-	for i := range user.Albums[al].Photo {
-		if user.Albums[al].Photo[i].PhotoId == picture {
-			pic = i
-			break
+		for i := range user.Albums[al].Photo {
+			if user.Albums[al].Photo[i].PhotoId == picture {
+				pic = i
+				break
+			}
 		}
-	}
-	currentUser := findUser(dbConnection, user2)
-	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
+		user.Albums[al].Photo[pic].Comments = append(user.Albums[al].Photo[pic].Comments, com)
+		photo = user.Albums[al].Photo[pic]
+	} else {
+		var vid int
 
-	user.Albums[al].Photo[pic].Comments = append(user.Albums[al].Photo[pic].Comments, com)
-	photo := user.Albums[al].Photo[pic]
+		for i := range user.Albums[al].Video {
+			if user.Albums[al].Video[i].VideoId == picture {
+				vid = i
+				break
+			}
+		}
+		user.Albums[al].Video[vid].Comments = append(user.Albums[al].Video[vid].Comments, com)
+		video = user.Albums[al].Video[vid]
+	}
+
 	err := dbConnection.session.DB("gmsTry").C("user").Update(bson.M{"_id": user.UserId}, bson.M{"$set": bson.M{"albums": user.Albums}})
 	if err != nil {
 		fmt.Fprintf(w, "No")
 	}
 
-	photo = user.Albums[al].Photo[pic]
-	updateTagDB(photo, dbConnection)
+	updateTagDB(photo, video, dbConnection)
 
 	response := com.Body + "_" + com.User + "_" + com.Timestamp
 	fmt.Fprintf(w, "Yes_"+response)

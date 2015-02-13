@@ -105,7 +105,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	authenticated, _ := template.ParseFiles("authenticated2.html")
+	authenticated, _ := template.ParseFiles("pictures2.html")
 	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
 
 }

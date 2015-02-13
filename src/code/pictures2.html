@@ -128,7 +128,7 @@
 										{{if $element.Photo}}
 											{{range $index2, $element2 :=$element.Photo}}
 												{{if $element2.URL}}
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
+													<li id="li{{$element2.PhotoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
 														<a id="{{$element2.PhotoId}}" name="liaOwn" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
@@ -138,6 +138,14 @@
 															
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
+																	<div style="display:none">
+																		<form id="details" name={{$element2.PhotoId}}>
+																			<input type="hidden" id="picId{{$element2.PhotoId}}" value="{{$element2.PhotoId}}" />
+																			<input type="hidden" id="picAlbumId{{$element2.PhotoId}}" value="{{$element2.AlbumId}}" />
+																			<input type="hidden" id="picOwner{{$element2.PhotoId}}" value="{{$element2.Owner}}" />
+																			<input type="hidden" id="contentType{{$element2.PhotoId}}" value="image" />
+																		</form>
+																	</div>
 															      		<div class="modal-header login_modal_header">
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
@@ -146,6 +154,7 @@
 																	      		<img style="width:100%; height:100%;" src="{{$element2.URL}}" />
 																				<div style="display:block; text-align:center;">																		
 																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.PhotoId}}">Prev</a>
+																					<button  id ="deleteButton" data-dismiss="modal" name="{{$element2.PhotoId}}" class="btn submitButton">Delete</button>
 																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.PhotoId}}">Next</a>
 																				</div>
 																			</div>
@@ -169,6 +178,7 @@
 																					<form id="commentForm">
 																						<div>
 																							<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																							<input type="hidden" id="cType" value="image" />
 																							<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
 																							<input type="hidden" id="albumNumber" value="{{$element.AlbumId}}" />
 																							<input type="hidden" id="owner" value="{{$element2.Owner}}" />

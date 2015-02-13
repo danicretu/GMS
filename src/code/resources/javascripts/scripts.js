@@ -24,6 +24,44 @@ $(document).ready(function() {
 		
 	});
 	
+	$("#deleteButton").click(function() {
+		console.log("delete button was pressed");
+		
+		console.log("delete button was pressed");
+		
+		console.log("delete button was pressed");
+		var name = $(this).attr("name");
+		var picId =$("input#picId"+name).val();
+		var albumId=$("input#picAlbumId"+name).val();
+		var picOwner =$("input#picOwner"+name).val();
+		var contentType = $("input#contentType"+name).val();
+		console.log("delete button was pressed");
+		$.ajax({
+			url:"/delete",
+			type:"POST",
+			data:{"pic":picId, "album":albumId, "owner":picOwner, "cType":contentType},
+			success: function(html){
+				var t=html.split('_');
+				if (t[0] == 'Yes') {
+					
+					console.log("in success "+html);
+					console.log("in success "+t[1]);
+					
+						$('#li'+t[1]).remove();
+						$('#picModal'+t[1]).remove();
+				
+					/*var id = "li"+picId;
+					var id2 = "picModal"+picId;
+					
+					var el = document.getElementById( id);
+					el.parentNode.removeChild( el );
+					var el = document.getElementById( id2);
+					el.parentNode.removeChild( el ); */
+				}
+			}
+		});
+	}); 
+	
 	$("#upvote").click(function(){
 		var picId =$("input#picId").val();
 		var albumId=$("input#picAlbumId").val();
@@ -43,12 +81,34 @@ $(document).ready(function() {
 		
 	});
 	
-	$("#submit").click(function(){
+	$("#testButton").click(function(){
+		console.log("in test button");
+		$.ajax({
+			url:"/flickrTest",
+			type:"POST",
+			success: function(html){
+				console.log(html);
+				document.getElementById('test').innerHTML = html;
+				
+				
+			}
+		});
+		
+	});
+	
+	$('.scroll-link').on('click', function(event){
+		event.preventDefault();
+		var sectionID = $(this).attr("data-id");
+		scrollToID('#' + sectionID, 750);
+	});
+	
+	
+	
+	$("#contentForm").submit(function(){
 		
 		file=$('#imgInp')[0].files[0];
 		var form = new FormData();
 		form.append("uploadData", file);
-		
 		$.ajax({
 			url:"/saveFile",
 			type:"POST",
@@ -58,12 +118,19 @@ $(document).ready(function() {
 			success: function(html){
 				var t=html.split('_');
 				if (t[0]=='Yes') {
+					
 					$('#blah').attr('src', t[1]);
 					$('#imageURL').val(t[1]);
+					
+					$('#contentType').val(document.querySelector('input[name="optradio"]:checked').value)
 					if (t[3] != 'nil') {
 						$('#imageLocation').attr('value', t[2]+","+t[3]);
 						$('#find').click();
 						$('#imageLocation').attr('value', $('#imageLocation').val());
+					}
+					console.log($('#contentType').val());
+					if ($('#contentType').val() == "video"){
+					document.getElementById('preview').style.display='none';
 					}
 					$("#uploadDiv").replaceWith($("#uploadForm"));
 					document.getElementById('uploadForm').style.display = 'block';
@@ -72,7 +139,8 @@ $(document).ready(function() {
 				}
 			}
 		
-		});
+		}); 
+		return false;
 	});
 	
 	$("#uploadForm").keypress(function(e) {
@@ -110,10 +178,11 @@ $(document).ready(function() {
 		var picture=$("input#pictureNumber").val();
 		var album=$("input#albumNumber").val();
 		var owner=$("input#owner").val();
+		var cType=$("input#cType").val();
 		$.ajax({
 			type:"POST",
 			url:"/saveComment",
-			data:{"comment" : comment, "pic" : picture, "album":album, "owner":owner},
+			data:{"comment" : comment, "pic" : picture, "album":album, "owner":owner, "cType":cType},
 			success: function(html) {
 				var t=html.split('_');
 				if (t[0]=='Yes') {
@@ -262,10 +331,12 @@ function readURL(input) {
     
 function tagCloud() {
 	var tagMap = {};
+	
 	$.ajax({
         url: "/tagCloud",
         type: "GET",
         success: function (data) {
+			console.log(data);
 
 			var t=data.split(',');
 			var max = parseInt(t.pop().split(' ')[1]);
@@ -273,6 +344,7 @@ function tagCloud() {
 				var split=t[i].split(' ');
 				tagMap[split[0]]=parseInt(split[1]);
 			}
+			console.log(tagMap+"      "+max);
 			for (var m in tagMap){
 				if(tagMap[m] > 0){
 
@@ -290,6 +362,17 @@ function tagCloud() {
                 console.log("Error getting tags from db");
             }
     });	
+}
+
+function scrollToID(id, speed){
+	var offSet = 50;
+	var targetOffset = $(id).offset().top - offSet;
+	var mainNav = $('#main-nav');
+	$('html,body').animate({scrollTop:targetOffset}, speed);
+	if (mainNav.hasClass("open")) {
+		mainNav.css("height", "1px").removeClass("in").addClass("collapse");
+		mainNav.removeClass("open");
+	}
 }
 
 function checkIfLoggedIn() {
@@ -384,10 +467,11 @@ function upview(id) {
 		var picId =$("input#picId"+id).val();
 		var albumId=$("input#picAlbumId"+id).val();
 		var picOwner =$("input#picOwner"+id).val();
+		var cType=$("input#contentType"+id).val();
 		$.ajax({
 			url:"/upvote",
 			type:"POST",
-			data:{"picId" : picId, "albumId" : albumId, "picOwner" : picOwner},
+			data:{"picId" : picId, "albumId" : albumId, "picOwner" : picOwner, "cType":cType},
 			success: function(html){
 				var t=html.split('_');
 				if (t[0] == 'Yes') {

@@ -16,6 +16,7 @@ $(document).ready(function() {
 		//document.getElementById('errorLabel').innerHTML('no error');
 		var email =$("input#email_label").val();
 		var password=$("input#password_label").val();
+		console.log("in login");
 		$.ajax({
 			type:"POST",
 			url:"/login",
