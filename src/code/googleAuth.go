@@ -92,15 +92,16 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		id := bson.NewObjectId()
-		albums := createDefaultAlbum(id.Hex(), user.Given_Name+" "+user.Family_Name, "")
+		createDefaultAlbum(dbConnection, id.Hex(), user.Given_Name+" "+user.Family_Name)
 
-		newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", albums, user.Id, "", "", id.Hex()}
+		newUser := User{id, user.Given_Name, user.Family_Name, "", "", user.Id, "", "", user.Id}
 		add(dbConnection, newUser)
+
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
-	authenticated, _ := template.ParseFiles("authenticated2.html")
+	authenticated, _ := template.ParseFiles("pictures2.html")
 	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
 }

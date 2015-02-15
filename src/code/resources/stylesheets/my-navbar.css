@@ -147,7 +147,7 @@
     padding-bottom: 50px;
     background-color: #0D77B6;
 }
-#lifeLog {  
+#recentImages {  
     height: auto;  
     margin: 0 auto; 
     width: 100%; 
@@ -156,7 +156,47 @@
     padding-bottom: 50px;
     background-color: white;
 }
-#userGenerated {  
+#popularImages {  
+    height: auto;  
+    margin: 0 auto; 
+    width: 100%; 
+    position: relative; 
+    padding-top: 50px; 
+    padding-bottom: 50px;
+    background-color: #0D77B6;
+}
+
+#recentVideos {  
+    height: auto;  
+    margin: 0 auto; 
+    width: 100%; 
+    position: relative;
+	 padding-top: 50px; 
+    padding-bottom: 50px;
+    background-color: white;
+}
+
+#popularVideos {  
+    height: auto;  
+    margin: 0 auto; 
+    width: 100%; 
+    position: relative; 
+    padding-top: 50px; 
+    padding-bottom: 50px;
+    background-color: #0D77B6;
+}
+
+#news {  
+    height: auto;  
+    margin: 0 auto; 
+    width: 100%; 
+    position: relative;
+	 padding-top: 50px; 
+    padding-bottom: 50px;
+    background-color: white;
+}
+
+#flickrImages {  
     height: auto;  
     margin: 0 auto; 
     width: 100%; 

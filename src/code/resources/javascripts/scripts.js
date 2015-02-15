@@ -100,78 +100,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var sectionID = $(this).attr("data-id");
 		scrollToID('#' + sectionID, 750);
-	});
-	
-	
-	
-	$("#contentForm").submit(function(){
-		
-		file=$('#imgInp')[0].files[0];
-		var form = new FormData();
-		form.append("uploadData", file);
-		$.ajax({
-			url:"/saveFile",
-			type:"POST",
-			data: form,
-			processData: false,
-			contentType: false,
-			success: function(html){
-				var t=html.split('_');
-				if (t[0]=='Yes') {
-					
-					$('#blah').attr('src', t[1]);
-					$('#imageURL').val(t[1]);
-					
-					$('#contentType').val(document.querySelector('input[name="optradio"]:checked').value)
-					if (t[3] != 'nil') {
-						$('#imageLocation').attr('value', t[2]+","+t[3]);
-						$('#find').click();
-						$('#imageLocation').attr('value', $('#imageLocation').val());
-					}
-					console.log($('#contentType').val());
-					if ($('#contentType').val() == "video"){
-					document.getElementById('preview').style.display='none';
-					}
-					$("#uploadDiv").replaceWith($("#uploadForm"));
-					document.getElementById('uploadForm').style.display = 'block';
-				} else {
-					console.log("fail upload");
-				}
-			}
-		
-		}); 
-		return false;
-	});
-	
-	$("#uploadForm").keypress(function(e) {
-		  //Enter key
-		if (e.which == 13) {
-		    return false;
-		}
-	});
-	
-	$("#enterTag").unbind('keypress').keypress(function(e) {
-		  //Enter key
-		if (e.which == 13) {
-			var tag = $("input#enterTag").val();
-			
-			if (tag != "" && tag != " ") {
-				if (document.getElementById('tagsLabel').style.visibility == 'hidden'){
-					document.getElementById('tagsLabel').style.visibility = 'visible';
-				}
-				var t=tag.split(',');
-				addTag(t, "displayTags");
-				if (document.getElementById('displayTags').style.visibility == 'hidden'){
-					document.getElementById('displayTags').style.visibility = 'visible';
-				}
-
-				flickrRelatedTags(tag);
-				//tagAlgo(tag)
-				
-			}
-			$('#enterTag').val("");
-		}
-	});
+	});	
 	
 	$("#commentForm").submit(function(){
 		var comment =$("input#comment").val();
@@ -210,38 +139,276 @@ $(document).ready(function() {
 
 });
 
+function onDelete(id, cType){
+	console.log("delete button was pressed");
+		console.log("delete button was pressed"+id);
+		$.ajax({
+			url:"/delete",
+			type:"POST",
+			data:{"pic":id, "cType":cType},
+			success: function(html){
+				console.log(html);
+				var t=html.split('_');
+				if (t[0] == 'Yes') {
+					
+					console.log("in success "+html);
+					console.log("in success "+t[1]);
+					
+					$('#li'+t[1]).remove();
+					$('#picModal'+t[1]).remove();
+					tagCloud('User');
+				}
+			}
+		});
+	return false;
+}
+
+function getAlbumDetails(album,start,cType,nModP, nModN){
+	//console.log(data);
+	$.ajax({
+		url:"/albums",
+		type:"POST",
+		data: {"albumId":album, "start":start, "cType":cType, "nModP":nModP, "nModN" : nModN},
+		success: function(html){
+			var obj = jQuery.parseJSON(html);
+			//console.log(obj[0].Content);
+			$('#panelBodyContent').html(obj[0].Content);
+			var uls = document.getElementsByName("lia")
+			console.log(uls.length);
+			if (uls.length >= 1) {
+				for (var m=0; m<uls.length; m++) {
+				console.log(uls[m].id+" id");
+				assignClass(uls[m].id)();
+				}
+			}
+			
+			carousel();
+		}
+					
+	});
+	return false;
+	
+}
+
+function getProfile(){
+	window.location="/pictures2.html"
+	getPictures('')();
+}
+
+function createNewAlbum(name){
+	console.log("in create new album");
+	n=$('input#'+name).val();
+	$.ajax({
+			url:"/createAlbum",
+			type:"POST",
+			data: {"name":n},
+			success: function(html){
+				$('#albumSelect')
+		         .append($("<option></option>")
+		         .attr("value",html)
+		         .text(n)); 
+				$('#albumModal').modal('hide');
+				
+			}
+			});
+	
+}
+
+
+function contentForm(){
+		
+		file=$('#imgInp')[0].files[0];
+		var form = new FormData();
+		form.append("uploadData", file);
+		$.ajax({
+			url:"/saveFile",
+			type:"POST",
+			data: form,
+			processData: false,
+			contentType: false,
+			success: function(html){
+				var t=html.split('_');
+				if (t[0]=='Yes') {
+					
+					$('#blah').attr('src', t[1]);
+					$('#imageURL').val(t[1]);
+					
+					$('#contentType').val(document.querySelector('input[name="optradio"]:checked').value)
+					if (t[3] != 'nil') {
+						$('#imageLocation').attr('value', t[2]+","+t[3]);
+						$('#find').click();
+						$('#imageLocation').attr('value', $('#imageLocation').val());
+					}
+					console.log($('#contentType').val());
+					if ($('#contentType').val() == "video"){
+					document.getElementById('preview').style.display='none';
+					}
+					$("#uploadDiv").replaceWith($("#uploadForm"));
+					document.getElementById('uploadForm').style.display = 'block';
+					$("#uploadForm").keypress(function(e) {
+						  //Enter key
+						if (e.which == 13) {
+						    return false;
+						}
+					});
+					unbind();
+				} else {
+					console.log("fail upload");
+				}
+			}
+		
+		}); 
+		return false;
+}
+
+function unbind(){
+	$("#enterTag").unbind('keypress').keypress(function(e) {
+			  //Enter key
+			if (e.which == 13) {
+				var tag = $("input#enterTag").val();
+				console.log(tag);
+				
+				if (tag != "" && tag != " ") {
+					if (document.getElementById('tagsLabel').style.visibility == 'hidden'){
+						document.getElementById('tagsLabel').style.visibility = 'visible';
+					}
+					var t=tag.split(',');
+					addTag(t, "displayTags");
+					if (document.getElementById('displayTags').style.visibility == 'hidden'){
+						document.getElementById('displayTags').style.visibility = 'visible';
+					}
+	
+					flickrRelatedTags(tag);
+					//tagAlgo(tag)
+					
+				}
+				$('#enterTag').val("");
+			}
+		});
+}
+
+function uploadForm(){
+	var imageURL =$("input#imageURL").val();
+	var caption=$("input#caption").val();
+	var contentType=$("input#contentType").val();
+	var e = document.getElementById("albumSelect");
+	var albumSelect = e.options[e.selectedIndex].value;
+	var location=$("input#location").val();
+	var lng=$("input#lng").val();
+	var lat=$("input#lat").val();
+	var locality=$("input#locality").val();
+	var formatted_address=$("input#formatted_address").val();
+	var tags=$("input#tagList").val();
+	console.log(albumSelect);
+	$.ajax({
+		type:"POST",
+		url:"/uploadPic",
+		data:{"imageURL" : imageURL, "caption" : caption, "contentType":contentType, "albumSelect":albumSelect, "location":location, "lng":lng, "lat":lat, "locality":locality, "formatted_address" : formatted_address, "tagList":tags},
+		success: function(html) {
+			getPictures('');
+			tagCloud('User');
+		}
+	});
+	return false;
+	
+	
+}
+
+function getUpload(){
+	$.ajax({
+		type:"GET",
+		url:"/upload",
+		success: function(html) {
+				//console.log("in success"+html);
+				var obj = jQuery.parseJSON(html);
+				console.log(obj[0].Name+"            ***********")
+				if (obj[0].Name=="upload") {
+					console.log("in ok");
+					console.log(document.getElementById('panelBodyContent').id);
+					//document.getElementById('panelBodyContent').innerHtml = "Hello";
+					$('#panelBodyContent').html(obj[0].Content);
+					console.log(document.getElementById('panelBodyContent').innerHtml);
+					
+			}
+				
+		}
+		
+	});
+	return false;
+}
+
+function commentFormSubmit(inp){
+	console.log("in comment form");
+	var comment =document.getElementById('comment'+inp).value;
+	var picture=$("input#pictureNumber"+inp).val();
+	var cType=$("input#cType"+inp).val();
+	console.log("in comment form"+comment+" "+picture+" "+cType);
+		$.ajax({
+			type:"POST",
+			url:"/saveComment",
+			data:{"comment" : comment, "pic" : picture, "cType":cType},
+			success: function(html) {
+				var t=html.split('_');
+				if (t[0]=='Yes') {
+					$('#comment').val("");
+					$('#commentList'+inp).prepend("<li>"+
+									"<div class='commentText'>"+
+									"<p>"+t[1]+"</p>"+
+									"<a class='user under' href='/user?"+t[2]+"'>"+t[2]+"</a>"+
+									"<span class='date under'> on "+t[3]+"</span>"+
+									"</div></li>");
+				} else {
+					
+				}
+			}
+		}); 
+		return false;
+}
+
 function assign(data) {
-	data.addEventListener("click",function(){ upview(data.id);});
+	console.log("in assign", data);
+	return function() {
+		document.getElementById(data).addEventListener("click",function(){ return upview(data);});
+		
+	}
+	//data.addEventListener("click",function(){ return upview(data.id);});
 }
 
 
 function addTag(t, tagDiv) {
 	var x = document.getElementById(tagDiv);
 	for (var tag in t){
-		var option = document.createElement("a");
 		var tagId = "tag"+tagNo++;
-					
-		option.text = t[tag];
-		option.setAttribute('id',tagId);
-		
-		if (tagDiv == "displayTags"){
-			option.setAttribute('class', "tagUpload");
-			option.setAttribute('onClick', function(event){removeTag(tagDiv);});
-			option.onclick = function() {removeTag(tagDiv);};
-			tags.push(t[tag]);
-			updateTagList();
-		} else if (tagDiv == "suggestedTags") {
-			option.setAttribute('class', "tagUpload");
-			option.setAttribute('onClick', function(event){addToMainList(t[tag]);});
-			option.onclick = function() {addToMainList(t[tag]);};
-			
-			
-		}
+		console.log("in add tag t", t[tag])
+		option = createElement(t[tag], tagDiv, tagId);
+
 		x.appendChild(option);
 	}
 }
 
+function createElement(tag, tagDiv, tagId){
+	var option = document.createElement("a");
+	option.text = tag;
+		option.setAttribute('id',tagId);
+		console.log("in addTag", tagId, " ", tagNo)
+		if (tagDiv == "displayTags"){
+			option.setAttribute('class', "tagUpload");
+			option.setAttribute('onClick', function(event){removeTag(tagDiv);});
+			option.onclick = function() {removeTag(tagDiv);};
+			tags.push(tag);
+			updateTagList();
+		} else if (tagDiv == "suggestedTags") {
+			option.setAttribute('class', "tagUpload");
+			option.setAttribute('onClick', function(event){addToMainList(tag, tagNo);});
+			option.onclick = function() {addToMainList(tag, tagNo);};
+			
+			
+		}
+		return option;
+}
+
 function removeTag(list) {
+
 	var text = $(event.target).text();
 	var index = jQuery.inArray(text,tags);
 	var tagList = document.getElementById(list);
@@ -253,11 +420,13 @@ function removeTag(list) {
 	}
 }
 
-function addToMainList(tag) {
+function addToMainList(tag, id) {
+
 	var x = document.getElementById("displayTags");
 	var option = document.createElement("a");
-	var tagId = "tag"+tagNo++;
+	var tagId = "tag"+id;
 	removeTag("suggestedTags");
+	console.log("in add to main list ", tag, id);
 				
 	option.text = tag;
 	option.setAttribute('id',tagId);
@@ -265,12 +434,216 @@ function addToMainList(tag) {
 	option.setAttribute('onClick', function(event){removeTag("displayTags");});
 	option.onclick = function() {removeTag("displayTags");};
 	tags.push(tag);
+	console.log("in add to main list", tags)
 	updateTagList();
 	x.appendChild(option);
 }
 
+function test(data){
+	//var data =$("input#srch-term").val();
+	console.log("in test"+data);
+	return false;
+	//document.getElementById('test').innerHTML = html;
+}
+
+function getVideos(data){
+	console.log("in get Videos");
+	if (data != -1){
+		$.ajax({
+			type:"POST",
+			url:"/videos",
+			data:{"req" : data},
+			success : function(html){
+				var obj = jQuery.parseJSON(html);
+				console.log(obj[0].Name+"            ***********")
+				if (obj[0].Name=="ownVideos") {
+					console.log("in ok");
+					console.log(document.getElementById('panelBodyContent').id);
+					//document.getElementById('panelBodyContent').innerHtml = "Hello";
+					$('#panelBodyContent').html(obj[0].Content);
+					console.log(document.getElementById('panelBodyContent').innerHtml);
+					
+					var uls = document.getElementsByName("lia")
+					console.log(uls.length);
+					if (uls.length >= 1) {
+						console.log(uls.length);
+						for (m=0; m<uls.length; m++) {
+							assignClass(uls[m].id)();
+							console.log(uls[m].id+" id");
+							
+							//document.getElementById(uls[m].id).className="liaOwn";
+							
+						}
+					}
+					carousel();
+				}
+				
+			}
+		})
+	}
+}
+
+function getPictures(data){
+	if (data!="-1"){
+	console.log("in get Pictures");
+		$.ajax({
+			type:"POST",
+			url:"/pictures",
+			data:{"req" : data},
+			success: function(html) {
+				//console.log("in success"+html);
+				var obj = jQuery.parseJSON(html);
+				console.log(obj[0].Name+"            ***********")
+				if (obj[0].Name=="ownPictures") {				
+					console.log("in ok");
+					console.log(document.getElementById('panelBodyContent').id);
+					//document.getElementById('panelBodyContent').innerHtml = "Hello";
+					$('#panelBodyContent').html(obj[0].Content);
+					var uls = document.getElementsByName("lia")
+					console.log(uls.length);
+					if (uls.length >= 1) {
+						for (m=0; m<uls.length; m++) {
+							console.log(uls[m].id+" id");
+							//document.getElementById(uls[m].id).className="liaOwn";
+							assignClass(uls[m].id)();
+						}
+					}
+					console.log(document.getElementById('panelBodyContent').innerHtml);
+					
+				}
+				carousel(); 
+				
+			}
+	});
+	return false;
+	}
+}
+
+function assignClass(data) {
+	console.log(data);
+	return function() {
+		console.log("in assign class");
+		$('#'+ data).attr('name','liaOwn');
+		
+	}
+	//data.addEventListener("click",function(){ return upview(data.id);});
+}
+
+function getContentTemp(user,start,cType,nModP, nModN){
+			$.ajax({
+				type:"POST",
+				url:"/user",
+				data:{"user" : user, "start":start, "cType":cType, "nModP":nModP},
+				success : function(html){			
+						console.log("in ok");
+						console.log(document.getElementById('panelBodyContent').id);
+						//document.getElementById('panelBodyContent').innerHtml = "Hello";
+						$('#panelBodyContent').html(html);
+						carousel();
+						var imgList = document.getElementsByName("lia");
+						for (var i = 0; i < imgList.length; i++)
+						{
+							assign(imgList[i].id)();
+							
+						}
+				}
+			});
+	
+}
+
+function getTagContent(tag,start,cType,nModP, nModN){
+			$.ajax({
+				type:"POST",
+				url:"/tag",
+				data:{"tag" : tag, "start":start, "cType":cType, "nModP":nModP},
+				success : function(html){			
+						console.log("in ok");
+						console.log(document.getElementById('panelBodyContent').id);
+						//document.getElementById('panelBodyContent').innerHtml = "Hello";
+						$('#panelBodyContent').html(html);
+						carousel();
+						var imgList = document.getElementsByName("lia");
+						for (var i = 0; i < imgList.length; i++)
+						{
+							assign(imgList[i].id)();
+							
+						}
+				}
+			});
+	
+}
+
+
+function getAlbums(data){
+	console.log("in get Albums");
+	if (data == "") {
+		$.ajax({
+			type:"POST",
+			url:"/albums",
+			data:{"req" : data},
+			success: function(html) {
+				//console.log("in success"+html);
+				var obj = jQuery.parseJSON(html);
+				console.log(obj[0].Name+"            ***********")
+				if (obj[0].Name=="ownAlbums") {
+					console.log("in ok");
+					console.log(document.getElementById('panelBodyContent').id);
+					//document.getElementById('panelBodyContent').innerHtml = "Hello";
+					$('#panelBodyContent').html(obj[0].Content);
+					console.log(document.getElementById('panelBodyContent').innerHtml);
+				}
+				
+			}
+	});
+	return false;
+	}
+}
+
+function flickrNews(data){
+	if (data=="getTags"){
+		data =$("input#srch-term").val();
+	}
+	console.log(data+"start");
+	$.ajax({
+			type:"POST",
+			url:"/flickrNews",
+			data:{"req" : data},
+			success: function(html) {
+				console.log(html);
+				if (data=="start"){
+					document.getElementById('panelBodyContent').innerHTML=html;
+				} else if (data.indexOf("tag") > -1){
+					var obj = jQuery.parseJSON(html);
+					console.log(obj+"            ***********")
+					if (obj[0].Name == "flickr"){
+						document.getElementById('resultPhotos').innerHTML=obj[0].Content;
+						document.getElementById('resultPhotos').style.visibility='visible';
+						document.getElementById('resultNews').innerHTML=obj[1].Content;
+						document.getElementById('resultNews').style.visibility='visible';
+					} else {
+						document.getElementById('resultPhotos').innerHTML=obj[1].Content;
+						document.getElementById('resultPhotos').style.visibility='visible';
+						document.getElementById('resultNews').innerHTML=obj[0].Content;
+						document.getElementById('resultNews').style.visibility='visible';
+						}
+						
+					
+				}else {
+					console.log("in else")
+					document.getElementById('cloudFlickr').innerHTML="";
+					populateCloud(html,"Flickr");
+					document.getElementById('cloudFlickr').style.visibility='visible';
+					
+				}
+			}
+	});
+	return false;
+}
+
+
 function updateTagList() {
 	var tagsForHTML = document.getElementById("tagList");
+	console.log("in update tag list", tags);
 	tagsForHTML.setAttribute('value', tags);
 }
 
@@ -329,38 +702,99 @@ function readURL(input) {
         }
     }
     
-function tagCloud() {
-	var tagMap = {};
+function tagCloud(cloud) {
+	
 	
 	$.ajax({
         url: "/tagCloud",
         type: "GET",
         success: function (data) {
 			console.log(data);
-
-			var t=data.split(',');
-			var max = parseInt(t.pop().split(' ')[1]);
-			for (i=0; i<t.length; i++) {
-				var split=t[i].split(' ');
-				tagMap[split[0]]=parseInt(split[1]);
-			}
-			console.log(tagMap+"      "+max);
-			for (var m in tagMap){
-				if(tagMap[m] > 0){
-
-					if(tagMap[m]/max == 1) size = 8;
-					else if((1>tagMap[m]/max) && (tagMap[m]/max>0.7)) size = 7;
-					else if((0.7>tagMap[m]/max) && (tagMap[m]/max>0.5)) size = 6;
-					else if ((0.5>tagMap[m]/max) && (tagMap[m]/max>0.3)) size = 4;
-					else size = 2;
-					$('#cloud').append("<a class='size"+size+"' href='/tag?"+m+"'>"+m+"</a>");
-				}
-			}
-			
+			populateCloud(data, cloud);			
         },
             error: function(data) {
                 console.log("Error getting tags from db");
             }
+    });	
+}
+
+function getSimilarTag(t,start,cType,nModP, nModN){
+	console.log(t);
+	$.ajax({
+        url: "/tag",
+        type: "GET",
+		data: {"tag" : t,"start":start, "cType":cType, "nModP":nModP, "nModN":nModN},
+        success: function (html) {
+				$('#panelBodyContent').html(html);
+				//document.getElementById('deleteButton').style.display='none';
+				var imgList = document.getElementsByName("lia");
+				carousel();
+				for (var i = 0; i < imgList.length; i++)
+				{
+					assign(imgList[i].id)();
+					
+				}
+				
+        		},
+            error: function(data) {
+                console.log("Error getting tags from db");
+            }
+    });
+}
+
+function populateCloud(data, cloud){
+	var tagMap = {};
+	console.log("cloud "+data)
+	var t=data.split(',');
+	var max = parseInt(t.pop().split(' ')[1]);
+	for (i=0; i<t.length; i++) {
+		var split=t[i].split(' ');
+		tagMap[split[0]]=parseInt(split[1]);
+	}
+	console.log(tagMap+"      "+max);
+	$('#cloud'+cloud).html("");
+	for (var m in tagMap){
+		if(tagMap[m] > 0){
+			
+			if(tagMap[m]/max == 1) size = 8;
+			else if((1>tagMap[m]/max) && (tagMap[m]/max>0.7)) size = 7;
+			else if((0.7>tagMap[m]/max) && (tagMap[m]/max>0.5)) size = 6;
+			else if ((0.5>tagMap[m]/max) && (tagMap[m]/max>0.3)) size = 4;
+			else size = 2;
+			if (cloud=="Flickr"){
+				var aLink = document.createElement("a");
+				aLink.text = m;
+				aLink.setAttribute('class', "size"+size);
+				addOnClick(aLink, m)();
+				$('#cloud'+cloud).append(aLink);
+			}else{
+				$('#cloud'+cloud).append("<a class='size"+size+"'href='#' onclick=\"getSimilarTag('" + m + "')\"'>"+m+"</a>");
+			}
+		}
+	}
+}
+
+function getUser(u,start,cType,nModP, nModN){
+	$.ajax({
+        url: "/user",
+        type: "GET",
+		data:{"user":u, "start":start, "cType":cType, "nModP":nModP, "nModN":nModN},
+        success: function (data) {
+			console.log(data);
+			$('#panelBodyContent').html(data);
+			var imgList = document.getElementsByName("lia");
+			for (var i = 0; i < imgList.length; i++)
+			{
+				assign(imgList[i].id)();
+				
+			}
+			//document.getElementById('deleteButton').style.display='none';
+			carousel();
+						
+        },
+        error: function(data) {
+                console.log("Error getting tags from db");
+        }
     });	
 }
 
@@ -376,6 +810,7 @@ function scrollToID(id, speed){
 }
 
 function checkIfLoggedIn() {
+	console.log("in check login");
 	$.ajax({
 			type:"GET",
 			url:"/checkLogIn",
@@ -405,11 +840,12 @@ function checkIfLoggedIn() {
 		});
 }
 
+
 function carousel() {
 	var ul = document.getElementsByName("lia");
 	if (ul.length > 1) {
 		for (m=0; m<ul.length; m++) {
-
+			
 			if (m==ul.length-1){
 				var next = ul[0]
 				var prev = ul[m-1]
@@ -418,6 +854,7 @@ function carousel() {
 				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+prev.id);
 				//document.getElementById("prev"+ul[m].id).addEventListener("click",function(){print(prev.id); });
 				addListener(ul[m].id, next.id, prev.id)();
+				
 			} else if (m==0){
 				
 				var next1 = ul[m+1]
@@ -443,15 +880,28 @@ function carousel() {
 	var ul2 = document.getElementsByName("liaOwn");
 	for (m=0; m<ul2.length; m++) {
 		if (m==ul2.length-1){
-			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[0].id);
-			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m-1].id);
+			var next3 = ul[0]
+			var prev3 = ul[m-1]
+			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+next3.id);
+			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+prev3.id);
 		} else if (m==0){
-			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m+1].id);
-			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[ul2.length-1].id);
+			var next4 = ul[m+1]
+			var prev4 = ul[ul.length-1]
+			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+next4.id);
+			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+prev4.id);
 		} else {
-			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m+1].id);
-			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+ul2[m-1].id);
+			var next5 = ul[m+1]
+			var prev5 = ul[m-1]
+			document.getElementById("next"+ul2[m].id).setAttribute('data-target','#picModal'+next5.id);
+			document.getElementById("prev"+ul2[m].id).setAttribute('data-target','#picModal'+prev5.id);
 		}
+	}
+}
+
+function addOnClick(aLink, tag){
+	return function() {
+		aLink.onclick=function() {return flickrNews("tag_"+tag);};
+		
 	}
 }
 

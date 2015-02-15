@@ -97,15 +97,16 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		id := bson.NewObjectId()
-		albums := createDefaultAlbum(id.Hex(), user.Name, "")
+		createDefaultAlbum(dbConnection, id.Hex(), user.Name)
 
-		newUser := User{id, user.Name, "", "", "", "", albums, "", "", user.Id_Str, id.Hex()}
+		newUser := User{id, user.Name, "", "", "", "", "", user.Id_Str, user.Id_Str}
 		add(dbConnection, newUser)
+
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
-	authenticated, _ := template.ParseFiles("authenticated2.html")
+	authenticated, _ := template.ParseFiles("pictures2.html")
 	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
 }

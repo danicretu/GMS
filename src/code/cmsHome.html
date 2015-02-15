@@ -203,7 +203,9 @@
   					</div>
   				
   			</div>
-  		</section>-->			
+  		</section>-->		
+		
+<div id="homepage">	
        <section id="intro" data-speed="6" data-type="background">
        <div class="container">         
          <div class="container-fluid">
@@ -267,11 +269,20 @@
 <section class="arrows_box">
     <div class="arrows">
         <svg viewBox="0 0 32 32" class="arrow_down" id="about_arrow_next">
+			<script>
+				$(document).ready(function()){
+					$('.arrow-down, .arrow-up').on('click', function(event) {
+						event.preventDefault();
+						var sectionId=$(this).attr("data-id");
+						scrollToID('#'+sectionID, 750)
+					});
+				});
+			</script>
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>        
     </div>
 </section>
 <!-- Section #2 -->
-	<section id="newsToday" data-speed="4" data-type="background">
+	<section id="popularImages" data-speed="4" data-type="background">
 	<div id="images" class="page-section">
 	<div class="container">                  
 		  <div class="row">
@@ -378,14 +389,14 @@
 	</section>
    <section class="blue_arrows_box">
     <div class="arrows">
-        <svg viewBox="0 0 32 32" class="arrow_down" id="news_arrow_next">
+        <svg data-id="images" viewBox="0 0 32 32" class="arrow_down" id="news_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg viewBox="0 0 32 32" class="arrow_up" id="news_arrow_back">
+        <svg data-id="recentImages" viewBox="0 0 32 32" class="arrow_up" id="news_arrow_back">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
 	<!-- Section #3 -->
-	<section id="lifeLog" data-speed="2" data-type="background">
+	<section id="recentImages" data-speed="2" data-type="background">
 		<div class="container">         
          <div class="container-fluid">
   <div class="row">
@@ -436,8 +447,6 @@
 																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> -at {{$element3.Location.Name}}</p> 
 																					{{end}}
 																					
-																					<p id= "upvotep{{$element3.PhotoId}}{{$.R.Name}}" style="float:left;clear:both; font-size:smaller;color:black;" class="col-md-2">{{$element3.Views}}</p>
-																					<p style="float:left; font-size:small; padding-top:1.3%;color:black;">Views</p>
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag1, $elementTag2 := $element3.Tags}}
@@ -498,7 +507,7 @@
     </div>
 	</section>
 	<!-- section4 -->
-	<section id="userGenerated" data-speed="4" data-type="background">
+	<section id="popularVideos" data-speed="4" data-type="background">
 	<div id="video" class="page-section">
 	<div class="container">                  
   <div class="row">
@@ -619,7 +628,7 @@
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
-	<section id="lifeLog" data-speed="2" data-type="background">
+	<section id="recentVideos" data-speed="2" data-type="background">
 			<div class="container">         
 	         <div class="container-fluid">
 	  <div class="row">
@@ -677,9 +686,6 @@
 																						{{if $element3.Location.Name}}
 																							<p style="clear:both; font-size:small;color:black;" class="col-md-6"> -at {{$element3.Location.Name}}</p> 
 																						{{end}}
-																						
-																						<p id= "upvotep{{$element3.VideoId}}{{$.R.Name}}" style="float:left;clear:both; font-size:smaller;color:black;" class="col-md-2">{{$element3.Views}}</p>
-																						<p style="float:left; font-size:small; padding-top:1.3%;color:black;">Views</p>
 																					</div>
 																					<div style="clear:both;">
 																						{{range $indexTag1, $elementTag2 := $element3.Tags}}
@@ -731,13 +737,132 @@
 	  </div>
 	</div>
 	</section>
+	<section class="arrows_box">
+    <div class="arrows">
+        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
 	
+	<section id="news">
+	<div class="panel-heading">
+                 <h2 class="panel-title" style="font-size: 24px">News</h2>
+               </div>
+	
+	
+	<div id = "newsHelper">
+<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+					{{range $element2 := .N}}
+												
+													
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
+														<a href={{$element2.URL}}>{{$element2.Title}}</a>
+														
+														<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
+								          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">
+								        					</a>
+														
+													</li>
+													{{if $element2.ImageUrl}}		
+													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
+															
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																	      		<img style="width:90%; height:100%;" src="{{$element2.ImageUrl}}" />		
+																				
+																			</div>
+																			
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>	
+															
+												{{end}}
+											{{end}}
+	</ul>
+</div>
+	</section>
+	<section class="arrows_box">
+    <div class="arrows">
+        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
+	<section id="flickrImages" data-speed="4" data-type="background">
+	<div class="panel-heading">
+                 <h2 class="panel-title" style="font-size: 24px">FlickrImages</h2>
+               </div>
+	<div id="pictureHelper">
+
+	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+		{{range $element2 := .Flickr}}
+												{{if $element2.URL}}
+													
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
+														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
+								          					<img class="img-thumbnail" src="{{$element2.URL}}">
+								        					</a>
+													</li>
+															
+													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
+															
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
+																				<div style="display:block; text-align:center;">																		
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.ImageName}}">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.ImageName}}">Next</a>
+																				</div>
+																			</div>
+																			<div class="col-md-4" style="padding:0;">
+																				
+																				<p style="float:right; font-size:medium;">{{$element2.TimeStamp}}</p>
+																				<div style="clear:both; padding-top:7%;" class="row">
+																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																																									
+																				</div>
+																				<div style="clear:both;">
+																					{{range $indexTag, $elementTag := $element2.Keywords}}
+																						<a class="tag" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
+																					{{end}}
+																				</div>
+																				
+																																						
+																			</div>
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>				
+												{{end}}
+											{{end}}
+											
+											</ul>
+	
+	
+
+</div>
+	</section>
 	<section class="blue_arrows_box">
     <div class="arrows">        
         <svg viewBox="0 0 32 32" class="arrow_up" id="ugc_arrow_back">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
-	</section>   	
+	</section> 
+</div>  	
        <!--<footer class="footer">
          <div class="container">
            <p class="text-muted">Place sticky footer content here.</p>
@@ -880,4 +1005,3 @@
 		</div>		        		
     </div>
 </div>
-

@@ -22,9 +22,14 @@ $(document).ready(function() {
 			url:"/login",
 			data:{"email" : email, "pass" : password},
 			success: function(html) {
-				if (html=='Yes') {
-					console.log("**********************")
-					setTimeout('go_to_userPage()', 500);
+				console.log("**********************");
+				var t=html.split("_");
+				
+				if (t[0]=='Yes') {
+					console.log("**********************");
+					//setTimeout('go_to_userPage()', 500);
+					//document.getElementById('cmsPage').style.display='none';
+					go_to_userPage();
 				} else {
 					document.getElementById("errorLabel").innerHTML="wrong username or password";
 				}
@@ -33,6 +38,7 @@ $(document).ready(function() {
 		
 		return false;
 	});
+	
 	$("#registerButton").click(function(){
 		$("#modalBody").replaceWith($("#registerDiv"));
 		document.getElementById('registerDiv').style.display='block';
@@ -73,7 +79,7 @@ $(document).ready(function() {
 });
 
 function go_to_userPage() {
-	window.location="/pictures"
+	window.location="/authenticated";
 }
 
 function registerBox() {

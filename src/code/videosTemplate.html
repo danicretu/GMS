@@ -1,0 +1,100 @@
+<div class="panel-heading" >
+    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
+</div>
+
+<div id="pictureTemplate">
+<ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+{{range $index2, $element2 :=.Video}}
+												{{if $element2.URL}}
+													<li id="li{{$element2.VideoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
+														<a id="{{$element2.VideoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}">
+								          					<video class="img-thumbnail">
+																<source src="{{$element2.URL}}" type="video/mp4">
+  																<source src="{{$element2.URL}}" type="video/ogg">
+																Your browser does not support the video tag.
+															</video>
+								        					</a>
+													</li>
+															
+													<div class="modal" id="picModal{{$element2.VideoId}}" tabindex="-1" role="dialog" aria-hidden="true">
+															<div style="display:none">
+																<form id="details" name={{$element2.VideoId}}>
+																	<input type="hidden" id="picId{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
+																	<input type="hidden" id="picAlbumId{{$element2.VideoId}}" value="{{$element2.AlbumId}}" />
+																	<input type="hidden" id="picOwner{{$element2.VideoId}}" value="{{$element2.Owner}}" />
+																	<input type="hidden" id="contentType{{$element2.VideoId}}" value="video" />
+																</form>
+															</div>
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																	      		
+																				<video style="width:100%; height:100%;" controls>
+																					<source src="{{$element2.URL}}" type="video/mp4"></source>
+					  																<source src="{{$element2.URL}}" type="video/ogg"></source>
+																					Your browser does not support the video tag.
+																				</video>
+																				<div style="display:block; text-align:center;">																		
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.VideoId}}">Prev</a>
+																					<button  id ="deleteButton" onclick="return onDelete({{$element2.VideoId}}, 'video')" data-dismiss="modal" name="{{$element2.VideoId}}" class="btn submitButton">Delete</button>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.VideoId}}">Next</a>
+																				</div>
+																			</div>
+																			<div class="col-md-4" style="padding:0;">
+																				<a style="float:left; font-size:medium;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
+																				<div style="clear:both; padding-top:7%;" class="row">
+																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																					{{if $element2.Location.Name}}
+																						<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																					{{end}}
+																					<p id= "upvotep{{$element2.VideoId}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
+																					<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+																				</div>
+																				<div style="clear:both;padding-top:4%;">
+																					{{range $indexTag, $elementTag := $element2.Tags}}
+																						<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+																					{{end}}
+																				</div>
+																				<div style="padding-top:5px;">
+																					<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.VideoId}})">
+																						<div>
+																							<input type="text" class="comment{{$element2.VideoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.VideoId}}" placeholder="Enter Comment..." />
+																							<input type="hidden" id="cType{{$element2.VideoId}}" value="video" />
+																							<input type="hidden" id="pictureNumber{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
+																							<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																						</div>
+																					</form>
+																				</div>
+																				<div class="commentBox">
+																					<ul class="commentList" id="commentList{{$element2.VideoId}}">
+																						{{if $element2.Comments}}
+																							{{range $indexComment, $elementComment := $element2.Comments}}
+																								{{if $elementComment.Body}}
+																									<li>
+																										<div class="commentText">
+																											<p>{{$elementComment.Body}}</p>																									
+																											<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
+																											<span class="date under">on {{$elementComment.Timestamp}}</span>
+																										</div>
+																									</li>
+																								{{end}}
+																							{{end}}
+																						{{end}}
+																					</ul>
+																				</div>
+																			</div>
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>				
+												{{end}}
+											{{end}}
+	</ul>
+<a href="#" id="previous" onclick="getVideos({{.PageP}})">Prev</a>
+<a href="#" id="next"  onclick="getVideos({{.PageN}})">Next</a>
+</div>

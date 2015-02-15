@@ -1,0 +1,54 @@
+<div id="pictureHelper">
+
+	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+											{{range $element2 := .P}}
+												{{if $element2.URL}}
+													
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
+														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
+								          					<img class="img-thumbnail" src="{{$element2.URL}}">
+								        					</a>
+													</li>
+															
+													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
+															
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
+																				<div style="display:block; text-align:center;">																		
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.ImageName}}">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.ImageName}}">Next</a>
+																				</div>
+																			</div>
+																			<div class="col-md-4" style="padding:0;">
+																				
+																				<p style="float:right; font-size:medium;">{{$element2.TimeStamp}}</p>
+																				<div style="clear:both; padding-top:7%;" class="row">
+																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																																									
+																				</div>
+																				<div style="clear:both;">
+																					{{range $indexTag, $elementTag := $element2.Keywords}}
+																						<a class="tag" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
+																					{{end}}
+																				</div>
+																				
+																																						
+																			</div>
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>				
+												{{end}}
+											{{end}}
+											
+											</ul>
+	
+	
+
+</div>
