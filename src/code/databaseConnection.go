@@ -140,13 +140,9 @@ func findUser(m *MongoDBConn, id string) *User {
 	return &result
 }
 
-<<<<<<< HEAD
-func getFlickrImages(tag string) []FlickrImage {
-	source := "/home/dani/go-programs/flickrData/"
-=======
+
 func getFlickrImages(tag string, start int) []FlickrImage {
 	source := "/resources/flickr/"
->>>>>>> 0461347ce875bba41182a3055097588ba5f35503
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connectFlickr()
 	c := dbConnection.session.DB(flickrDB).C("gmsNewsScottish")
@@ -169,11 +165,8 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 	return flickrImage
 }
 
-<<<<<<< HEAD
-func getNews(tag string) []News {
-=======
+
 func getNews(tag string, start int) []News {
->>>>>>> 0461347ce875bba41182a3055097588ba5f35503
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connectFlickr()
 	c := dbConnection.session.DB(flickrDB).C("gmsNewsScottish")
