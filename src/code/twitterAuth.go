@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/mrjones/oauth"
 	"gopkg.in/mgo.v2/bson"
-	"html/template"
+	//"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -97,16 +97,16 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		id := bson.NewObjectId()
-		createDefaultAlbum(dbConnection, id.Hex(), user.Name)
 
 		newUser := User{id, user.Name, "", "", "", "", "", user.Id_Str, user.Id_Str}
 		add(dbConnection, newUser)
+		createDefaultAlbum(dbConnection, newUser.Id, user.Name)
 
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
-	authenticated, _ := template.ParseFiles("pictures2.html")
-	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
+	http.Redirect(w, r, "/authenticated", http.StatusFound)
+	return
 }

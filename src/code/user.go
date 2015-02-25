@@ -148,9 +148,6 @@ var store = sessions.NewCookieStore(authKey, encKey)
 
 var dbConnection *MongoDBConn
 
-var db_name = "ugc"
-var flickrDB = "gmsTry"
-
 //add(dbConnection, name, password) ->add to db
 //find(dbConnection, name) ->find in db
 
@@ -176,8 +173,9 @@ func main() {
 	router.HandleFunc("/user", handleUserProfile)
 	router.HandleFunc("/upvote", handleUpvote)
 	router.HandleFunc("/cmsHome", handleCms)
-	router.HandleFunc("/flickrTest", handleFlickrTest)
 	router.HandleFunc("/delete", handleDelete)
+	router.HandleFunc("/retrieveTag", handleMainTag)
+	router.HandleFunc("/retrieveUser", handleMainUser)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
@@ -224,14 +222,64 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, resp)
 
 }
+func flickrHelper(flickr string, start int) string {
+	s := ""
+	var doc bytes.Buffer
+	images := getFlickrImages(flickr, start)
+	flickrData := struct {
+		Tag    string
+		PageIP int
+		PageIN int
+		P      []FlickrImage
+	}{
+		flickr,
+		start - 1,
+		start + 1,
+		images,
+	}
+	t, _ := template.ParseFiles("pictureHelper.html")
+	t.Execute(&doc, flickrData)
+	s = doc.String()
+	return s
+}
+
+func newsHelper(guardian string, start int) string {
+	s := ""
+	var doc bytes.Buffer
+	news := getNews(guardian, start)
+	newsData := struct {
+		Tag    string
+		PageIP int
+		PageIN int
+		N      []News
+	}{
+		guardian,
+		start - 1,
+		start + 1,
+		news,
+	}
+	t, _ := template.ParseFiles("newsHelper.html")
+	t.Execute(&doc, newsData)
+	s = doc.String()
+	return s
+}
 
 func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("in handle ")
 	r.ParseForm()
 	request := r.FormValue("req")
+	st := r.FormValue("start")
+	cType := r.FormValue("cType")
 	s := ""
 	var doc bytes.Buffer
+	var start int
+
 	response := make([]Response, 2)
+	if st == "" {
+		start = 0
+	} else {
+		start, _ = strconv.Atoi(st)
+	}
 
 	fmt.Println(request, "in handle flickr 2")
 
@@ -239,107 +287,61 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("flickrNews.html")
 		t.Execute(&doc, nil)
 		s = doc.String()
-	} else if strings.HasPrefix(request, "tag") {
-		tag := strings.Split(request, "_")
-
-		guardian := tag[1]
-		flickr := strings.ToLower(tag[1])
-
-		news := getNews(guardian)
-		images := getFlickrImages(flickr)
-
-		flickrData := struct {
-			Page string
-			P    []FlickrImage
-		}{
-			"0",
-			images,
+	} else if strings.HasPrefix(request, "getTags") {
+		input := request[7:]
+		fmt.Println("in else" + input)
+		if input == "Commonwealth Games" || input == "commonwealth games" {
+			s = "Boxing 5,Tennis 7,Cycling 13,maximum 13"
+		} else {
+			s = "No content found with requested tag"
 		}
-		t, _ := template.ParseFiles("pictureHelper.html")
-		t.Execute(&doc, flickrData)
-		s = doc.String()
 
-		response[0].Name = "flickr"
-		response[0].Content = s
+	} else {
 
-		newsData := struct {
-			Page string
-			N    []News
-		}{
-			"0",
-			news,
+		guardian := request
+		flickr := strings.ToLower(request)
+
+		if cType == "image" {
+
+			response[0].Name = "flickr"
+			response[0].Content = flickrHelper(flickr, start)
+			response[1].Name = "news"
+			response[1].Content = ""
+
+		} else if cType == "news" {
+
+			response[1].Name = "news"
+			response[1].Content = newsHelper(guardian, start)
+			response[0].Name = "flickr"
+			response[0].Content = ""
+		} else {
+
+			response[1].Name = "news"
+			response[1].Content = newsHelper(guardian, start)
+			response[0].Name = "flickr"
+			response[0].Content = flickrHelper(flickr, start)
 		}
-		t, _ = template.ParseFiles("newsHelper.html")
-		t.Execute(&doc, newsData)
-		s = doc.String()
 
-		response[1].Name = "news"
-		response[1].Content = s
-
-		fmt.Println(s)
+		//fmt.Println(s)
 
 		b, err := json.Marshal(response)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		fmt.Printf("%s", b)
+		//fmt.Printf("%s", b)
 		fmt.Fprintf(w, "%s", b)
-		return
 
-	} else {
-		fmt.Println("in else")
-		s = "Boxing 5,Tennis 7,Cycling 13,maximum 13"
 	}
 
 	fmt.Fprintf(w, s)
-}
-
-func handleFlickrTest(w http.ResponseWriter, r *http.Request) {
-	data := struct {
-		Name string
-	}{
-		"George",
-	}
-
-	var doc bytes.Buffer
-	t, _ := template.ParseFiles("test.html")
-	t.Execute(&doc, data)
-	s := doc.String()
-
-	//fmt.Println(s)
-	fmt.Fprintf(w, s)
-
-	/*session2, err := mgo.Dial("localhost:27018")
-	//DialWithTimeout(fwd.localAddr, 10*time.Minute)
-	//mongodb://imdcserv1.dcs.gla.ac.uk/gmsTry
-	if err != nil {
-		fmt.Println(err)
-	}
-	//defer session2.Close()
-	fmt.Println(session2)
-	admindb := session2.DB(db_name)
-	fmt.Println(admindb)
-	/*
-		err = admindb.Login("gms", "rdm$248")
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		coll := session2.DB(db_name).C("gmsNewsScottish")
-		var result string
-		err = coll.Find(bson.M{"source": "http://www.theguardian.com", "url": "http://www.theguardian.com/sport/2014/aug/04/australian-athletes-funding-commonwealth-games"}).One(&result)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(result) */
 }
 
 func handleVideos(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	start, _ := strconv.Atoi(r.FormValue("req"))
-	limit := 3
+	limit := 9
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
 	u := findUser(dbConnection, currentUser)
@@ -350,24 +352,29 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 
 	var videos []Video
 	err := dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": u.Id}).Skip(start * limit).Limit(limit).All(&videos)
-	data := struct {
-		PageP int
-		PageN int
-		Video []Video
-	}{
-		start - 1,
-		start + 1,
-		videos,
-	}
 
-	//fmt.Println(photos)
+	if len(videos) > 0 || start == 0 {
+		data := struct {
+			PageP int
+			PageN int
+			Video []Video
+		}{
+			start - 1,
+			start + 1,
+			videos,
+		}
 
-	t, _ := template.ParseFiles("videosTemplate.html")
-	if t == nil {
-		fmt.Println("no template******************************************")
+		//fmt.Println(photos)
+
+		t, _ := template.ParseFiles("videosTemplate.html")
+		if t == nil {
+			fmt.Println("no template******************************************")
+		}
+		t.Execute(&doc, data)
+		s = doc.String()
+	} else {
+		s = ""
 	}
-	t.Execute(&doc, data)
-	s = doc.String()
 
 	response[0].Name = "ownVideos"
 	response[0].Content = s
@@ -390,11 +397,13 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 
 func handleCms(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
-	currentUser := session.Values["user"].(string)
-	u := findUser(dbConnection, currentUser)
-
-	if u == nil {
+	u := &User{}
+	if session.Values["user"] == nil {
 		u = &User{}
+	} else if session.Values["user"].(string) == "" {
+		u = &User{}
+	} else {
+		u = findUser(dbConnection, session.Values["user"].(string))
 	}
 
 	var p DisplayPhotos
@@ -411,10 +420,9 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("could not get most viewed photos")
 	}
 
-	flickrImages := getFlickrImages("boxing")
-	fmt.Println(len(flickrImages))
-	news := getNews("Boxing")
-	fmt.Println(len(news))
+	flickrImages := getFlickrImages("boxing", 0)
+
+	news := getNews("Boxing", 0)
 
 	data := struct {
 		P      DisplayPhotos
@@ -471,6 +479,7 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 
 	updateTagDB(photo, video, dbConnection)
 	updateMostViewed(photo, video, dbConnection)
+	updateMostRecent(photo, video, dbConnection)
 
 	if cType == "image" {
 		fmt.Fprintf(w, "Yes_"+strconv.Itoa(photo.Views))
@@ -506,9 +515,27 @@ func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
 	u := findUser(dbConnection, currentUser)
+	var photos []Photo
+
+	err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(9).All(&photos)
+	if err != nil {
+		fmt.Println("could not get images from DB")
+	}
+
+	photoData := struct {
+		FirstName string
+		PageN     int
+		PageP     int
+		Photo     []Photo
+	}{
+		u.FirstName,
+		1,
+		1,
+		photos,
+	}
 
 	authenticated, _ := template.ParseFiles("pictures2.html")
-	authenticated.Execute(w, u)
+	authenticated.Execute(w, photoData)
 }
 
 func tagAlgo(u string) string {
@@ -528,8 +555,46 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w)
 	}
 
-	authenticated, _ := template.ParseFiles("gmsHome.html")
+	authenticated, _ := template.ParseFiles("index.html")
 	authenticated.Execute(w, session.Values["user"].(string))
+
+}
+
+func handleMainUser(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	currentUser := session.Values["user"].(string)
+	user := findUser(dbConnection, currentUser)
+
+	u := r.URL.RawQuery
+
+	var photos []Photo
+	var videos []Video
+
+	dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&photos)
+	dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&videos)
+
+	photoData := struct {
+		FirstName string
+		PageIN    int
+		PageIP    int
+		PageVN    int
+		PageVP    int
+		User      string
+		Photo     []Photo
+		Video     []Video
+	}{
+		user.FirstName,
+		1,
+		1,
+		1,
+		1,
+		u,
+		photos,
+		videos,
+	}
+
+	authenticated, _ := template.ParseFiles("otherUsers.html")
+	authenticated.Execute(w, photoData)
 
 }
 
@@ -543,7 +608,8 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	st, _ := strconv.Atoi(start)
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
-	limit := 3
+	limit := 9
+	flag := true
 
 	var photos []Photo
 	var videos []Video
@@ -581,6 +647,10 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			}
 			//fmt.Println(photos)
 
+			if len(photos) == 0 {
+				flag = false
+			}
+
 			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(nMod * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
@@ -599,6 +669,11 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
+
+			if len(videos) == 0 {
+				flag = false
+			}
+
 			fmt.Println(photos)
 			sti = nMod
 			stv = st
@@ -607,31 +682,36 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(t, " ", start, " ", cType, " ", nModP)
 
-	photoData := struct {
-		PageIN int
-		PageIP int
-		PageVN int
-		PageVP int
-		User   string
-		Photo  []Photo
-		Video  []Video
-	}{
-		sti + 1,
-		sti - 1,
-		stv + 1,
-		stv - 1,
-		t,
-		photos,
-		videos,
-	}
+	if flag == true {
 
-	temp, _ := template.ParseFiles("photoVideoTemplate.html")
-	if temp == nil {
-		fmt.Println("no template******************************************")
-	}
+		photoData := struct {
+			PageIN int
+			PageIP int
+			PageVN int
+			PageVP int
+			User   string
+			Photo  []Photo
+			Video  []Video
+		}{
+			sti + 1,
+			sti - 1,
+			stv + 1,
+			stv - 1,
+			t,
+			photos,
+			videos,
+		}
 
-	temp.Execute(&doc, photoData)
-	s = doc.String()
+		temp, _ := template.ParseFiles("photoVideoTemplate.html")
+		if temp == nil {
+			fmt.Println("no template******************************************")
+		}
+
+		temp.Execute(&doc, photoData)
+		s = doc.String()
+	} else {
+		s = ""
+	}
 
 	fmt.Fprintf(w, s)
 
@@ -729,7 +809,9 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 
-	if session.Values["user"].(string) == "" {
+	if session.Values["user"] == nil {
+		fmt.Fprintf(w, "No")
+	} else if session.Values["user"].(string) == "" {
 		fmt.Fprintf(w, "No")
 	} else {
 		message := "Yes," + findUser(dbConnection, session.Values["user"].(string)).FirstName
@@ -763,7 +845,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	st, _ := strconv.Atoi(start)
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
-	limit := 3
+	limit := 9
 
 	var photos []Photo
 	var videos []Video
@@ -771,6 +853,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	var stv int
 	var doc bytes.Buffer
 	s := ""
+	flag := true
 
 	if cType == "" {
 		tag := findByTag(dbConnection, t)
@@ -789,6 +872,10 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 		err := dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&photos)
 		if err != nil {
 			fmt.Println(err)
+		}
+
+		if len(photos) == 0 {
+			flag = false
 		}
 		//fmt.Println(photos)
 
@@ -810,6 +897,10 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		if len(videos) == 0 {
+			flag = false
+		}
 		fmt.Println(photos)
 		sti = nMod
 		stv = st
@@ -818,42 +909,73 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(t, " ", start, " ", cType, " ", nModP)
 
-	if len(photos) == 0 {
-		photos = nil
-	}
-	if len(videos) == 0 {
-		videos = nil
-	}
-	photoData := struct {
-		PageIN int
-		PageIP int
-		PageVN int
-		PageVP int
-		Tag    string
-		Photo  []Photo
-		Video  []Video
-	}{
-		sti + 1,
-		sti - 1,
-		stv + 1,
-		stv - 1,
-		t,
-		photos,
-		videos,
-	}
-	fmt.Println(photoData)
+	if flag == true {
 
-	temp, _ := template.ParseFiles("tagContentTemplate.html")
-	if temp == nil {
-		fmt.Println("no template******************************************")
-	}
+		photoData := struct {
+			PageIN int
+			PageIP int
+			PageVN int
+			PageVP int
+			Tag    string
+			Photo  []Photo
+			Video  []Video
+		}{
+			sti + 1,
+			sti - 1,
+			stv + 1,
+			stv - 1,
+			t,
+			photos,
+			videos,
+		}
+		fmt.Println(photoData)
 
-	temp.Execute(&doc, photoData)
-	s = doc.String()
+		temp, _ := template.ParseFiles("tagContentTemplate.html")
+		if temp == nil {
+			fmt.Println("no template******************************************")
+		}
+
+		temp.Execute(&doc, photoData)
+		s = doc.String()
+	} else {
+		s = ""
+	}
 
 	fmt.Println(s)
 
 	fmt.Fprintf(w, s)
+}
+
+func handleMainTag(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	currentUser := session.Values["user"].(string)
+	user := findUser(dbConnection, currentUser)
+
+	u := r.URL.RawQuery
+	tag := findByTag(dbConnection, u)
+
+	photoData := struct {
+		FirstName string
+		PageIN    int
+		PageIP    int
+		PageVN    int
+		PageVP    int
+		Tag       string
+		Photo     []Photo
+		Video     []Video
+	}{
+		user.FirstName,
+		1,
+		1,
+		1,
+		1,
+		tag.Name,
+		tag.Photos,
+		tag.Videos,
+	}
+
+	authenticated, _ := template.ParseFiles("taggedPictures2.html")
+	authenticated.Execute(w, photoData)
 }
 
 func handleFlickr(w http.ResponseWriter, r *http.Request) {
@@ -939,19 +1061,24 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	lng := r.FormValue("lng")
 	lat := r.FormValue("lat")
 	locationN := r.FormValue("locality")
-	if loc == "" {
+	/*if loc == "" {
 		lng = ""
 		lat = ""
 		locationN = ""
-	}
+	} */
+
+	fmt.Println(loc, " loc")
+	fmt.Println(lng, " lng")
+	fmt.Println(lat, " lat")
+	fmt.Println(locationN, " locN")
 
 	streetN := r.FormValue("formatted_address")
 	streetN = strings.Split(streetN, ",")[0]
 	tags := r.FormValue("tagList")
 
 	var location = *new(Location)
-	if loc != "" && lat != "" && lng != "" {
-		location = Location{locationN, lat, lng}
+	if lat != "" && lng != "" {
+		location = Location{streetN + ", " + locationN, lat, lng}
 	}
 
 	t := make([]string, 0)
@@ -988,7 +1115,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	updateMostRecent(p, v, dbConnection)
+	insertInMostRecent(p, v, dbConnection)
 
 }
 
@@ -1004,30 +1131,33 @@ func getPictures(collName string, field string, userId string, templateName stri
 	s := ""
 	var doc bytes.Buffer
 	var photos []Photo
-	limit := 3
+	limit := 9
 	err := dbConnection.session.DB(db_name).C(collName).Find(bson.M{field: userId}).Skip(start * limit).Limit(limit).All(&photos)
 
 	if err != nil {
 		fmt.Println(err)
 	}
+	if len(photos) > 0 || start == 0 {
+		photoData := struct {
+			PageN int
+			PageP int
+			Photo []Photo
+		}{
+			start + 1,
+			start - 1,
+			photos,
+		}
 
-	photoData := struct {
-		PageN int
-		PageP int
-		Photo []Photo
-	}{
-		start + 1,
-		start - 1,
-		photos,
+		t, _ := template.ParseFiles(templateName)
+		if t == nil {
+			fmt.Println("no template******************************************")
+		}
+
+		t.Execute(&doc, photoData)
+		s = doc.String()
+	} else {
+		s = ""
 	}
-
-	t, _ := template.ParseFiles(templateName)
-	if t == nil {
-		fmt.Println("no template******************************************")
-	}
-
-	t.Execute(&doc, photoData)
-	s = doc.String()
 	return s
 
 }
@@ -1067,7 +1197,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 	st, _ := strconv.Atoi(start)
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
-	limit := 3
+	limit := 9
 
 	fmt.Println(query, " ", start, " ", cType, " ", nModP)
 
@@ -1077,6 +1207,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
+	flag := true
 
 	if query == "" {
 		var albums []Album
@@ -1128,6 +1259,10 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			}
 			//fmt.Println(photos)
 
+			if len(photos) == 0 {
+				flag = false
+			}
+
 			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(nMod * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
@@ -1146,6 +1281,10 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
+
+			if len(videos) == 0 {
+				flag = false
+			}
 			fmt.Println(photos)
 			sti = nMod
 			stv = st
@@ -1153,31 +1292,36 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println(query, " ", start, " ", cType, " ", nModP)
 
-		photoData := struct {
-			PageIN  int
-			PageIP  int
-			PageVN  int
-			PageVP  int
-			AlbumId string
-			Photo   []Photo
-			Video   []Video
-		}{
-			sti + 1,
-			sti - 1,
-			stv + 1,
-			stv - 1,
-			query,
-			photos,
-			videos,
-		}
+		if flag == true {
 
-		temp, _ := template.ParseFiles("albumDetailTemplate.html")
-		if temp == nil {
-			fmt.Println("no template******************************************")
-		}
+			photoData := struct {
+				PageIN  int
+				PageIP  int
+				PageVN  int
+				PageVP  int
+				AlbumId string
+				Photo   []Photo
+				Video   []Video
+			}{
+				sti + 1,
+				sti - 1,
+				stv + 1,
+				stv - 1,
+				query,
+				photos,
+				videos,
+			}
 
-		temp.Execute(&doc, photoData)
-		s = doc.String()
+			temp, _ := template.ParseFiles("albumDetailTemplate.html")
+			if temp == nil {
+				fmt.Println("no template******************************************")
+			}
+
+			temp.Execute(&doc, photoData)
+			s = doc.String()
+		} else {
+			s = ""
+		}
 
 		response[0].Name = "albumDetail"
 	}

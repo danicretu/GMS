@@ -3,8 +3,9 @@ package main
 import (
 	"code.google.com/p/goauth2/oauth"
 	"encoding/json"
+	//"fmt"
 	"gopkg.in/mgo.v2/bson"
-	"html/template"
+	//"html/template"
 	"io/ioutil"
 	"net/http"
 )
@@ -92,16 +93,16 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		id := bson.NewObjectId()
-		createDefaultAlbum(dbConnection, id.Hex(), user.Given_Name+" "+user.Family_Name)
 
 		newUser := User{id, user.Given_Name, user.Family_Name, "", "", user.Id, "", "", user.Id}
 		add(dbConnection, newUser)
+		createDefaultAlbum(dbConnection, newUser.Id, user.Given_Name+" "+user.Family_Name)
 
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)
 
 	}
 
-	authenticated, _ := template.ParseFiles("pictures2.html")
-	authenticated.Execute(w, findUser(dbConnection, session.Values["user"].(string)))
+	http.Redirect(w, r, "/authenticated", http.StatusFound)
+	return
 }

@@ -55,3 +55,23 @@
 	margin-right:3%;
 	
 }
+
+.imgdiv {
+	padding-bottom:15px;position:relative;text-align:center;
+}
+
+.modal-header .close {
+	margin-top:-15px;
+}
+
+.close{
+	color:white;
+	font-size:25px;
+	opacity:1;
+}
+
+/*
+body {
+	 font-family: RalewayReg;
+    src: url("../fonts/Raleway-Regular.ttf");
+} */

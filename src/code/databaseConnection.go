@@ -16,11 +16,12 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-var db_name = "db_name"
+var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gms")
+	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
+	//session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -32,6 +33,7 @@ func (m *MongoDBConn) connect() *mgo.Session {
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
 	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gms")
+	//session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -138,16 +140,16 @@ func findUser(m *MongoDBConn, id string) *User {
 	return &result
 }
 
-func getFlickrImages(m *MongoDBConn, tag string) []FlickrImage {
-	source := "/home/dani/go-programs/flickrData/"
+func getFlickrImages(tag string, start int) []FlickrImage {
+	source := "/home/go-programs/flickrData/"
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connectFlickr()
-	c := dbConnection.session.DB("gmsTry").C("gmsNewsScottish")
+	c := dbConnection.session.DB(flickrDB).C("gmsNewsScottish")
 	var flickrImage []FlickrImage
-	fmt.Println("the keyword is...", tag)
 	var myarr = []string{tag}
+	limit := 8
 
-	err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(0).Limit(8).All(&flickrImage)
+	err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -162,14 +164,15 @@ func getFlickrImages(m *MongoDBConn, tag string) []FlickrImage {
 	return flickrImage
 }
 
-func getNews(m *MongoDBConn, tag string) []News {
+func getNews(tag string, start int) []News {
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connectFlickr()
-	c := dbConnection.session.DB("gmsTry").C("gmsNewsScottish")
+	c := dbConnection.session.DB(flickrDB).C("gmsNewsScottish")
 	var news []News
 	var newsKey = []string{tag}
+	limit := 8
 
-	err := c.Find(bson.M{"source": "http://www.theguardian.com", "keywords": bson.M{"$all": newsKey}}).Skip(0).Limit(8).All(&news)
+	err := c.Find(bson.M{"source": "http://www.theguardian.com", "keywords": bson.M{"$all": newsKey}}).Skip(start * limit).Limit(limit).All(&news)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -389,6 +392,7 @@ func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
 			for m := range p.Photos {
 				if p.Photos[m].PhotoId == photo.PhotoId {
 					p.Photos[m].Views = photo.Views
+					p.Photos[m].Comments = photo.Comments
 					flag = true
 				}
 			}
@@ -402,6 +406,7 @@ func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
 			for m := range p.Photos {
 				if p.Photos[m].PhotoId == photo.PhotoId {
 					p.Photos[m].Views = photo.Views
+					p.Photos[m].Comments = photo.Comments
 					flag = true
 				}
 
@@ -423,6 +428,7 @@ func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
 			for m := range p.Videos {
 				if p.Videos[m].VideoId == video.VideoId {
 					p.Videos[m].Views = video.Views
+					p.Videos[m].Comments = video.Comments
 					flag = true
 				}
 			}
@@ -435,6 +441,7 @@ func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
 			index := 0
 			for m := range p.Videos {
 				if p.Videos[m].VideoId == video.VideoId {
+					p.Videos[m].Views = video.Views
 					p.Videos[m].Views = video.Views
 					flag = true
 				}
@@ -460,7 +467,7 @@ func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
 	}
 }
 
-func updateMostRecent(photo Photo, video Video, m *MongoDBConn) {
+func insertInMostRecent(photo Photo, video Video, m *MongoDBConn) {
 	var p DisplayPhotos
 	c := m.session.DB(db_name).C("displayPhotos")
 	err := c.Find(bson.M{"name": "recent"}).One(&p)
@@ -503,4 +510,49 @@ func updateMostRecent(photo Photo, video Video, m *MongoDBConn) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func updateMostRecent(photo Photo, video Video, m *MongoDBConn) {
+
+	if photo.PhotoId != "" {
+		query := bson.M{
+			"name":           "recent",
+			"photos.photoId": photo.PhotoId,
+		}
+
+		update := bson.M{
+			"$set": bson.M{
+				"photos.$.comments": photo.Comments,
+				"photos.$.views":    photo.Views,
+			},
+		}
+		err := m.session.DB(db_name).C("displayPhotos").Update(query, update)
+		if err != nil {
+			fmt.Println("could not update comments in recent db")
+		} else {
+			fmt.Println("updated in photo recent")
+		}
+	} else {
+
+		query := bson.M{
+			"name":           "recent",
+			"videos.videoId": video.VideoId,
+		}
+
+		update := bson.M{
+			"$set": bson.M{
+				"videos.$.comments": video.Comments,
+				"videos.$.views":    video.Views,
+			},
+		}
+
+		err := m.session.DB(db_name).C("displayPhotos").Update(query, update)
+		if err != nil {
+			fmt.Println("could not update comments in ecent db")
+		} else {
+			fmt.Println("updated in recent db")
+		}
+
+	}
+
 }

@@ -1,28 +1,32 @@
+<div class="panel-heading headText" >
+    <h2 class="panel-title" style="font-size: 24px">Upload</h2>
+</div>
 							
-<div id="uploadDiv" class="uploadDiv">
+	
+<div id="uploadDiv" class="uploadDiv headText">
 	<form action="#" onsubmit="return contentForm()" id="contentForm">
 		<input type="radio" name="optradio" class="radio-inline" value="image">Image
 		<input type="radio" name="optradio" class="radio-inline" value="video" required>Video
-		<h3>Choose a file to upload: </h3>
+		<p>Choose a file to upload: <p>
 		<input style="float:left;" type="file" name="file" id="imgInp" required> 
 		<input id="submit" class="btn submitButton" type="submit" name="submit" value="Submit">            	
 	</form>
 </div>
 							
 							
-<div id="uploadForm" class="uploadForm" style="display:none;">
+<div id="uploadForm" class="uploadForm headText" style="display:none;">
 	<form action="#" onsubmit="return uploadForm()" id ="uploadForm" method="post" style="padding: 10px; background-color:#EAEAEA;">
 		<input type="hidden" name="imageURL" id="imageURL"/>
 		<input type="hidden" name="contentType" id="contentType">
-		<div id="preview" class="row">
+		<div id="preview">
 			<h3 style="float:left;" class="col-md-5">Uploaded image </h3>
 			<img style="float:left; width:40%;" id="blah" class="img-thumbnail col-md-7" src="#" alt="your image" />
 		</div>
-		<div class="row" style="clear:both; padding-top:1%;">
+		<div style="clear:both; padding-top:1%;">
 			<p class="col-md-5" style="float:left;">Add a description</p>
-			<input type="text" name="caption" class="email col-md-7" style="width:250px; margin-bottom:10px; border-radius:4px;" id="caption" placeholder="Description"/>
+			<input type="text" name="caption" class="email col-md-7" style="margin-bottom:10px; border-radius:4px;" id="caption" placeholder="Description"/>
 		</div>
-		<div class="row">
+		<div>
 			<p class="col-md-5" style="padding-right:3%; float:left;">Add this picture to an album</p>
 			<select id="albumSelect" name="albumSelect" class="albumSelect col-md-3">
 				{{range $element := .Albums}}
@@ -32,24 +36,26 @@
 			<a href="#" data-toggle="modal" data-target="#albumModal" style="float:right;" class="col-md-4"> Or create a new album...</a>
 			
 		</div>
-		<div style="clear:both; padding-top:2%;" class="row">
+		<div style="clear:both; padding-top:2%;">
 			<p style="float:left; padding-right:1%;" class="col-md-5"> Where was this picture taken? </p>
-			<input type="text" name="location" id="imageLocation" placeholder="Where was the picture taken?" style="float:left; padding-right:3%; border-radius:4px;" class="col-md-6">
+			<input type="text" name="location" id="imageLocation" placeholder="Enter location..." style="float:left; padding-right:3%; border-radius:4px;" class="col-md-6">
 			<input id="find" value="find" type="button" style="height:auto; display:none;"/>
 			<input id="lng" type="hidden" name="lng" value="" data-geo="lng">
 			<input id="lat" type="hidden" name="lat" value="" data-geo="lat">
 			<input id="locality" type="hidden" name="locality" value="" data-geo="locality">
 			<input id="formatted_address" type="hidden" name="formatted_address" value="" data-geo="formatted_address">
 		</div>
-		<div style="clear:both;" class="row">
+		<div style="clear:both;">
 			<p style="float:left;" class="col-md-5">Add a tag</p>
 			<input type="text" name="tag" class="email col-md-6" style="border-radius:4px;" id="enterTag" placeholder="Add a tag..."/>
 		</div>
-		<div id ="displayTags" style="visibility:hidden; margin-bottom: 20px; margin-top: 10px">
+		<div id ="displayTags" style="visibility:hidden; margin-bottom: 20px; margin-top: 10px; clear:both;">
 													
 		</div>
-		<p style="clear:both">Suggested Tags: </p>
-		<p style="visibility:hidden; font-size:small;" id="tagsLabel">Gathering similar tags...</p>
+		<div>
+			<p style="clear:both" class="col-md-12">Suggested Tags: </p>
+			<p style="visibility:hidden; font-size:small;" id="tagsLabel">Gathering similar tags...</p>
+		</div>
 		<div id ="suggestedTags" style="clear:both;visibility:hidden; word-wrap: break-word;margin-top:20px" >
 									
 		</div>

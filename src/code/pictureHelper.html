@@ -1,16 +1,16 @@
-<div id="pictureHelper">
+<div id="pictureHelper" class="headText">
 
 	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-											{{range $element2 := .P}}
+											{{range $index2, $element2 := .P}}
 												{{if $element2.URL}}
 													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
+														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
 													</li>
 															
-													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
+													<div class="modal" id="picModal{{$index2}}flickr" tabindex="-1" role="dialog" aria-hidden="true">
 															
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
@@ -18,23 +18,23 @@
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
 															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																			<div class='col-md-8 imgdiv'>
 																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
 																				<div style="display:block; text-align:center;">																		
-																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.ImageName}}">Prev</a>
-																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.ImageName}}">Next</a>
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}flickr">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}flickr">Next</a>
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
 																				
-																				<p style="float:right; font-size:medium;">{{$element2.TimeStamp}}</p>
-																				<div style="clear:both; padding-top:7%;" class="row">
-																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																				<p style="float:right; font-size:medium; color:black; clear:both;">{{$element2.TimeStamp}}</p>
+																				<div style="clear:both; padding-top:7%; padding-left:8%;" class="row">
+																					<p style="float:left; font-size:90%; color:black;">{{$element2.Description}}</p>
 																																									
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Keywords}}
-																						<a class="tag" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
+																						<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
 																					{{end}}
 																				</div>
 																				
@@ -45,10 +45,11 @@
 														    	</div>
 													</div>				
 												{{end}}
-											{{end}}
+											{{end}} 
 											
 											</ul>
 	
 	
-
+<a href="#" id="previous" onclick="return flickrNews({{.Tag}},{{.PageIP}},'image')">Prev</a>
+<a href="#" id="next"  onclick="return flickrNews({{.Tag}},{{.PageIN}},'image')">Next</a> 
 </div>

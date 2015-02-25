@@ -36,8 +36,14 @@
        <nav class="navbar navbar-my navbar-fixed-top" role="navigation">
          <div class="container">
            <div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle Navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
              
-             <a class="navbar-brand" href="/" style="font-size: 38px">               
+             <a class="navbar-brand" href="/">               
              	GMS:Glasgow Memories Server
              </a>
            </div>
@@ -86,9 +92,9 @@
                  </ul>
                </li> 
 			  <li class="dropdown">
-                 <a href="/authenticated2" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{.U.FirstName}} <span class="caret"></span></a>
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{.FirstName}} <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
-				  <li><a href="/authenticated">Profile</a></li>
+				  <li><a href="#" onclick="getPictures('');">Profile</a></li>
                    <li><a href="/logout">Log Out</a></li>                 
                  </ul>
                </li>            		
@@ -103,209 +109,233 @@
 	       <div class="container">         
 	        <div class="container-fluid">
 			  <div class="row">
-			  	<div class="col-md-3">
-				    <ul class="nav nav-pills nav-stacked">
-				      <li><a href="/pictures">Pictures</a></li>
-					  <li><a href="/videos">Videos</a></li>	
-				      <li><a href="/albums">Albums</a></li>
-				      <li><a href="/upload">Upload</a></li>
-					  <li><a href="/flickrNews">Flickr News</a></li>
-				    </ul>
-				    <hr>
-				    <div class="panel mypanel" style="width:auto; margin:0;">
-      					<div class="row" id="cloudUser" style="width:auto; margin:0;">
-        					</div>            	      	
-      				</div>
+			  	<div class="col-md-3 collapse-group">
+					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
+				    <div class="hidden-xs sideMenu">
+						<ul class="nav nav-pills nav-stacked">
+					      <li  class="active"><a href="#" onclick="getPictures('');">Pictures</a></li>
+						  <li><a href="#" onclick="getVideos('');">Videos</a></li>	
+					      <li><a href="#" onclick="getAlbums('');">Albums</a></li>
+					      <li><a href="#" onClick="getUpload();">Upload</a></li>
+						  <li><a href="#" onclick="flickrNews('start');">Flickr News</a></li>
+					    </ul>
+					    <hr>
+					    <div class="panel mypanel" style="width:auto; margin:0;">
+							<h3 style="text-align:center;">Popular Tags</h3>
+	      					<div class="row" id="cloudUser" style="width:auto; margin:0;">
+	        					</div>            	      	
+	      				</div>
+					</div>
 			    </div>    
-			   	<div class="col-md-9">
-			        <div class="panel mypanel">
+			   	<div id= "replace" class="col-md-9">
+			        <div class="panel mypanel" id="panelBodyContent">
 			            	<div class="panel-heading">
-			            		<h2 class="panel-title" style="font-size: 24px">All pictures with requested tag</h2>
+			            		<h2 class="panel-title" style="font-size: 24px">Pictures</h2>
 			            	</div>
-						<div class="panel-body headText"> 
-							<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-											{{range $index2, $element2 :=.T.Photos}}
-												{{if $element2.URL}}
-													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a id="{{$index2}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}">
-								          					<img class="img-thumbnail" src="{{$element2.URL}}">
-								        					</a>
+						<div class="panel-body headText" id="panelBodyContent"> 
+							
+							<div id="pictures">
+								<div class="panel-heading" >
+								    <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
+								</div>
+								
+								<div id="pictureTemplate">
+								<ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+								
+									{{if .Photo}}
+									{{range $element2 :=.Photo}}
+											{{if $element2.URL}}
+													<li id="li{{$element2.PhotoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
+														<a id="{{$element2.PhotoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
+															<img class="img-thumbnail" src="{{$element2.URL}}">
+														</a>
 													</li>
-															
-													<div class="modal" id="picModal{{$index2}}" tabindex="-1" role="dialog" aria-hidden="true">
-															<div style="display:none">
-																<form id="details" name={{$index2}}>
-																	<input type="hidden" id="picId{{$index2}}" value="{{$element2.PhotoId}}" />
-																	<input type="hidden" id="picAlbumId{{$index2}}" value="{{$element2.AlbumId}}" />
-																	<input type="hidden" id="picOwner{{$index2}}" value="{{$element2.Owner}}" />
-																	<input type="hidden" id="contentType{{$index2}}" value="image" />
-																</form>
-															</div>
-															<div class="modal-dialog" style="width: auto; max-width: 900px;">
-															    	<div class="modal-content">
-															      		<div class="modal-header login_modal_header">
-															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-															      		</div>
-															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
-																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
-																				<div style="display:block; text-align:center;">																		
-																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}">Prev</a>
-																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}">Next</a>
-																				</div>
+													<div class="modal" id="picModal{{$element2.PhotoId}}" tabindex="-1" role="dialog" aria-hidden="true">
+														<div class="modal-dialog" style="width: auto; max-width: 900px;">
+														    	<div class="modal-content">
+																<div style="display:none">
+																	<form id="details" name={{$element2.PhotoId}}>
+																		<input type="hidden" id="picId{{$element2.PhotoId}}" value="{{$element2.PhotoId}}" />
+																		<input type="hidden" id="picAlbumId{{$element2.PhotoId}}" value="{{$element2.AlbumId}}" />
+																		<input type="hidden" id="picOwner{{$element2.PhotoId}}" value="{{$element2.Owner}}" />
+																		<input type="hidden" id="contentType{{$element2.PhotoId}}" value="image" />
+																	</form>
+																</div>
+																<div class="modal-header login_modal_header">
+												        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+												      			</div>
+																<div class="modal-body login-modal row" >
+																	<div class='col-md-8 imgdiv'>
+															      		<img class="imageSize" src="{{$element2.URL}}" />
+																			<div style="display:block; text-align:center;">																		
+																				<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.PhotoId}}">Prev</a>
+																				<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.PhotoId}}">Next</a>
 																			</div>
-																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
-																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-																				<div style="clear:both; padding-top:7%;" class="row">
-																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
-																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
-																					{{end}}
-																					
-																					<p id= "upvotep{{$index2}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
-																					<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+																	</div>
+																	<div class="col-md-4" style="padding:0;">
+																		<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+																		<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
+																		<div style="clear:both; padding-top:7%;" class="row">
+																			<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																			{{if $element2.Location.Name}}
+																				<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																			{{end}}
+																			<p id= "upvotep{{$element2.PhotoId}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
+																			<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+																		</div>
+																		<div style="clear:both;padding-top:4%;">
+																			{{range $elementTag := $element2.Tags}}
+																				<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+																			{{end}}
+																		</div>
+																		<div style="padding-top:5px;">
+																			<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.PhotoId}})">
+																				<div>
+																					<input type="text" class="comment{{$element2.PhotoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.PhotoId}}" placeholder="Enter Comment..." />
+																					<input type="hidden" id="cType{{$element2.PhotoId}}" value="image" />
+																					<input type="hidden" id="pictureNumber{{$element2.PhotoId}}" value="{{$element2.PhotoId}}" />
+																					<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																				</div>
-																				<div style="clear:both;">
-																					{{range $indexTag, $elementTag := $element2.Tags}}
-																						<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
-																					{{end}}
-																				</div>
-																				
-																					<div style="padding-top:5px;">
-																						<form id="commentForm">
-																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
-																								<input type="hidden" id="cType" value="image" />
-																								<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
-																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
-																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
-																							</div>
-																						</form>
-																					</div>
-																					<div class="commentBox">
-																						<ul class="commentList" id="commentList">
-																							{{if $element2.Comments}}
-																								{{range $indexComment, $elementComment := $element2.Comments}}
-																									{{if $elementComment.Body}}
-																										<li>
-																											<div class="commentText">
-																												<p>{{$elementComment.Body}}</p>																									
-																												<a class="user under" href="/user?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
-																												<span class="date under">on {{$elementComment.Timestamp}}</span>
-																											</div>
-																										</li>
-																									{{end}}
-																								{{end}}
+																			</form>
+																		</div>
+																		<div class="commentBox">
+																			<ul class="commentList" id="commentList{{$element2.PhotoId}}">
+																				{{if $element2.Comments}}
+																					{{range $indexComment, $elementComment := $element2.Comments}}
+																							{{if $elementComment.Body}}
+																								<li>
+																									<div class="commentText">
+																										<p>{{$elementComment.Body}}</p>																									
+																										<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
+																										<span class="date under">on {{$elementComment.Timestamp}}</span>
+																									</div>
+																								</li>
 																							{{end}}
-																						</ul>
-																					</div>
-																				
-																			</div>
-															      		</div>	
-															    </div>
-														    	</div>
-													</div>				
-												{{end}}
-											{{end}}
-											
-											{{range $index2, $element2 :=.T.Videos}}
-												{{if $element2.URL}}
+																					{{end}}
+																				{{end}}
+																			</ul>
+																		</div>
+																	</div>
+																</div>
+															</div>	
+														</div>								
 													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a id="{{$index2}}video" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}video">
-								          					<video class="img-thumbnail">
-																<source src="{{$element2.URL}}" type="video/mp4">
-  																<source src="{{$element2.URL}}" type="video/ogg">
-																Your browser does not support the video tag.
-															</video>
-								        					</a>
-													</li>
-															
-													<div class="modal" id="picModal{{$index2}}video" tabindex="-1" role="dialog" aria-hidden="true">
-															<div style="display:none">
-																<form id="details" name={{$index2}}video>
-																	<input type="hidden" id="picId{{$index2}}video" value="{{$element2.VideoId}}" />
-																	<input type="hidden" id="picAlbumId{{$index2}}video" value="{{$element2.AlbumId}}" />
-																	<input type="hidden" id="picOwner{{$index2}}video" value="{{$element2.Owner}}" />
-																	<input type="hidden" id="contentType{{$index2}}video" value="video" />
-																</form>
-															</div>
-															<div class="modal-dialog" style="width: auto; max-width: 900px;">
-															    	<div class="modal-content">
-															      		<div class="modal-header login_modal_header">
-															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-															      		</div>
-															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
-																	      		<video style="width:100%; height:100%;" controls>
-																					<source src="{{$element2.URL}}" type="video/mp4"></source>
-					  																<source src="{{$element2.URL}}" type="video/ogg"></source>
-																					Your browser does not support the video tag.
-																				</video>
-																				<div style="display:block; text-align:center;">																		
-																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}video">Prev</a>
-																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}video">Next</a>
-																				</div>
-																			</div>
-																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
-																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-																				<div style="clear:both; padding-top:7%;" class="row">
-																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
-																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
-																					{{end}}
-																					
-																					<p id= "upvotep{{$index2}}video" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
-																					<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
-																				</div>
-																				<div style="clear:both;">
-																					{{range $indexTag, $elementTag := $element2.Tags}}
-																						<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
-																					{{end}}
-																				</div>
-																				
-																					<div style="padding-top:5px;">
-																						<form id="commentForm">
-																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
-																								<input type="hidden" id="cType" value="video" />
-																								<input type="hidden" id="pictureNumber" value="{{$element2.VideoId}}" />
-																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
-																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
-																							</div>
-																						</form>
-																					</div>
-																					<div class="commentBox">
-																						<ul class="commentList" id="commentList">
-																							{{if $element2.Comments}}
-																								{{range $indexComment, $elementComment := $element2.Comments}}
-																									{{if $elementComment.Body}}
-																										<li>
-																											<div class="commentText">
-																												<p>{{$elementComment.Body}}</p>																									
-																												<a class="user under" href="/user?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
-																												<span class="date under">on {{$elementComment.Timestamp}}</span>
-																											</div>
-																										</li>
-																									{{end}}
-																								{{end}}
-																							{{end}}
-																						</ul>
-																					</div>
-																				
-																			</div>
-															      		</div>	
-															    </div>
-														    	</div>
-													</div>				
-												{{end}}
+													</div>		
+																							
+																							
 											{{end}}
-							</ul>          	
+									{{end}}
+									{{end}}
+																			
+																			
+										
+								
+								</ul>
+								<a href="#" id="previous" onclick="getSimilarTag({{.Tag}},{{.PageIP}},'image',{{.PageVP}},{{.PageVN}})">Prev</a>
+								<a href="#" id="next"  onclick="getSimilarTag({{.Tag}},{{.PageIN}},'image',{{.PageVP}},{{.PageVN}})">Next</a>
+								</div>
+								</div>
+								
+								<div id="videos">
+								<div class="panel-heading" >
+								    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
+								</div>
+								<div id="pictureTemplate">
+								<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+																	{{range $element2 :=.Video}}
+																				{{if $element2.URL}}
+																					<li id="li{{$element2.VideoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
+																						<a id="{{$element2.VideoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}">
+																          					<video class="img-thumbnail">
+																								<source src="{{$element2.URL}}" type="video/mp4">
+								  																<source src="{{$element2.URL}}" type="video/ogg">
+																								Your browser does not support the video tag.
+																							</video>
+																        					</a>
+																					</li>
+																							
+																					<div class="modal" id="picModal{{$element2.VideoId}}" tabindex="-1" role="dialog" aria-hidden="true">
+																							<div style="display:none">
+																								<form id="details" name={{$element2.VideoId}}>
+																									<input type="hidden" id="picId{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
+																									<input type="hidden" id="picAlbumId{{$element2.VideoId}}" value="{{$element2.AlbumId}}" />
+																									<input type="hidden" id="picOwner{{$element2.VideoId}}" value="{{$element2.Owner}}" />
+																									<input type="hidden" id="contentType{{$element2.VideoId}}" value="video" />
+																								</form>
+																							</div>
+																							<div class="modal-dialog" style="width: auto; max-width: 900px;">
+																							    	<div class="modal-content">
+																							      		<div class="modal-header login_modal_header">
+																							        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+																							      		</div>
+																							      		<div class="modal-body login-modal row" >
+																											<div class='col-md-8 imgdiv'>
+																									      		
+																												<video class="imageSize" controls>
+																													<source src="{{$element2.URL}}" type="video/mp4"></source>
+													  																<source src="{{$element2.URL}}" type="video/ogg"></source>
+																													Your browser does not support the video tag.
+																												</video>
+																												<div style="display:block; text-align:center;">																		
+																													<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.VideoId}}">Prev</a>
+																													<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.VideoId}}">Next</a>
+																												</div>
+																											</div>
+																											<div class="col-md-4" style="padding:0;">
+																												<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+																												<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
+																												<div style="clear:both; padding-top:7%;" class="row">
+																													<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
+																													{{if $element2.Location.Name}}
+																														<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																													{{end}}
+																													<p id= "upvotep{{$element2.VideoId}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
+																													<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+																												</div>
+																												<div style="clear:both;padding-top:4%;">
+																													{{range $indexTag, $elementTag := $element2.Tags}}
+																														<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+																													{{end}}
+																												</div>
+																												<div style="padding-top:5px;">
+																													<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.VideoId}})">
+																														<div>
+																															<input type="text" class="comment{{$element2.VideoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.VideoId}}" placeholder="Enter Comment..." />
+																															<input type="hidden" id="cType{{$element2.VideoId}}" value="video" />
+																															<input type="hidden" id="pictureNumber{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
+																															<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																														</div>
+																													</form>
+																												</div>
+																												<div class="commentBox">
+																													<ul class="commentList" id="commentList{{$element2.VideoId}}">
+																														{{if $element2.Comments}}
+																															{{range $indexComment, $elementComment := $element2.Comments}}
+																																{{if $elementComment.Body}}
+																																	<li>
+																																		<div class="commentText">
+																																			<p>{{$elementComment.Body}}</p>																									
+																																			<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
+																																			<span class="date under">on {{$elementComment.Timestamp}}</span>
+																																		</div>
+																																	</li>
+																																{{end}}
+																															{{end}}
+																														{{end}}
+																													</ul>
+																												</div>
+																											</div>
+																							      		</div>	
+																							    </div>
+																						    	</div>
+																					</div>				
+																				{{end}}
+																			{{end}}
+									</ul>
+								<a href="#" id="previous" onclick="getSimilarTag({{.Tag}},{{.PageVP}},'video',{{.PageIP}},{{.PageIN}})">Prev</a>
+								<a href="#" id="next"  onclick="getSimilarTag({{.Tag}},{{.PageVN}},'video',{{.PageIP}},{{.PageIN}})">Next</a>
+								</div>
+								</div>
 			                		              	
 			            	</div>			               
 			        </div>          
@@ -344,14 +374,10 @@
     <script src="resources/javascripts/owl.carousel.min.js"></script>
    	<script src="resources/javascripts/nivo-lightbox.min.js"></script>
 	<script src="resources/javascripts/login.js"></script> 
-	<script src="resources/javascripts/scripts.js"></script>
-			
-			<script>
-				tagCloud("User");
-			</script>
-			<script>
-				carousel();
-			</script> 
+	<script src="resources/javascripts/scripts.js"></script> 
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+	<script src="resources/javascripts/jquery.geocomplete.js"></script>
+	
     <script type="text/javascript">
                   $(document).ready(function() {
                      $('#reservation').daterangepicker(null, function(start, end, label) {
@@ -394,7 +420,13 @@
                $(window).load(function() {
                   $(".loader").fadeOut("slow");
                })
-         </script>             
+         </script>  	
+			<script>
+				tagCloud("User");
+			</script>   
+			<script>
+				carousel();
+			</script>        
     
 			 
      </body>
