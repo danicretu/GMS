@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/goauth2/oauth"
 	"encoding/json"
 	//"github.com/gorilla/sessions"
+	"fmt"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io/ioutil"
