@@ -140,6 +140,7 @@ func findUser(m *MongoDBConn, id string) *User {
 	return &result
 }
 
+
 func getFlickrImages(tag string, start int) []FlickrImage {
 	source := "/resources/flickr/"
 	dbConnection = NewMongoDBConn()
@@ -163,6 +164,7 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 
 	return flickrImage
 }
+
 
 func getNews(tag string, start int) []News {
 	dbConnection = NewMongoDBConn()
