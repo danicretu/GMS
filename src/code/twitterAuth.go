@@ -89,9 +89,9 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(bits, &user)
 
 	var existing *User
-	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"tId": user.Id_Str}).One(&existing)
+	dbConnection.session.DB(db_name).C("user").Find(bson.M{"tId": user.Id_Str}).One(&existing)
 	session, _ := store.Get(r, "cookie")
-	if existing != nil {
+	if existing != nil && existing.Id != "" {
 		session.Values["user"] = existing.Id
 		session.Save(r, w)
 	} else {

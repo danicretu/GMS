@@ -17,10 +17,10 @@ var (
 
 var oauthCfgG = &oauth.Config{
 	//TODO: put your project's Client Id here.  To be got from https://code.google.com/apis/console
-	ClientId: "410632888135-3joclvqh2br18gq8mqa64klfo1vnae0k.apps.googleusercontent.com",
+	ClientId: "635233175461-6r2tu8shk7jtn22pemesoued3c3d4qd9.apps.googleusercontent.com",
 
 	//TODO: put your project's Client Secret value here https://code.google.com/apis/console
-	ClientSecret: "-XsCO0Rlpd7EawBFLdlRs-aQ",
+	ClientSecret: "xZBmWyS6wpC51IrAnOcrBnb5",
 
 	//For Google's oauth2 authentication, use this defined URL
 	AuthURL: "https://accounts.google.com/o/oauth2/auth",
@@ -30,7 +30,7 @@ var oauthCfgG = &oauth.Config{
 
 	//To return your oauth2 code, Google will redirect the browser to this page that you have defined
 	//TODO: This exact URL should also be added in your Google API console for this project within "API Access"->"Redirect URIs"
-	RedirectURL: "http://localhost:8080/oauth2callback",
+	RedirectURL: "http://mirugc.dcs.gla.ac.uk/oauth2callback",
 
 	//This is the 'scope' of the data that you are asking the user's permission to access. For getting user's info, this is the url that Google has defined.
 	Scope: "https://www.googleapis.com/auth/userinfo.profile",
@@ -85,9 +85,9 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &user)
 
 	var existing *User
-	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"gId": user.Id}).One(&existing)
+	dbConnection.session.DB(db_name).C("user").Find(bson.M{"gId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
-	if existing != nil {
+	if existing != nil && existing.Id != "" {
 		session.Values["user"] = existing.Id
 		session.Save(r, w)
 	} else {

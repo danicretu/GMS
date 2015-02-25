@@ -93,11 +93,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(db_name)
 	fmt.Println(existing)
 
-	id := bson.NewObjectId()
-	newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", user.Id, "", user.Id}
-	add(dbConnection, newUser)
-
-	if existing != nil {
+	if existing.Id != "" && existing != nil {
 
 		session.Values["user"] = existing.Id
 		session.Save(r, w)
