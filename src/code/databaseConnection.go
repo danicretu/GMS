@@ -16,11 +16,11 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-var db_name = "db_name"
+var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gms")
+	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +31,7 @@ func (m *MongoDBConn) connect() *mgo.Session {
 }
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gms")
+	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
 	if err != nil {
 		panic(err)
 	}
@@ -138,7 +138,7 @@ func findUser(m *MongoDBConn, id string) *User {
 	return &result
 }
 
-func getFlickrImages(m *MongoDBConn, tag string) []FlickrImage {
+func getFlickrImages(tag string) []FlickrImage {
 	source := "/home/dani/go-programs/flickrData/"
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connectFlickr()
@@ -162,7 +162,7 @@ func getFlickrImages(m *MongoDBConn, tag string) []FlickrImage {
 	return flickrImage
 }
 
-func getNews(m *MongoDBConn, tag string) []News {
+func getNews(tag string) []News {
 	dbConnection = NewMongoDBConn()
 	_ = dbConnection.connectFlickr()
 	c := dbConnection.session.DB("gmsTry").C("gmsNewsScottish")

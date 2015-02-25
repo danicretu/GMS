@@ -148,8 +148,6 @@ var store = sessions.NewCookieStore(authKey, encKey)
 
 var dbConnection *MongoDBConn
 
-var db_name = "ugc"
-var flickrDB = "gmsTry"
 
 //add(dbConnection, name, password) ->add to db
 //find(dbConnection, name) ->find in db
@@ -188,7 +186,7 @@ func main() {
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
 
 	http.Handle("/", router)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8892", nil)
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
