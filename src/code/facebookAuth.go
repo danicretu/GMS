@@ -26,7 +26,7 @@ var oauthCfgF = &oauth.Config{
 
 	TokenURL: "https://graph.facebook.com/oauth/access_token",
 
-	RedirectURL: "http://localhost:8080/oauth2callbackF",
+	RedirectURL: "http://mirugc.dcs.gla.ac.uk/oauth2callbackF",
 }
 
 type UserF struct {
@@ -86,7 +86,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &user)
 
 	var existing *User
-	dbConnection.session.DB("gmsTry").C("user").Find(bson.M{"fId": user.Id}).One(&existing)
+	dbConnection.session.DB(db_name).C("user").Find(bson.M{"fId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
 	if existing != nil {
 
