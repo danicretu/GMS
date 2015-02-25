@@ -187,7 +187,7 @@ func main() {
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
 
 	http.Handle("/", router)
-	http.ListenAndServe(":8892", nil)
+	http.ListenAndServe(":8080", nil)
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
