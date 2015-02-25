@@ -90,7 +90,12 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	dbConnection.session.DB(db_name).C("user").Find(bson.M{"fId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
 
-	fmt.Println(existing == nil)
+	fmt.Println(db_name)
+	fmt.Println(existing)
+
+	id := bson.NewObjectId()
+	newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", user.Id, "", user.Id}
+	add(dbConnection, newUser)
 
 	if existing != nil {
 
