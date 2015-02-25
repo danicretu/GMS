@@ -1,3 +1,66 @@
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+	
+	.navbar-my .navbar-brand {font-size:17px;}
+/* Styles */
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen 
+and (min-width : 321px) {
+	.navbar-my .navbar-brand {font-size:17px;}
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 320px) {
+	.navbar-my .navbar-brand {font-size:17px;}
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) {
+	.navbar-my .navbar-brand {font-size:38px;}
+}
+
+/* iPads (landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : landscape) {
+/* Styles */
+}
+
+/* iPads (portrait) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) {
+/* Styles */
+}
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+	.navbar-my .navbar-brand {font-size:38px;}
+}
+
+/* Large screens ----------- */
+@media only screen 
+and (min-width : 1824px) {
+/* Styles */
+}
+
+/* iPhone 4 ----------- */
+@media
+only screen and (-webkit-min-device-pixel-ratio : 1.5),
+only screen and (min-device-pixel-ratio : 1.5) {
+/* Styles */
+}
+
+
 @font-face {
     font-family: AmericanType;
     src: url("../fonts/american_typewriter.ttf");
@@ -24,6 +87,7 @@
 .navbar-my .navbar-brand{
 	color:white;
 	font-family: AmericanType;
+	/*font-size:38px; */
 }
 .navbar-my .navbar-brand:hover .navbar-my .navbar-brand:focus{
 	color:white;
@@ -48,11 +112,16 @@
 .navbar-my .navbar-toggle{
 	border-color:#ddd;
 }
+
 .navbar-my .navbar-toggle:hover,.navbar-my .navbar-toggle:focus{
 	background-color:#ddd;
 }
 .navbar-my .navbar-toggle .icon-bar{
-	background-color:#888;
+	background-color:white;
+}
+
+.navbar-my .open .dropdown-menu {
+	background-color:white;
 }
 .navbar-my .navbar-collapse,.navbar-my .navbar-form{
 	border-color:#e7e7e7;
@@ -60,7 +129,12 @@
 .navbar-my .navbar-nav>.open>a,.navbar-my .navbar-nav>.open>a:hover,.navbar-my .navbar-nav>.open>a:focus{
 	color:#555;background-color:#e7e7e7;
 }
+
+
+
+
 @media (max-width:767px){.navbar-my .navbar-nav .open .dropdown-menu>li>a{color:#777;}
+
 .navbar-my .navbar-nav .open .dropdown-menu>li>a:hover,.navbar-my .navbar-nav .open .dropdown-menu>li>a:focus{color:#0D77B6;background-color:transparent;}
 .navbar-my .navbar-nav .open .dropdown-menu>.active>a,.navbar-my .navbar-nav .open .dropdown-menu>.active>a:hover,.navbar-my .navbar-nav .open .dropdown-menu>.active>a:focus{
 	color:#555;background-color:#e7e7e7;}
@@ -140,6 +214,15 @@
 }
 #newsToday {  
     height: auto;  
+    margin: 0 auto; 
+    width: 100%; 
+    position: relative; 
+    padding-top: 50px; 
+    padding-bottom: 50px;
+    background-color: #0D77B6;
+}
+#userGenerated{
+	height: auto;  
     margin: 0 auto; 
     width: 100%; 
     position: relative; 

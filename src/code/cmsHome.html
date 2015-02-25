@@ -129,12 +129,17 @@
        <nav class="navbar navbar-my navbar-fixed-top" role="navigation">
          <div class="container">
            <div class="navbar-header">
-             
-             <a class="navbar-brand" href="/" style="font-size: 38px">               
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle Navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+             <a class="navbar-brand" href="/">               
              	GMS:Glasgow Memories Server
              </a>
            </div>
-           <div id="navbar" class="collapse navbar-collapse navbar-my-text">
+           <div id="navbar" class="navbar-collapse collapse navbar-my-text">
              <ul class="nav navbar-nav">
                <li><a href="#">Home</a></li>
                <li><a href="#about">Today</a></li>
@@ -210,7 +215,12 @@
        <div class="container">         
          <div class="container-fluid">
   <div class="row">
-  	<div class="col-md-3">
+	
+  	<div class="col-md-3 collapse-group">
+	
+	<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
+	<!--<a class="btn btn-default" data-toggle="collapse" data-target=".sideMenu">View Menu</a> -->
+	<div class="hidden-xs sideMenu">
       <ul  id = "main-nav" class="nav nav-pills nav-stacked">
         <li class="active"><a href="#"  class="scroll-link" data-id="images">User Images</a></li>
 		<li><a href="#" class="scroll-link" data-id="video">Videos</a></li>
@@ -232,7 +242,10 @@
               </div>              
 			</div>       	      	
       </div>
+	</div>
+	
     </div>    
+
    <div class="col-md-9">
              <div class="panel mypanel">
                <div class="panel-heading">
@@ -268,16 +281,7 @@
 </section>
 <section class="arrows_box">
     <div class="arrows">
-        <svg viewBox="0 0 32 32" class="arrow_down" id="about_arrow_next">
-			<script>
-				$(document).ready(function()){
-					$('.arrow-down, .arrow-up').on('click', function(event) {
-						event.preventDefault();
-						var sectionId=$(this).attr("data-id");
-						scrollToID('#'+sectionID, 750)
-					});
-				});
-			</script>
+        <svg viewBox="0 0 32 32" class="scroll-link arrow_down" id="about_arrow_next" data-id="images">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>        
     </div>
 </section>
@@ -291,12 +295,12 @@
 		               <div class="panel-heading">
 		                 <h2 class="panel-title" style="font-size: 24px; color:white">Most Popular Images</h2>
 		               </div>
-		               <div class="panel-body bodyText">            	
+		               <div class="panel-body headText">            	
 		                <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 											{{range $index2, $element2 :=.P.Photos}}
 												{{if $element2.URL}}
 													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px; width:20%;">
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 														<a id="{{$element2.PhotoId}}{{$.P.Name}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}{{$.P.Name}}">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
@@ -317,15 +321,15 @@
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
 															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																			<div class='col-md-8 imgdiv'>
 																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
 																				<div style="display:block; text-align:center;">																		
 																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.PhotoId}}{{$.P.Name}}">Prev</a>
 																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.PhotoId}}{{$.P.Name}}">Next</a>
 																				</div>
 																			</div>
-																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
+																			<div class="col-md-4" style="padding:0; padding-left:2%;">
+																				<a style="float:left; font-size:medium; clear:both;" name="logA" href="/retrieveUser?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
 																				<p style="float:right; font-size:medium; color:black;">{{$element2.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;" class="row">
 																					<p style="float:left; font-size:90%;color:black;" class="col-md-6">{{$element2.Description}}</p>
@@ -338,7 +342,7 @@
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Tags}}
-																						<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
+																						<a class="tag" name="logT" href="/retrieveTag?{{$elementTag}}">{{$elementTag}}</a>
 																					{{end}}
 																				</div>
 																				<div name="logP">
@@ -362,7 +366,7 @@
 																										<li>
 																											<div class="commentText">
 																												<p>{{$elementComment.Body}}</p>																									
-																												<a class="user under" href="/user?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
+																												<a class="user under" name="logA" href="/retrieveUser?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
 																												<span class="date under">on {{$elementComment.Timestamp}}</span>
 																											</div>
 																										</li>
@@ -380,7 +384,7 @@
 												{{end}}
 											{{end}}
 							</ul>
-			              	
+			              	</div>
 		               </div>
 		             </div>          
 		           </div>
@@ -389,14 +393,15 @@
 	</section>
    <section class="blue_arrows_box">
     <div class="arrows">
-        <svg data-id="images" viewBox="0 0 32 32" class="arrow_down" id="news_arrow_next">
+        <svg data-id="recentImages" viewBox="0 0 32 32" class="scroll-link arrow_down" id="news_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg data-id="recentImages" viewBox="0 0 32 32" class="arrow_up" id="news_arrow_back">
+        <svg data-id="images" viewBox="0 0 32 32" class="scroll-link arrow_up" id="news_arrow_back">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
 	<!-- Section #3 -->
 	<section id="recentImages" data-speed="2" data-type="background">
+	<div id="recentImages" class="page-section">
 		<div class="container">         
          <div class="container-fluid">
   <div class="row">
@@ -405,12 +410,12 @@
                <div class="panel-heading">
                  <h2 class="panel-title" style="font-size: 24px">Recently Uploaded Images</h2>
                </div>
-               <div class="panel-body bodyText">            	
+               <div class="panel-body headText">            	
                   <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 											{{range $index3, $element3 :=.R.Photos}}
 												{{if $element3.URL}}
 													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px; width:20%;">
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 														<a id="{{$element3.PhotoId}}{{$.R.Name}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element3.PhotoId}}{{$.R.Name}}">
 								          					<img class="img-thumbnail" src="{{$element3.URL}}">
 								        					</a>
@@ -431,26 +436,27 @@
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
 															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																			<div class='col-md-8 imgdiv'>
 																	      		<img style="width:90%; height:100%;" src="{{$element3.URL}}" />		
 																				<div style="display:block; text-align:center;">																		
 																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element3.PhotoId}}{{$.R.Name}}">Prev</a>
 																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element3.PhotoId}}{{$.R.Name}}">Next</a>
 																				</div>
 																			</div>
-																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium;" href="/user?{{$element3.Owner}}">{{$element3.OwnerName}}</a>
+																			<div class="col-md-4" style="padding:0; padding-left:2%; ">
+																				<a style="float:left; font-size:medium; clear:both;" name="logA" href="/retrieveUser?{{$element3.Owner}}">{{$element3.OwnerName}}</a>
 																				<p style="float:right; font-size:medium; color:black;">{{$element3.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;" class="row">
 																					<p style="float:left; font-size:90%;color:black;" class="col-md-6">{{$element3.Description}}</p>
 																					{{if $element3.Location.Name}}
 																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> -at {{$element3.Location.Name}}</p> 
 																					{{end}}
-																					
+																					<p id= "upvotep{{$element3.PhotoId}}{{$.R.Name}}" style="float:left;clear:both; font-size:smaller;color:black;" class="col-md-2">{{$element3.Views}}</p>
+																					<p style="float:left; font-size:small; padding-top:1.3%;color:black;">Views</p>
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag1, $elementTag2 := $element3.Tags}}
-																						<a class="tag" href="/tag?{{$elementTag2}}">{{$elementTag2}}</a>
+																						<a class="tag" name="logT" href="/retrieveTag?{{$elementTag2}}">{{$elementTag2}}</a>
 																					{{end}}
 																				</div>
 																				<div name="logR">
@@ -473,7 +479,7 @@
 																										<li>
 																											<div class="commentText">
 																												<p>{{$elementComment1.Body}}</p>																									
-																												<a class="user under" href="/user?{{$elementComment1.UserId}}">{{$elementComment1.User}}</a>
+																												<a class="user under" name="logA" href="/retrieveUser?{{$elementComment1.UserId}}">{{$elementComment1.User}}</a>
 																												<span class="date under">on {{$elementComment1.Timestamp}}</span>
 																											</div>
 																										</li>
@@ -491,7 +497,7 @@
 												{{end}}
 											{{end}}
 							</ul> 
-	              	
+	              	</div>
                </div>
              </div>          
            </div>
@@ -500,9 +506,9 @@
 	</section>
 	<section class="arrows_box">
     <div class="arrows">
-        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
+        <svg data-id="video" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
+        <svg data-id="recentImages" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
@@ -516,12 +522,12 @@
                <div class="panel-heading">
                  <h2 class="panel-title" style="font-size: 24px; color:white">Most Popular Videos</h2>
                </div>
-               <div class="panel-body bodyText">            	
+               <div class="panel-body headText">            	
                   <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 											{{range $index2, $element2 :=.P.Videos}}
 												{{if $element2.URL}}
 													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px; width:20%;">
+													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 														<a id="{{$element2.VideoId}}{{$.P.Name}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}{{$.P.Name}}">
 								          					<video class="img-thumbnail">
 																<source src="{{$element2.URL}}" type="video/mp4">
@@ -546,7 +552,7 @@
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
 															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																			<div class='col-md-8 imgdiv'>
 																	      		<video style="width:100%; height:100%;" controls>
 																					<source src="{{$element2.URL}}" type="video/mp4"></source>
 					  																<source src="{{$element2.URL}}" type="video/ogg"></source>
@@ -557,8 +563,8 @@
 																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.VideoId}}{{$.P.Name}}">Next</a>
 																				</div>
 																			</div>
-																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium;" href="/user?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
+																			<div class="col-md-4" style="padding:0; padding-left:2%;">
+																				<a style="float:left; font-size:medium; clear:both;" name="logA" href="/retrieveUser?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
 																				<p style="float:right; font-size:medium; color:black;">{{$element2.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;" class="row">
 																					<p style="float:left; font-size:90%;color:black;" class="col-md-6">{{$element2.Description}}</p>
@@ -571,7 +577,7 @@
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Tags}}
-																						<a class="tag" href="/tag?{{$elementTag}}">{{$elementTag}}</a>
+																						<a class="tag" name="logT" href="/retrieveTag?{{$elementTag}}">{{$elementTag}}</a>
 																					{{end}}
 																				</div>
 																				<div name="logP">
@@ -595,7 +601,7 @@
 																										<li>
 																											<div class="commentText">
 																												<p>{{$elementComment.Body}}</p>																									
-																												<a class="user under" href="/user?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
+																												<a class="user under" name="logA" href="/retrieveUser?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
 																												<span class="date under">on {{$elementComment.Timestamp}}</span>
 																											</div>
 																										</li>
@@ -613,7 +619,7 @@
 												{{end}}
 											{{end}}
 							</ul>
-	              	
+	              	</div>
                </div>
              </div>          
            </div>
@@ -622,13 +628,14 @@
 	</section>
 	<section class="arrows_box">
     <div class="arrows">
-        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
+        <svg data-id="recentVideos" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
+        <svg data-id="video" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
 	<section id="recentVideos" data-speed="2" data-type="background">
+	<div id="recentVideos" class="page-section">
 			<div class="container">         
 	         <div class="container-fluid">
 	  <div class="row">
@@ -637,12 +644,12 @@
 	               <div class="panel-heading">
 	                 <h2 class="panel-title" style="font-size: 24px">Recently Uploaded Videos</h2>
 	               </div>
-	               <div class="panel-body bodyText">            	
+	               <div class="panel-body headText">            	
 	                  <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 												{{range $index3, $element3 :=.R.Videos}}
 													{{if $element3.URL}}
 														
-														<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px; width:20%;">
+														<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 															<a id="{{$element3.VideoId}}{{$.R.Name}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element3.VideoId}}{{$.R.Name}}">
 									          					<video class="img-thumbnail">
 																<source src="{{$element3.URL}}" type="video/mp4">
@@ -667,7 +674,7 @@
 																        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 																      		</div>
 																      		<div class="modal-body login-modal row" >
-																				<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																				<div class='col-md-8 imgdiv'>
 																		      		<video style="width:100%; height:100%;" controls>
 																						<source src="{{$element3.URL}}" type="video/mp4"></source>
 						  																<source src="{{$element3.URL}}" type="video/ogg"></source>
@@ -678,8 +685,8 @@
 																						<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element3.VideoId}}{{$.R.Name}}">Next</a>
 																					</div>
 																				</div>
-																				<div class="col-md-4" style="padding:0;">
-																					<a style="float:left; font-size:medium;" href="/user?{{$element3.Owner}}">{{$element3.OwnerName}}</a>
+																				<div class="col-md-4" style="padding:0; padding-left:2%; ">
+																					<a style="float:left; font-size:medium; clear:both;" name="logA" href="/retrieveUser?{{$element3.Owner}}">{{$element3.OwnerName}}</a>
 																					<p style="float:right; font-size:medium; color:black;">{{$element3.Timestamp}}</p>
 																					<div style="clear:both; padding-top:7%;" class="row">
 																						<p style="float:left; font-size:90%;color:black;" class="col-md-6">{{$element3.Description}}</p>
@@ -689,7 +696,7 @@
 																					</div>
 																					<div style="clear:both;">
 																						{{range $indexTag1, $elementTag2 := $element3.Tags}}
-																							<a class="tag" href="/tag?{{$elementTag2}}">{{$elementTag2}}</a>
+																							<a class="tag" name="logT" href="/retrieveTag?{{$elementTag2}}">{{$elementTag2}}</a>
 																						{{end}}
 																					</div>
 																					<div name="logR">
@@ -712,7 +719,7 @@
 																											<li>
 																												<div class="commentText">
 																													<p>{{$elementComment1.Body}}</p>																									
-																													<a class="user under" href="/user?{{$elementComment1.UserId}}">{{$elementComment1.User}}</a>
+																													<a class="user under" name="logA" href="/retrieveUser?{{$elementComment1.UserId}}">{{$elementComment1.User}}</a>
 																													<span class="date under">on {{$elementComment1.Timestamp}}</span>
 																												</div>
 																											</li>
@@ -730,7 +737,8 @@
 													{{end}}
 												{{end}}
 								</ul> 
-		              	
+							</div>
+		              	</div>
 	               </div>
 	             </div>          
 	           </div>
@@ -739,34 +747,38 @@
 	</section>
 	<section class="arrows_box">
     <div class="arrows">
-        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
+        <svg data-id="flickrImages" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
+        <svg data-id="recentVideos" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
     </div>
 	</section>
+
+	<section id="flickrImages" data-speed="4" data-type="background">
+	<div id="flickrImages" class="page-section">
+	<div class="container">                  
+		  <div class="row">
+		    <div>
+		             <div class="panel newsPanel">
+		               <div class="panel-heading">
+		                 <h2 class="panel-title" style="font-size: 24px; color:white">Flickr Images</h2>
+		               </div>
+		               <div class="panel-body headText"> 
+
+	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+
 	
-	<section id="news">
-	<div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px">News</h2>
-               </div>
 	
-	
-	<div id = "newsHelper">
-<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-					{{range $element2 := .N}}
-												
+		{{range $index2, $element2 := .Flickr}}
+												{{if $element2.URL}}
 													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a href={{$element2.URL}}>{{$element2.Title}}</a>
-														
-														<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
-								          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">
+														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr">
+								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
-														
 													</li>
-													{{if $element2.ImageUrl}}		
-													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
+															
+													<div class="modal" id="picModal{{$index2}}flickr" tabindex="-1" role="dialog" aria-hidden="true">
 															
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
@@ -774,7 +786,88 @@
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
 															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																			<div class='col-md-8 imgdiv'>
+																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
+																				<div style="display:block; text-align:center;">																		
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}flickr">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}flickr">Next</a>
+																				</div>
+																			</div>
+																			<div class="col-md-4" style="padding:0; padding-left:2%; ">
+																				
+																				<p style="float:right; font-size:medium; color:black; clear:both;">{{$element2.TimeStamp}}</p>
+																				<div style="clear:both; padding-top:7%; padding-left:8%;" class="row">
+																					<p style="float:left; font-size:90%; color:black;">{{$element2.Description}}</p>
+																																									
+																				</div>
+																				<div style="clear:both;">
+																					{{range $indexTag, $elementTag := $element2.Keywords}}
+																						<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
+																					{{end}}
+																				</div>
+																				
+																																						
+																			</div>
+															      		</div>	
+															    </div>
+														    	</div>
+													</div>				
+												{{end}}
+											{{end}} 
+											
+											</ul>
+										</div>
+								</div>
+						</div>
+				</div>
+			</div>
+		</div>
+
+</div>
+	</section>
+	
+	<section class="blue_arrows_box">
+    <div class="arrows">
+        <svg data-id="news" viewBox="0 0 32 32" class="scroll-link arrow_down" id="news_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg data-id="flickrImages" viewBox="0 0 32 32" class="scroll-link arrow_up" id="news_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
+	
+	<section id="news">
+	<div id="news" class="page-section">
+	<div class="container">         
+         <div class="container-fluid">
+  <div class="row">
+    <div>
+             <div class="panel mypanel">
+               <div class="panel-heading">
+                 <h2 class="panel-title" style="font-size: 24px">News</h2>
+               </div>
+               <div class="panel-body headText">  
+<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+					{{range $index2, $element2 := .N}}
+												
+													
+													<li style="list-style:none;margin-bottom:25px;">
+														<a href={{$element2.URL}}>{{$element2.Title}}</a>
+														
+														<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}news">
+								          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">
+								        					</a>
+														
+													</li>
+													{{if $element2.ImageUrl}}		
+													<div class="modal" id="picModal{{$index2}}news" tabindex="-1" role="dialog" aria-hidden="true">
+															
+															<div class="modal-dialog" style="width: auto; max-width: 900px;">
+															    	<div class="modal-content">
+															      		<div class="modal-header login_modal_header">
+															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+															      		</div>
+															      		<div class="modal-body login-modal row" >
+																			<div class='col-md-8 imgdiv'>
 																	      		<img style="width:90%; height:100%;" src="{{$element2.ImageUrl}}" />		
 																				
 																			</div>
@@ -787,75 +880,15 @@
 												{{end}}
 											{{end}}
 	</ul>
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
 </div>
 	</section>
-	<section class="arrows_box">
-    <div class="arrows">
-        <svg viewBox="0 0 32 32" class="arrow_down" id="lifelog_arrow_next">
-            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg viewBox="0 0 32 32" class="arrow_up" id="lifelog_arrow_back">
-            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
-    </div>
-	</section>
-	<section id="flickrImages" data-speed="4" data-type="background">
-	<div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px">FlickrImages</h2>
-               </div>
-	<div id="pictureHelper">
-
-	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-		{{range $element2 := .Flickr}}
-												{{if $element2.URL}}
-													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
-								          					<img class="img-thumbnail" src="{{$element2.URL}}">
-								        					</a>
-													</li>
-															
-													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
-															
-															<div class="modal-dialog" style="width: auto; max-width: 900px;">
-															    	<div class="modal-content">
-															      		<div class="modal-header login_modal_header">
-															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-															      		</div>
-															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
-																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
-																				<div style="display:block; text-align:center;">																		
-																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.ImageName}}">Prev</a>
-																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.ImageName}}">Next</a>
-																				</div>
-																			</div>
-																			<div class="col-md-4" style="padding:0;">
-																				
-																				<p style="float:right; font-size:medium;">{{$element2.TimeStamp}}</p>
-																				<div style="clear:both; padding-top:7%;" class="row">
-																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
-																																									
-																				</div>
-																				<div style="clear:both;">
-																					{{range $indexTag, $elementTag := $element2.Keywords}}
-																						<a class="tag" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
-																					{{end}}
-																				</div>
-																				
-																																						
-																			</div>
-															      		</div>	
-															    </div>
-														    	</div>
-													</div>				
-												{{end}}
-											{{end}}
-											
-											</ul>
 	
-	
-
-</div>
-	</section>
 	<section class="blue_arrows_box">
     <div class="arrows">        
         <svg viewBox="0 0 32 32" class="arrow_up" id="ugc_arrow_back">
@@ -912,6 +945,13 @@
                         console.log(picker.startDate.format('YYYY-MM-DD'));
                         console.log(picker.endDate.format('YYYY-MM-DD'));
                      });
+					$('.arrow-down, .arrow-up').on('click', function(event) {
+						event.preventDefault();
+						var sectionId=$(this).attr("data-id");
+						scrollToID('#'+sectionID, 750)
+					});
+					
+					
                   });                  
                   </script>
      
@@ -982,26 +1022,36 @@
         			<div class="clearfix"></div>
         		
         			<div class="form-group modal-register-btn">
-        				<button id="registerButton" class="btn modal-login-btn" style="color:white;"> New User Please Register</button>
+        				<button data-dismiss="modal" data-toggle="modal" data-target="#registerModal" id="" class="btn modal-login-btn" style="color:white;"> New User Please Register</button>
         			</div>
       		</div>
     	</div>
   	</div>
 </div>
 
-<div id="registerDiv" style="display:none;">
-	<div id="modalBody" class="modal-body login-modal">
-      	<div class="clearfix"></div>
-      	<div id='social-icons-container'>
-			<form id="registerForm" class="loginDiv" >
-				<input type="text" class="form-control login-field" id="email" style="margin-bottom:20px" placeholder="E-mail Address" required/>
-				<input type="text" class="form-control login-field" id="first" style="margin-bottom:20px" placeholder="First Names" required/>
-				<input type="text" class="form-control login-field" id="last" style="margin-bottom:20px" placeholder="Last Name" required/>
-				<input type="password" class="form-control login-field" id="password" style="margin-bottom:20px" placeholder="Password" required/>
-				<input type="password" class="form-control login-field" id="confirmPassword" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
-				<label id="errorLabel"></label>
-				<input style="color:white;" type="submit" name="submit" value="Register" class="btn modal-login-btn">
-			</form>	
-		</div>		        		
-    </div>
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header login_modal_header">
+        	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        		<h2 class="modal-title" id="modalLabel">Register for an Account</h2>
+      		</div>
+			<div id="modalBody" class="modal-body login-modal">
+		      	<div class="clearfix"></div>
+		      	<div id='social-icons-container'>
+					<form id="registerForm" class="loginDiv" >
+						<input type="text" class="form-control login-field" id="email" style="margin-bottom:20px" placeholder="E-mail Address" required/>
+						<input type="text" class="form-control login-field" id="first" style="margin-bottom:20px" placeholder="First Names" required/>
+						<input type="text" class="form-control login-field" id="last" style="margin-bottom:20px" placeholder="Last Name" required/>
+						<input type="password" class="form-control login-field" id="password" style="margin-bottom:20px" placeholder="Password" required/>
+						<input type="password" class="form-control login-field" id="confirmPassword" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
+						<label id="errorLabel"></label>
+						<input style="color:white;" type="submit" name="submit" value="Register" class="btn modal-login-btn">
+						<button data-dismiss="modal" data-toggle="modal" data-target="#loginModal" id="" class="btn modal-login-btn" style="color:white;"> Go Back to Login</button>
+					</form>	
+				</div>	
+				</div>	        		
+		    </div>
+		</div>
+	</div>
 </div>

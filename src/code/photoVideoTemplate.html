@@ -3,7 +3,7 @@
     <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
 </div>
 
-<div id="pictureTemplate">
+<div id="pictureTemplate" class="headText">
 <ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 
 
@@ -29,7 +29,7 @@
 				        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				      			</div>
 								<div class="modal-body login-modal row" >
-									<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+									<div class='col-md-8 imgdiv'>
 							      		<img class="imageSize" src="{{$element2.URL}}" />
 											<div style="display:block; text-align:center;">																		
 												<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.PhotoId}}">Prev</a>
@@ -37,7 +37,7 @@
 											</div>
 									</div>
 									<div class="col-md-4" style="padding:0;">
-										<a style="float:left; font-size:medium;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+										<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
 										<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
 										<div style="clear:both; padding-top:7%;" class="row">
 											<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
@@ -94,8 +94,8 @@
 		
 
 </ul>
-<a href="#" id="previous" onclick="getContentTemp({{.User}},{{.PageIP}},'image',{{.PageVP}},{{.PageVN}})">Prev</a>
-<a href="#" id="next"  onclick="getContentTemp({{.User}},{{.PageIN}},'image',{{.PageVP}},{{.PageVN}})">Next</a>
+<a href="#" id="previous" onclick="getUser({{.User}},{{.PageIP}},'image',{{.PageVP}},{{.PageVN}})">Prev</a>
+<a href="#" id="next"  onclick="getUser({{.User}},{{.PageIN}},'image',{{.PageVP}},{{.PageVN}})">Next</a>
 </div>
 </div>
 
@@ -103,7 +103,7 @@
 <div class="panel-heading" >
     <h2 class="panel-title" style="font-size: 24px">Videos</h2>
 </div>
-<div id="pictureTemplate">
+<div id="pictureTemplate" class="headText">
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 									{{range $element2 :=.Video}}
 												{{if $element2.URL}}
@@ -132,7 +132,7 @@
 															        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 															      		</div>
 															      		<div class="modal-body login-modal row" >
-																			<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																			<div class='col-md-8 imgdiv'>
 																	      		
 																				<video class="imageSize" controls>
 																					<source src="{{$element2.URL}}" type="video/mp4"></source>
@@ -145,7 +145,7 @@
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+																				<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
 																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;" class="row">
 																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
@@ -195,7 +195,7 @@
 												{{end}}
 											{{end}}
 	</ul>
-<a href="#" id="previous" onclick="getContentTemp({{.User}},{{.PageVP}},'video',{{.PageIP}},{{.PageIN}})">Prev</a>
-<a href="#" id="next"  onclick="getContentTemp({{.User}},{{.PageVN}},'video',{{.PageIP}},{{.PageIN}})">Next</a>
+<a href="#" id="previous" onclick="getUser({{.User}},{{.PageVP}},'video',{{.PageIP}},{{.PageIN}})">Prev</a>
+<a href="#" id="next"  onclick="getUser({{.User}},{{.PageVN}},'video',{{.PageIP}},{{.PageIN}})">Next</a>
 </div>
 </div>

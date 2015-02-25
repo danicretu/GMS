@@ -1,18 +1,18 @@
 <div id = "newsHelper">
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-					{{range $element2 := .N}}
+					{{range $index2, $element2 := .N}}
 												
 													
-													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
+													<li style="list-style:none;margin-bottom:25px;">
 														<a href={{$element2.URL}}>{{$element2.Title}}</a>
 														
-														<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.ImageName}}">
+														<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}news">
 								          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">
 								        					</a>
 														
 													</li>
 													{{if $element2.ImageUrl}}		
-													<div class="modal" id="picModal{{$element2.ImageName}}" tabindex="-1" role="dialog" aria-hidden="true">
+													<div class="modal" id="picModal{{$index2}}news" tabindex="-1" role="dialog" aria-hidden="true">
 															
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
@@ -33,4 +33,6 @@
 													{{end}}
 											{{end}}
 	</ul>
+	<a href="#" id="previous" onclick="return flickrNews({{.Tag}},{{.PageIP}},'news')">Prev</a>
+	<a href="#" id="next"  onclick="return flickrNews({{.Tag}},{{.PageIN}},'news')">Next</a> 
 </div>
