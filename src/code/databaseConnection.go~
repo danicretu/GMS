@@ -188,8 +188,6 @@ func getNews(tag string, start int) []News {
 
 	}
 
-	fmt.Println(news)
-
 	return news
 }
 
