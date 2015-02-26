@@ -551,60 +551,6 @@ function assign(data) {
 function setClass(id) {
 	$('#'+ data).attr('name','liaOwn');
 }
-/*
-function getContentTemp(user,start,cType,nModP, nModN){
-	if (start != -1) {
-			$.ajax({
-				type:"POST",
-				url:"/user",
-				data:{"user" : user, "start":start, "cType":cType, "nModP":nModP},
-				success : function(html){			
-						console.log("in ok");
-						console.log(document.getElementById('panelBodyContent').id);
-						//document.getElementById('panelBodyContent').innerHtml = "Hello";
-						if (html != ""){
-							$('#panelBodyContent').html(html);
-							carousel();
-							var imgList = document.getElementsByName("lia");
-							for (var i = 0; i < imgList.length; i++)
-							{
-								assign(imgList[i].id)();
-								
-							}
-						}
-				}
-			});
-		}
-	
-}
-*//*
-function getTagContent(tag,start,cType,nModP, nModN){
-	if (start != -1) {
-			$.ajax({
-				type:"POST",
-				url:"/tag",
-				data:{"tag" : tag, "start":start, "cType":cType, "nModP":nModP},
-				success : function(html){			
-						console.log("in ok");
-						console.log(document.getElementById('panelBodyContent').id);
-						//document.getElementById('panelBodyContent').innerHtml = "Hello";
-						if (html != ""){
-							$('#panelBodyContent').html(html);
-							carousel();
-							var imgList = document.getElementsByName("lia");
-							for (var i = 0; i < imgList.length; i++)
-							{
-								assign(imgList[i].id)();
-								
-							}
-						}
-				}
-			});
-	}
-	
-}
-
-*/
 
 function setActive(lid){
 	var lis = document.getElementsByName("menuItem")
@@ -646,17 +592,63 @@ function getAlbums(data){
 	}
 }
 
+function flickrMenu(data, start, cType){
+	if (data=="getTags"){
+		data +=$("input#srch-term").val();
+	} else {
+		
+	}
+	
+	if (start != -1){
+		$.ajax({
+			type:"POST",
+			url:"/flickrImages",
+			data:{"req":data, "start":start, "cType":cType},
+			success: function(html){
+				if (data=="start"){
+					document.getElementById('panelBodyContent').innerHTML=html;
+				} else if(data.indexOf("getTags") > -1){
+							console.log("in else")
+							if (html != "No content found with requested tag"){
+								document.getElementById('cloudFlickr').innerHTML="";
+								populateCloud(html,"Flickr");
+								document.getElementById('cloudFlickr').style.visibility='visible';
+							} else {
+								document.getElementById('cloudFlickr').innerHTML=html;
+								document.getElementById('cloudFlickr').style.visibility='visible';
+							}
+				} else {
+					var obj = jQuery.parseJSON(html);
+					
+					if (cType == "and" && obj[0].Content!=""){
+						document.getElementById('resultAnd').innerHTML=obj[0].Content;
+						document.getElementById('resultAnd').style.visibility='visible';
+					} else if (cType=="or" && obj[1].Content!="") {
+						document.getElementById('resultOr').innerHTML=obj[1].Content;
+						document.getElementById('resultOr').style.visibility='visible';
+					}else{
+						document.getElementById('resultAnd').innerHTML=obj[0].Content;
+						document.getElementById('resultAnd').style.visibility='visible';
+						document.getElementById('resultOr').innerHTML=obj[1].Content;
+						document.getElementById('resultOr').style.visibility='visible';
+					} 
+				}
+			}
+		});
+	}
+}
+
 function flickrNews(data, start, cType){
 	if (data=="getTags"){
 		data +=$("input#srch-term").val();
 	}
 	console.log(data+"start");
 	console.log(cType);
-	setActive("flickrMenu");
+	setActive("flickrCWG");
 	if (start != -1){
 		$.ajax({
 				type:"POST",
-				url:"/flickrNews",
+				url:"/flickrCwg",
 				data:{"req" : data, "start" : start, "cType" : cType},
 				success: function(html) {
 					$('div.sideMenu').removeClass('in');

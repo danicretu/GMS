@@ -5,6 +5,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	//"time"
+	//"math/rand"
 	"strings"
 )
 
@@ -15,6 +16,8 @@ type MongoDBConn struct {
 func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
+
+//var db_name = "gmsTry"
 
 var db_name = "ugc"
 var flickrDB = "gmsTry"
@@ -138,6 +141,37 @@ func findUser(sess *mgo.Session, id string) *User {
 	}
 
 	return &result
+}
+
+func getFlickrMain() []FlickrImage1 {
+
+	//a := rand.Intn(65536)
+	//b := rand.Intn(a)
+
+	source := "/resources/flickr/"
+	dbConn := NewMongoDBConn()
+	_ = dbConn.connectFlickr()
+	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
+	var flickrImage []FlickrImage1
+	//var myarr = []string{tag}
+	//limit := 8
+
+	err := c.Find(bson.M{}).Skip(10).Limit(8).All(&flickrImage)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(flickrImage)
+
+	for i := range flickrImage {
+		date := strings.Split(flickrImage[i].TimeStamp, " ")
+		t := strings.Split(date[0], "/")
+		folderName := t[0] + "_" + t[1] + "_" + t[2]
+		flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
+	}
+
+	return flickrImage
+
 }
 
 func getFlickrImages(tag string, start int) []FlickrImage {

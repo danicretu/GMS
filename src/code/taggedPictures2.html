@@ -113,11 +113,12 @@
 					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 				    <div class="hidden-xs sideMenu">
 						<ul class="nav nav-pills nav-stacked">
-					      <li  class="active"><a href="#" onclick="getPictures('');">Pictures</a></li>
-						  <li><a href="#" onclick="getVideos('');">Videos</a></li>	
-					      <li><a href="#" onclick="getAlbums('');">Albums</a></li>
-					      <li><a href="#" onClick="getUpload();">Upload</a></li>
-						  <li><a href="#" onclick="flickrNews('start');">Flickr News</a></li>
+					      <li name="menuItem" id="pictureMenu"><a href="#" onclick="getPictures('');">Pictures</a></li>
+						  <li name="menuItem" id="videoMenu"><a href="#" onclick="getVideos('');">Videos</a></li>	
+					      <li name="menuItem" id="albumMenu"><a href="#" onclick="getAlbums('');">Albums</a></li>
+					      <li name="menuItem" id="uploadMenu"><a href="#" onClick="getUpload();">Upload</a></li>
+						  <li name="menuItem" id="flickrCWG"><a href="#" onclick="flickrNews('start');">Glasgow CWG 2014</a></li>
+					   	  <li name="menuItem" id="flickrMenu"><a href="#" onclick="flickrMenu('start')">Flickr Glasgow Images</a></li>
 					    </ul>
 					    <hr>
 					    <div class="panel mypanel" style="width:auto; margin:0;">

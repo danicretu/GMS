@@ -118,6 +118,15 @@ type FlickrImage struct {
 	Keywords    []string `bson:"keywords"`
 }
 
+type FlickrImage1 struct {
+	//PhotoID     string
+	URL         string
+	ImageName   string   `bson:"imageName"`
+	Description string   `bson:"description"`
+	TimeStamp   string   `bson:"datePosted"`
+	Keywords    []string `bson:"keywords"`
+}
+
 type News struct {
 	Title        string `bson:"title"`
 	URL          string `bson:"url"`
@@ -161,7 +170,7 @@ func main() {
 	router.HandleFunc("/authenticated", handleAuthenticated)
 	router.HandleFunc("/pictures", handlePictures)
 	router.HandleFunc("/videos", handleVideos)
-	router.HandleFunc("/flickrNews", handleFlickrNews)
+	router.HandleFunc("/flickrCwg", handleFlickrNews)
 	router.HandleFunc("/albums", handleAlbums)
 	router.HandleFunc("/upload", handleUpload)
 	router.HandleFunc("/uploadPic", uploadHandler)
@@ -178,6 +187,7 @@ func main() {
 	router.HandleFunc("/delete", handleDelete)
 	router.HandleFunc("/retrieveTag", handleMainTag)
 	router.HandleFunc("/retrieveUser", handleMainUser)
+	router.HandleFunc("/flickrImages", handleFlickrGeneral)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
@@ -267,6 +277,55 @@ func newsHelper(guardian string, start int) string {
 	return s
 }
 
+func getImages(request string, temp string) string {
+	s := ""
+	var doc bytes.Buffer
+
+	if request == "start" {
+
+		photos := getFlickrMain()
+
+		fmt.Println(photos)
+
+		data := struct {
+			P []FlickrImage1
+		}{
+			photos,
+		}
+
+		t, _ := template.ParseFiles(temp)
+		t.Execute(&doc, data)
+
+	}
+
+	s = doc.String()
+
+	return s
+}
+
+func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	request := r.FormValue("req")
+	//extension := r.FormValue("ext")
+	//st := r.FormValue("start")
+	//cType := r.FormValue("cType")
+	s := ""
+	//var doc bytes.Buffer
+	//var start int
+
+	//response := make([]Response, 2)
+	/*if st == "" {
+		start = 0
+	} else {
+		start, _ = strconv.Atoi(st)
+	} */
+
+	if request == "start" {
+		s = getImages(request, "flickrImages.html")
+		fmt.Fprintf(w, s)
+	}
+}
+
 func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("in handle ")
 	r.ParseForm()
@@ -287,6 +346,7 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(request, "in handle flickr 2")
 
 	if request == "start" {
+
 		t, _ := template.ParseFiles("flickrNews.html")
 		t.Execute(&doc, nil)
 		s = doc.String()
