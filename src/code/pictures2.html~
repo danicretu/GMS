@@ -140,7 +140,7 @@
 								{{range $element2 :=.Photo}}
 										{{if $element2.URL}}
 												<li id="li{{$element2.PhotoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
-													<a id="{{$element2.PhotoId}}" name="liaOwn" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
+													<a id="{{$element2.PhotoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
 														<img class="img-thumbnail" src="{{$element2.URL}}">
 													</a>
 												</li>
