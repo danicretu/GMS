@@ -145,8 +145,8 @@ func findUser(sess *mgo.Session, id string) *User {
 
 func getFlickrMain() []FlickrImage1 {
 
-	//a := rand.Intn(65536)
-	//b := rand.Intn(a)
+	a := rand.Intn(38626)
+	b := rand.Intn(a)
 
 	source := "/resources/flickr/"
 	dbConn := NewMongoDBConn()
@@ -156,7 +156,7 @@ func getFlickrMain() []FlickrImage1 {
 	//var myarr = []string{tag}
 	//limit := 8
 
-	err := c.Find(bson.M{}).Skip(10).Limit(8).All(&flickrImage)
+	err := c.Find(bson.M{}).Skip(b).Limit(8).All(&flickrImage)
 	if err != nil {
 		fmt.Println(err)
 	}
