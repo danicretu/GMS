@@ -26,6 +26,8 @@ func (m *MongoDBConn) connect() *mgo.Session {
 		panic(err)
 	}
 
+	defer session.close()
+
 	fmt.Println("connect")
 	m.session = session
 	return m.session
@@ -44,8 +46,10 @@ func (m *MongoDBConn) connectFlickr() *mgo.Session {
 }
 
 func add(m *MongoDBConn, user User) {
+	dbConnection = NewMongoDBConn()
+	_ = dbConnection.connect()
 
-	c := m.session.DB(db_name).C("user")
+	c := dbConnection.session.DB(db_name).C("user")
 	err := c.Insert(user)
 	if err != nil {
 		panic(err)
@@ -119,7 +123,9 @@ func getAllTags(m *MongoDBConn) []Tag {
 
 func find(m *MongoDBConn, email string) *User {
 	result := User{}
-	c := m.session.DB(db_name).C("user")
+	dbConnection = NewMongoDBConn()
+	_ = dbConnection.connect()
+	c := dbConnection.session.DB(db_name).C("user")
 	err := c.Find(bson.M{"email": email}).One(&result)
 	if err != nil {
 		return nil
@@ -196,7 +202,10 @@ func createDefaultAlbum(m *MongoDBConn, ownerId string, ownerName string) {
 
 	album := Album{id, id.Hex(), ownerId, ownerName, "Default Album"}
 
-	c := m.session.DB(db_name).C("albums")
+	dbConnection = NewMongoDBConn()
+	_ = dbConnection.connect()
+
+	c := dbConnection.session.DB(db_name).C("albums")
 	err := c.Insert(album)
 	if err != nil {
 		panic(err)

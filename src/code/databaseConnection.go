@@ -26,7 +26,7 @@ func (m *MongoDBConn) connect() *mgo.Session {
 		panic(err)
 	}
 
-	defer session.close()
+	defer session.Close()
 
 	fmt.Println("connect")
 	m.session = session
