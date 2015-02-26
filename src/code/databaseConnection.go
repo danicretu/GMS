@@ -26,7 +26,6 @@ func (m *MongoDBConn) connect() *mgo.Session {
 		panic(err)
 	}
 
-
 	fmt.Println("connect")
 	m.session = session
 	return m.session
@@ -133,9 +132,9 @@ func find(m *MongoDBConn, email string) *User {
 	return &result
 }
 
-func findUser(m *MongoDBConn, id string) *User {
+func findUser(sess *mgo.Session, id string) *User {
 	result := User{}
-	c := m.session.DB(db_name).C("user")
+	c := sess.DB(db_name).C("user")
 	err := c.Find(bson.M{"userId": id}).One(&result)
 	if err != nil {
 		return nil
@@ -144,7 +143,6 @@ func findUser(m *MongoDBConn, id string) *User {
 
 	return &result
 }
-
 
 func getFlickrImages(tag string, start int) []FlickrImage {
 	source := "/resources/flickr/"
@@ -169,7 +167,6 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 
 	return flickrImage
 }
-
 
 func getNews(tag string, start int) []News {
 	dbConnection = NewMongoDBConn()

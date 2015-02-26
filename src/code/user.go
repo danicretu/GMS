@@ -1,13 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/rwcarlsen/goexif/exif"
-	//"gopkg.in/mgo.v2"
-	"bytes"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io"
@@ -148,6 +148,8 @@ var store = sessions.NewCookieStore(authKey, encKey)
 
 var dbConnection *MongoDBConn
 
+var sess *mgo.Session
+
 //add(dbConnection, name, password) ->add to db
 //find(dbConnection, name) ->find in db
 
@@ -181,7 +183,7 @@ func main() {
 	authenticateTwitter()
 
 	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connect()
+	sess = dbConnection.connect()
 
 	http.Handle("/resources/flickr/", http.StripPrefix("/resources/flickr/", http.FileServer(http.Dir("/local/imcd1/gms/flickrData"))))
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
@@ -345,7 +347,7 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 	limit := 9
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	u := findUser(dbConnection, currentUser)
+	u := findUser(sess, currentUser)
 
 	response := make([]Response, 1)
 	s := ""
@@ -404,7 +406,7 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 	} else if session.Values["user"].(string) == "" {
 		u = &User{}
 	} else {
-		u = findUser(dbConnection, session.Values["user"].(string))
+		u = findUser(sess, session.Values["user"].(string))
 	}
 
 	var p DisplayPhotos
@@ -515,7 +517,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	u := findUser(dbConnection, currentUser)
+	u := findUser(sess, currentUser)
 	var photos []Photo
 
 	err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(9).All(&photos)
@@ -564,7 +566,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 func handleMainUser(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(dbConnection, currentUser)
+	user := findUser(sess, currentUser)
 
 	u := r.URL.RawQuery
 
@@ -726,7 +728,7 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	c := findUser(dbConnection, currentUser)
+	c := findUser(sess, currentUser)
 
 	albumId := createAlbum(name, c.Id, c.FirstName+" "+c.LastName, dbConnection)
 
@@ -799,7 +801,7 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	session.Values["user"] = ""
 	session.Save(r, w)
-	u := findUser(dbConnection, session.Values["user"].(string))
+	u := findUser(sess, session.Values["user"].(string))
 
 	if u == nil {
 		u = &User{}
@@ -815,7 +817,7 @@ func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	} else if session.Values["user"].(string) == "" {
 		fmt.Fprintf(w, "No")
 	} else {
-		message := "Yes," + findUser(dbConnection, session.Values["user"].(string)).FirstName
+		message := "Yes," + findUser(sess, session.Values["user"].(string)).FirstName
 		fmt.Fprintf(w, message)
 	}
 }
@@ -950,7 +952,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(dbConnection, currentUser)
+	user := findUser(sess, currentUser)
 
 	u := r.URL.RawQuery
 	tag := findByTag(dbConnection, u)
@@ -1093,7 +1095,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
-	currentUser := findUser(dbConnection, user)
+	currentUser := findUser(sess, user)
 
 	//c := uploadToAlbum(cType, image, caption, album, lng, lat, streetN+", "+locationN, tags, currentUser)
 
@@ -1204,7 +1206,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
-	currentUser := findUser(dbConnection, user)
+	currentUser := findUser(sess, user)
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
@@ -1345,7 +1347,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	u := session.Values["user"].(string)
-	currentUser := findUser(dbConnection, u)
+	currentUser := findUser(sess, u)
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
@@ -1391,7 +1393,7 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	user2 := session.Values["user"].(string)
 
-	currentUser := findUser(dbConnection, user2)
+	currentUser := findUser(sess, user2)
 	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
 
 	photo := Photo{}
