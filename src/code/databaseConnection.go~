@@ -145,7 +145,7 @@ func findUser(sess *mgo.Session, id string) *User {
 
 func getFlickrMain() []FlickrImage1 {
 
-	a := rand.Intn(65536)
+	a := rand.Intn(38626)
 	b := rand.Intn(a)
 
 	source := "/resources/flickr/"
