@@ -87,7 +87,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &user)
 
 	var existing *User
-	dbConnection.session.DB(db_name).C("user").Find(bson.M{"fId": user.Id}).One(&existing)
+	sess.DB(db_name).C("user").Find(bson.M{"fId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
 
 	fmt.Println(db_name)
@@ -103,8 +103,8 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		id := bson.NewObjectId()
 
 		newUser := User{id, user.Given_Name, user.Family_Name, "", "", "", user.Id, "", user.Id}
-		add(dbConnection, newUser)
-		createDefaultAlbum(dbConnection, newUser.Id, user.Given_Name+" "+user.Family_Name)
+		add(sess, newUser)
+		createDefaultAlbum(sess, newUser.Id, user.Given_Name+" "+user.Family_Name)
 
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)

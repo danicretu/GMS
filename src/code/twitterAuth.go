@@ -89,7 +89,7 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(bits, &user)
 
 	var existing *User
-	dbConnection.session.DB(db_name).C("user").Find(bson.M{"tId": user.Id_Str}).One(&existing)
+	sess.DB(db_name).C("user").Find(bson.M{"tId": user.Id_Str}).One(&existing)
 	session, _ := store.Get(r, "cookie")
 	if existing != nil && existing.Id != "" {
 		session.Values["user"] = existing.Id
@@ -99,8 +99,8 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 		id := bson.NewObjectId()
 
 		newUser := User{id, user.Name, "", "", "", "", "", user.Id_Str, user.Id_Str}
-		add(dbConnection, newUser)
-		createDefaultAlbum(dbConnection, newUser.Id, user.Name)
+		add(sess, newUser)
+		createDefaultAlbum(sess, newUser.Id, user.Name)
 
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)

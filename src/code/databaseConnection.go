@@ -43,11 +43,9 @@ func (m *MongoDBConn) connectFlickr() *mgo.Session {
 	return m.session
 }
 
-func add(m *MongoDBConn, user User) {
-	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connect()
+func add(sess *mgo.Session, user User) {
 
-	c := dbConnection.session.DB(db_name).C("user")
+	c := sess.DB(db_name).C("user")
 	err := c.Insert(user)
 	if err != nil {
 		panic(err)
@@ -55,9 +53,9 @@ func add(m *MongoDBConn, user User) {
 
 }
 
-func addTags(m *MongoDBConn, tags []string, photo Photo, video Video) {
+func addTags(sess *mgo.Session, tags []string, photo Photo, video Video) {
 
-	c := m.session.DB(db_name).C("tags")
+	c := sess.DB(db_name).C("tags")
 	for tag := range tags {
 		result := Tag{}
 		err := c.Find(bson.M{"tag": tags[tag]}).One(&result)
@@ -94,8 +92,8 @@ func addTags(m *MongoDBConn, tags []string, photo Photo, video Video) {
 
 }
 
-func findByTag(m *MongoDBConn, tag string) *Tag {
-	c := m.session.DB(db_name).C("tags")
+func findByTag(sess *mgo.Session, tag string) *Tag {
+	c := sess.DB(db_name).C("tags")
 	result := Tag{}
 	err := c.Find(bson.M{"tag": tag}).One(&result)
 	if err != nil {
@@ -106,8 +104,8 @@ func findByTag(m *MongoDBConn, tag string) *Tag {
 	return &result
 }
 
-func getAllTags(m *MongoDBConn) []Tag {
-	c := m.session.DB(db_name).C("tags")
+func getAllTags(sess *mgo.Session) []Tag {
+	c := sess.DB(db_name).C("tags")
 	var result []Tag
 	err := c.Find(nil).All(&result)
 	if err != nil {
@@ -119,11 +117,9 @@ func getAllTags(m *MongoDBConn) []Tag {
 	return result
 }
 
-func find(m *MongoDBConn, email string) *User {
+func find(sess *mgo.Session, email string) *User {
 	result := User{}
-	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connect()
-	c := dbConnection.session.DB(db_name).C("user")
+	c := sess.DB(db_name).C("user")
 	err := c.Find(bson.M{"email": email}).One(&result)
 	if err != nil {
 		return nil
@@ -146,9 +142,9 @@ func findUser(sess *mgo.Session, id string) *User {
 
 func getFlickrImages(tag string, start int) []FlickrImage {
 	source := "/resources/flickr/"
-	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connectFlickr()
-	c := dbConnection.session.DB(flickrDB).C("gmsNewsScottish")
+	dbConn := NewMongoDBConn()
+	_ = dbConn.connectFlickr()
+	c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	var flickrImage []FlickrImage
 	var myarr = []string{tag}
 	limit := 8
@@ -169,9 +165,9 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 }
 
 func getNews(tag string, start int) []News {
-	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connectFlickr()
-	c := dbConnection.session.DB(flickrDB).C("gmsNewsScottish")
+	dbConn := NewMongoDBConn()
+	_ = dbConn.connectFlickr()
+	c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	var news []News
 	var newsKey = []string{tag}
 	limit := 8
@@ -193,26 +189,23 @@ func getNews(tag string, start int) []News {
 	return news
 }
 
-func createDefaultAlbum(m *MongoDBConn, ownerId string, ownerName string) {
+func createDefaultAlbum(sess *mgo.Session, ownerId string, ownerName string) {
 	id := bson.NewObjectId()
 
 	album := Album{id, id.Hex(), ownerId, ownerName, "Default Album"}
 
-	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connect()
-
-	c := dbConnection.session.DB(db_name).C("albums")
+	c := sess.DB(db_name).C("albums")
 	err := c.Insert(album)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func createAlbum(name string, uId string, uName string, m *MongoDBConn) string {
+func createAlbum(name string, uId string, uName string, sess *mgo.Session) string {
 	id := bson.NewObjectId()
 	album := Album{id, id.Hex(), uId, uName, name}
 
-	c := m.session.DB(db_name).C("albums")
+	c := sess.DB(db_name).C("albums")
 	err := c.Insert(album)
 	if err != nil {
 		panic(err)
@@ -221,9 +214,9 @@ func createAlbum(name string, uId string, uName string, m *MongoDBConn) string {
 	return album.AlbumId
 }
 
-func deleteFromDisplay(m *MongoDBConn, content string, cType string) {
+func deleteFromDisplay(sess *mgo.Session, content string, cType string) {
 	var p DisplayPhotos
-	c := m.session.DB(db_name).C("displayPhotos")
+	c := sess.DB(db_name).C("displayPhotos")
 	err := c.Find(bson.M{"name": "views"}).One(&p)
 
 	var r DisplayPhotos
@@ -279,18 +272,18 @@ func deleteFromDisplay(m *MongoDBConn, content string, cType string) {
 
 }
 
-func deleteFromTag(m *MongoDBConn, content string, cType string) {
+func deleteFromTag(sess *mgo.Session, content string, cType string) {
 	var t Tag
 	if cType == "image" {
 		var photo Photo
-		err := m.session.DB(db_name).C("photos").Find(bson.M{"photoId": content}).One(&photo)
+		err := sess.DB(db_name).C("photos").Find(bson.M{"photoId": content}).One(&photo)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		for r := range photo.Tags {
 
-			err = dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": photo.Tags[r]}).One(&t)
+			err = sess.DB(db_name).C("tags").Find(bson.M{"tag": photo.Tags[r]}).One(&t)
 			for x := range t.Photos {
 				if t.Photos[x].PhotoId == content {
 					t.Photos = append(t.Photos[:x], t.Photos[x+1:]...)
@@ -298,19 +291,19 @@ func deleteFromTag(m *MongoDBConn, content string, cType string) {
 				}
 
 			}
-			err = dbConnection.session.DB(db_name).C("tags").Update(bson.M{"tag": photo.Tags[r]}, bson.M{"$set": bson.M{"photos": t.Photos}})
+			err = sess.DB(db_name).C("tags").Update(bson.M{"tag": photo.Tags[r]}, bson.M{"$set": bson.M{"photos": t.Photos}})
 		}
 
 	} else {
 		var video Video
-		err := m.session.DB(db_name).C("videos").Find(bson.M{"videoId": content}).One(&video)
+		err := sess.DB(db_name).C("videos").Find(bson.M{"videoId": content}).One(&video)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		for r := range video.Tags {
 
-			err = dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": video.Tags[r]}).One(&t)
+			err = sess.DB(db_name).C("tags").Find(bson.M{"tag": video.Tags[r]}).One(&t)
 			for x := range t.Videos {
 				if t.Videos[x].VideoId == content {
 					t.Videos = append(t.Videos[:x], t.Videos[x+1:]...)
@@ -318,18 +311,18 @@ func deleteFromTag(m *MongoDBConn, content string, cType string) {
 				}
 
 			}
-			err = dbConnection.session.DB(db_name).C("tags").Update(bson.M{"tag": video.Tags[r]}, bson.M{"$set": bson.M{"videos": t.Videos}})
+			err = sess.DB(db_name).C("tags").Update(bson.M{"tag": video.Tags[r]}, bson.M{"$set": bson.M{"videos": t.Videos}})
 		}
 	}
 }
 
-func deleteFromOthers(m *MongoDBConn, content string, cType string) {
-	deleteFromDisplay(m, content, cType)
-	deleteFromTag(m, content, cType)
+func deleteFromOthers(sess *mgo.Session, content string, cType string) {
+	deleteFromDisplay(sess, content, cType)
+	deleteFromTag(sess, content, cType)
 
 }
 
-func updateTagDB(photo Photo, video Video, m *MongoDBConn) {
+func updateTagDB(photo Photo, video Video, sess *mgo.Session) {
 	tags := photo.Tags
 	for tag := range tags {
 		if photo.PhotoId != "" {
@@ -344,7 +337,7 @@ func updateTagDB(photo Photo, video Video, m *MongoDBConn) {
 					"photos.$.views":    photo.Views,
 				},
 			}
-			err := m.session.DB(db_name).C("tags").Update(query, update)
+			err := sess.DB(db_name).C("tags").Update(query, update)
 			if err != nil {
 				fmt.Println("could not update comments in tag db")
 			}
@@ -362,7 +355,7 @@ func updateTagDB(photo Photo, video Video, m *MongoDBConn) {
 				},
 			}
 
-			err := m.session.DB(db_name).C("tags").Update(query, update)
+			err := sess.DB(db_name).C("tags").Update(query, update)
 			if err != nil {
 				fmt.Println("could not update comments in tag db")
 			}
@@ -371,9 +364,9 @@ func updateTagDB(photo Photo, video Video, m *MongoDBConn) {
 	}
 }
 
-func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
+func updateMostViewed(photo Photo, video Video, sess *mgo.Session) {
 	var p DisplayPhotos
-	c := m.session.DB(db_name).C("displayPhotos")
+	c := sess.DB(db_name).C("displayPhotos")
 	err := c.Find(bson.M{"name": "views"}).One(&p)
 
 	if err != nil {
@@ -472,9 +465,9 @@ func updateMostViewed(photo Photo, video Video, m *MongoDBConn) {
 	}
 }
 
-func insertInMostRecent(photo Photo, video Video, m *MongoDBConn) {
+func insertInMostRecent(photo Photo, video Video, sess *mgo.Session) {
 	var p DisplayPhotos
-	c := m.session.DB(db_name).C("displayPhotos")
+	c := sess.DB(db_name).C("displayPhotos")
 	err := c.Find(bson.M{"name": "recent"}).One(&p)
 
 	if err != nil {
@@ -517,7 +510,7 @@ func insertInMostRecent(photo Photo, video Video, m *MongoDBConn) {
 	}
 }
 
-func updateMostRecent(photo Photo, video Video, m *MongoDBConn) {
+func updateMostRecent(photo Photo, video Video, sess *mgo.Session) {
 
 	if photo.PhotoId != "" {
 		query := bson.M{
@@ -531,7 +524,7 @@ func updateMostRecent(photo Photo, video Video, m *MongoDBConn) {
 				"photos.$.views":    photo.Views,
 			},
 		}
-		err := m.session.DB(db_name).C("displayPhotos").Update(query, update)
+		err := sess.DB(db_name).C("displayPhotos").Update(query, update)
 		if err != nil {
 			fmt.Println("could not update comments in recent db")
 		} else {
@@ -551,7 +544,7 @@ func updateMostRecent(photo Photo, video Video, m *MongoDBConn) {
 			},
 		}
 
-		err := m.session.DB(db_name).C("displayPhotos").Update(query, update)
+		err := sess.DB(db_name).C("displayPhotos").Update(query, update)
 		if err != nil {
 			fmt.Println("could not update comments in ecent db")
 		} else {
