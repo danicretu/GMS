@@ -319,8 +319,8 @@ func getImages(request string, init string, temp string, start int) string {
 			}{
 				input,
 				photos,
-				-1,
-				1,
+				start-1,
+				start+1,
 				"and",
 			}
 
@@ -330,26 +330,31 @@ func getImages(request string, init string, temp string, start int) string {
 
 			tags := photos[0].Keywords
 			tagString := ""
-			for img := range photos {
-				if img > 0 {
-					for tag := range photos[img].Keywords {
-						flag := false
-						for existing := range tags {
-							if tags[existing] == photos[img].Keywords[tag] || strings.ToLower(tags[existing]) == photos[img].Keywords[tag] {
-								flag = true
+			if (len(tags) < 15){
+				for img := range photos {
+					if (len(tags) > 15){
+						break;
+					}
+					if img > 0 {
+						for tag := range photos[img].Keywords {
+							flag := false
+							for existing := range tags {
+								if tags[existing] == photos[img].Keywords[tag] || strings.ToLower(tags[existing]) == photos[img].Keywords[tag] {
+									flag = true
+								}
+							}
+							if flag == false {
+								tags = append(tags, photos[img].Keywords[tag])
+								tagString += "," + photos[img].Keywords[tag]
 							}
 						}
-						if flag == false {
-							tags = append(tags, photos[img].Keywords[tag])
-							tagString += "," + photos[img].Keywords[tag]
-						}
-					}
-				} else {
-					for tag := range tags {
-						if tag != len(tags)-1 {
-							tagString += tags[tag] + ","
-						} else {
-							tagString += tags[tag]
+					} else {
+						for tag := range tags {
+							if tag != len(tags)-1 {
+								tagString += tags[tag] + ","
+							} else {
+								tagString += tags[tag]
+							}
 						}
 					}
 				}
@@ -388,8 +393,8 @@ func getImages(request string, init string, temp string, start int) string {
 			}{
 				request,
 				photos,
-				-1,
-				1,
+				start-1,
+				start+1,
 				"and",
 			}
 

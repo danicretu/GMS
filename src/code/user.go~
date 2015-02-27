@@ -288,8 +288,8 @@ func getImages(request string, init string, temp string, start int) string {
 		fmt.Println(photos)
 
 		data := struct {
-			P []FlickrImage
-			//P []FlickrImage1
+			//P []FlickrImage
+			P []FlickrImage1
 		}{
 			photos,
 		}
@@ -311,16 +311,16 @@ func getImages(request string, init string, temp string, start int) string {
 
 			data := struct {
 				Tag string
-				P   []FlickrImage
-				//P      []FlickrImage1
+				//P   []FlickrImage
+				P      []FlickrImage1
 				PageIP int
 				PageIN int
 				Type   string
 			}{
 				input,
 				photos,
-				-1,
-				1,
+				start-1,
+				start+1,
 				"and",
 			}
 
@@ -380,16 +380,16 @@ func getImages(request string, init string, temp string, start int) string {
 
 			data := struct {
 				Tag string
-				P   []FlickrImage
-				//P      []FlickrImage1
+				//P   []FlickrImage
+				P      []FlickrImage1
 				PageIP int
 				PageIN int
 				Type   string
 			}{
 				request,
 				photos,
-				-1,
-				1,
+				start-1,
+				start+1,
 				"and",
 			}
 
