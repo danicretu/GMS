@@ -143,7 +143,7 @@ func findUser(sess *mgo.Session, id string) *User {
 	return &result
 }
 
-func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
+func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrImage1 {
 
 	a := rand.Intn(65536)
 	b := rand.Intn(a)
@@ -155,7 +155,7 @@ func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
 	var flickrImage []FlickrImage1
 
-	fmt.Println(b,"    random number")
+	fmt.Println(b, "    random number")
 
 	//limit := 8
 
@@ -171,27 +171,33 @@ func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 		records, _ := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Count()
 		random := rand.Intn(records)
 
-		
 		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(10).Limit(8).All(&flickrImage)
 		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(random).Limit(8).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
 		}
-	} else if (tag == tag2){
+	} else if tag == tag2 {
 		var myarr = []string{tag}
-		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start*8).Limit(8).All(&flickrImage)
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
 		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
 		}
-		
+
 	} else {
 		var myarr = []string{tag, tag2}
-		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start*8).Limit(8).All(&flickrImage)
-		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
-		if err != nil {
-			fmt.Println(err)
+		if cType == "and" {
+			err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if cType == "or" {
+			err := c.Find(bson.M{"keywords": bson.M{"$in": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
+		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
 
 	}
 
