@@ -358,6 +358,14 @@ func getImages(request string, init string, temp string, start int) string {
 						}
 					}
 				}
+			} else {
+				for tag := range tags {
+							if tag != len(tags)-1 {
+								tagString += tags[tag] + ","
+							} else {
+								tagString += tags[tag]
+							}
+						}
 			}
 
 			response[0].Name = "tags"
