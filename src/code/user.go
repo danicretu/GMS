@@ -288,8 +288,8 @@ func getImages(request string, init string, temp string, start int) string {
 		fmt.Println(photos)
 
 		data := struct {
-			P []FlickrImage
-			//P []FlickrImage1
+			//P []FlickrImage
+			P []FlickrImage1
 		}{
 			photos,
 		}
