@@ -5,12 +5,12 @@
 												{{if $element2.URL}}
 													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a id="{{$index2}}flickr{{.Type}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr{{.Type}}">
+														<a id="{{$index2}}flickr{{$.Type}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr{{$.Type}}">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
 													</li>
 															
-													<div class="modal" id="picModal{{$index2}}flickr{{.Type}}" tabindex="-1" role="dialog" aria-hidden="true">
+													<div class="modal" id="picModal{{$index2}}flickr{{$.Type}}" tabindex="-1" role="dialog" aria-hidden="true">
 															
 															<div class="modal-dialog" style="width: auto; max-width: 900px;">
 															    	<div class="modal-content">
@@ -21,8 +21,8 @@
 																			<div class='col-md-8 imgdiv'>
 																	      		<img class="imageSize" src="{{$element2.URL}}" />		
 																				<div style="display:block; text-align:center;">																		
-																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}flickr{{.Type}}">Prev</a>
-																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}flickr{{.Type}}">Next</a>
+																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}flickr{{$.Type}}">Prev</a>
+																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}flickr{{$.Type}}">Next</a>
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
