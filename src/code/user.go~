@@ -1,13 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/rwcarlsen/goexif/exif"
-	//"gopkg.in/mgo.v2"
-	"bytes"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"io"
@@ -118,6 +118,15 @@ type FlickrImage struct {
 	Keywords    []string `bson:"keywords"`
 }
 
+type FlickrImage1 struct {
+	//PhotoID     string
+	URL         string
+	ImageName   string   `bson:"imageName"`
+	Description string   `bson:"description"`
+	TimeStamp   string   `bson:"datePosted"`
+	Keywords    []string `bson:"keywords"`
+}
+
 type News struct {
 	Title        string `bson:"title"`
 	URL          string `bson:"url"`
@@ -148,6 +157,8 @@ var store = sessions.NewCookieStore(authKey, encKey)
 
 var dbConnection *MongoDBConn
 
+var sess *mgo.Session
+
 //add(dbConnection, name, password) ->add to db
 //find(dbConnection, name) ->find in db
 
@@ -159,7 +170,7 @@ func main() {
 	router.HandleFunc("/authenticated", handleAuthenticated)
 	router.HandleFunc("/pictures", handlePictures)
 	router.HandleFunc("/videos", handleVideos)
-	router.HandleFunc("/flickrNews", handleFlickrNews)
+	router.HandleFunc("/flickrCwg", handleFlickrNews)
 	router.HandleFunc("/albums", handleAlbums)
 	router.HandleFunc("/upload", handleUpload)
 	router.HandleFunc("/uploadPic", uploadHandler)
@@ -176,18 +187,19 @@ func main() {
 	router.HandleFunc("/delete", handleDelete)
 	router.HandleFunc("/retrieveTag", handleMainTag)
 	router.HandleFunc("/retrieveUser", handleMainUser)
+	router.HandleFunc("/flickrImages", handleFlickrGeneral)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
 
 	dbConnection = NewMongoDBConn()
-	_ = dbConnection.connect()
+	sess = dbConnection.connect()
 
 	http.Handle("/resources/flickr/", http.StripPrefix("/resources/flickr/", http.FileServer(http.Dir("/local/imcd1/gms/flickrData"))))
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
 
 	http.Handle("/", router)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8892", nil)
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
@@ -199,17 +211,17 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	cType := r.FormValue("cType")
 
 	fmt.Println("in delete", picture, cType)
-	deleteFromOthers(dbConnection, picture, cType)
+	deleteFromOthers(sess, picture, cType)
 
 	if cType == "image" {
-		err := dbConnection.session.DB(db_name).C("photos").Remove(bson.M{"photoId": picture})
+		err := sess.DB(db_name).C("photos").Remove(bson.M{"photoId": picture})
 		if err != nil {
 			fmt.Println(err)
 			fmt.Fprintf(w, "No")
 			return
 		}
 	} else {
-		err := dbConnection.session.DB(db_name).C("videos").Remove(bson.M{"videoId": picture})
+		err := sess.DB(db_name).C("videos").Remove(bson.M{"videoId": picture})
 		if err != nil {
 			fmt.Println(err)
 			fmt.Fprintf(w, "No")
@@ -217,7 +229,7 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	deleteFromOthers(dbConnection, picture, cType)
+	deleteFromOthers(sess, picture, cType)
 	resp := "Yes_" + picture
 
 	fmt.Fprintf(w, resp)
@@ -265,6 +277,185 @@ func newsHelper(guardian string, start int) string {
 	return s
 }
 
+func getImages(request string, init string, temp string, start int) string {
+	s := ""
+	var doc bytes.Buffer
+
+	if request == "start" {
+
+		photos := getFlickrMain("", "", start)
+
+		fmt.Println(photos)
+
+		data := struct {
+			P []FlickrImage
+			//P []FlickrImage1
+		}{
+			photos,
+		}
+
+		t, _ := template.ParseFiles(temp)
+		t.Execute(&doc, data)
+
+	} else if strings.HasPrefix(request, "getTags") || request == init {
+		response := make([]Response, 2)
+		input := ""
+		if strings.HasPrefix(request, "getTags_") {
+			input = request[8:]
+		} else {
+			input = request[7:]
+		}
+		photos := getFlickrMain(input, "", start)
+
+		if len(photos) > 0 {
+
+			data := struct {
+				Tag string
+				P   []FlickrImage
+				//P      []FlickrImage1
+				PageIP int
+				PageIN int
+				Type   string
+			}{
+				input,
+				photos,
+				-1,
+				1,
+				"and",
+			}
+
+			t, _ := template.ParseFiles(temp)
+			t.Execute(&doc, data)
+			s = doc.String()
+
+			tags := photos[0].Keywords
+			tagString := ""
+			for img := range photos {
+				if img > 0 {
+					for tag := range photos[img].Keywords {
+						flag := false
+						for existing := range tags {
+							if tags[existing] == photos[img].Keywords[tag] || strings.ToLower(tags[existing]) == photos[img].Keywords[tag] {
+								flag = true
+							}
+						}
+						if flag == false {
+							tags = append(tags, photos[img].Keywords[tag])
+							tagString += "," + photos[img].Keywords[tag]
+						}
+					}
+				} else {
+					for tag := range tags {
+						if tag != len(tags)-1 {
+							tagString += tags[tag] + ","
+						} else {
+							tagString += tags[tag]
+						}
+					}
+				}
+			}
+
+			response[0].Name = "tags"
+			response[0].Content = tagString
+			response[1].Name = "pics"
+			response[1].Content = s
+
+			b, err := json.Marshal(response)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//ret := (string)b
+
+			return string(b)
+		} else {
+			return "No content found with requested tag"
+		}
+
+	} else {
+		response := make([]Response, 2)
+		photos := getFlickrMain(request, init, start)
+
+		if len(photos) > 0 {
+
+			data := struct {
+				Tag string
+				P   []FlickrImage
+				//P      []FlickrImage1
+				PageIP int
+				PageIN int
+				Type   string
+			}{
+				request,
+				photos,
+				-1,
+				1,
+				"and",
+			}
+
+			t, _ := template.ParseFiles(temp)
+			t.Execute(&doc, data)
+			s = doc.String()
+
+			response[0].Name = "and"
+			response[0].Content = s
+			response[1].Name = "or"
+			response[1].Content = ""
+
+			b, err := json.Marshal(response)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			//ret := (string)b
+
+			return string(b)
+
+		} else {
+			return "No content found with requested tag"
+		}
+	}
+
+	s = doc.String()
+
+	return s
+}
+
+func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	request := r.FormValue("req")
+	init := r.FormValue("init")
+	st := r.FormValue("start")
+	//cType := r.FormValue("cType")
+	s := ""
+	//var doc bytes.Buffer
+	var start int
+
+	//response := make([]Response, 2)
+	if st == "" {
+		start = 0
+	} else {
+		start, _ = strconv.Atoi(st)
+	}
+
+	if request == "start" {
+		s = getImages(request, "", "flickrImages.html", start)
+		fmt.Fprintf(w, s)
+	} else if strings.HasPrefix(request, "getTags") {
+		input := request[7:]
+		fmt.Println("in else" + input)
+		s = getImages(request, "", "flickrHelper.html", start)
+
+		fmt.Fprintf(w, s)
+
+	} else {
+		s = getImages(request, init, "flickrHelper.html", start)
+
+		fmt.Fprintf(w, s)
+
+	}
+}
+
 func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("in handle ")
 	r.ParseForm()
@@ -285,6 +476,7 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(request, "in handle flickr 2")
 
 	if request == "start" {
+
 		t, _ := template.ParseFiles("flickrNews.html")
 		t.Execute(&doc, nil)
 		s = doc.String()
@@ -345,14 +537,14 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 	limit := 9
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	u := findUser(dbConnection, currentUser)
+	u := findUser(sess, currentUser)
 
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
 
 	var videos []Video
-	err := dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": u.Id}).Skip(start * limit).Limit(limit).All(&videos)
+	err := sess.DB(db_name).C("videos").Find(bson.M{"owner": u.Id}).Skip(start * limit).Limit(limit).All(&videos)
 
 	if len(videos) > 0 || start == 0 {
 		data := struct {
@@ -404,18 +596,18 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 	} else if session.Values["user"].(string) == "" {
 		u = &User{}
 	} else {
-		u = findUser(dbConnection, session.Values["user"].(string))
+		u = findUser(sess, session.Values["user"].(string))
 	}
 
 	var p DisplayPhotos
-	c := dbConnection.session.DB(db_name).C("displayPhotos")
+	c := sess.DB(db_name).C("displayPhotos")
 	err := c.Find(bson.M{"name": "views"}).One(&p)
 	if err != nil {
 		fmt.Println("could not get most viewed photos")
 	}
 
 	var recent DisplayPhotos
-	c = dbConnection.session.DB(db_name).C("displayPhotos")
+	c = sess.DB(db_name).C("displayPhotos")
 	err = c.Find(bson.M{"name": "recent"}).One(&recent)
 	if err != nil {
 		fmt.Println("could not get most viewed photos")
@@ -459,18 +651,18 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 	video := Video{}
 
 	if cType == "image" {
-		err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"photoId": picId}).One(&photo)
+		err := sess.DB(db_name).C("photos").Find(bson.M{"photoId": picId}).One(&photo)
 		photo.Views = photo.Views + 1
-		err = dbConnection.session.DB(db_name).C("photos").Update(bson.M{"photoId": picId}, bson.M{"$set": bson.M{"views": photo.Views}})
+		err = sess.DB(db_name).C("photos").Update(bson.M{"photoId": picId}, bson.M{"$set": bson.M{"views": photo.Views}})
 		if err != nil {
 			fmt.Println("could not update photos in tag db")
 			fmt.Println(err)
 			fmt.Fprintf(w, "No")
 		}
 	} else {
-		err := dbConnection.session.DB(db_name).C("videos").Find(bson.M{"videoId": picId}).One(&video)
+		err := sess.DB(db_name).C("videos").Find(bson.M{"videoId": picId}).One(&video)
 		video.Views = video.Views + 1
-		err = dbConnection.session.DB(db_name).C("videos").Update(bson.M{"videoId": picId}, bson.M{"$set": bson.M{"views": video.Views}})
+		err = sess.DB(db_name).C("videos").Update(bson.M{"videoId": picId}, bson.M{"$set": bson.M{"views": video.Views}})
 		if err != nil {
 			fmt.Println("could not update views in videos db")
 			fmt.Println(err)
@@ -478,9 +670,9 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updateTagDB(photo, video, dbConnection)
-	updateMostViewed(photo, video, dbConnection)
-	updateMostRecent(photo, video, dbConnection)
+	updateTagDB(photo, video, sess)
+	updateMostViewed(photo, video, sess)
+	updateMostRecent(photo, video, sess)
 
 	if cType == "image" {
 		fmt.Fprintf(w, "Yes_"+strconv.Itoa(photo.Views))
@@ -495,7 +687,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	email := r.FormValue("email")
 	pass := r.FormValue("pass")
-	c := find(dbConnection, email)
+	c := find(sess, email)
 	fmt.Println(c == nil)
 	if c == nil {
 		fmt.Fprintf(w, "No")
@@ -515,10 +707,10 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	u := findUser(dbConnection, currentUser)
+	u := findUser(sess, currentUser)
 	var photos []Photo
 
-	err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(9).All(&photos)
+	err := sess.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(9).All(&photos)
 	if err != nil {
 		fmt.Println("could not get images from DB")
 	}
@@ -564,15 +756,15 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 func handleMainUser(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(dbConnection, currentUser)
+	user := findUser(sess, currentUser)
 
 	u := r.URL.RawQuery
 
 	var photos []Photo
 	var videos []Video
 
-	dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&photos)
-	dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&videos)
+	sess.DB(db_name).C("photos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&photos)
+	sess.DB(db_name).C("videos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&videos)
 
 	photoData := struct {
 		FirstName string
@@ -620,21 +812,21 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	s := ""
 
 	if t == "" {
-		dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(0).Limit(3).All(&photos)
-		dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(0).Limit(3).All(&videos)
+		sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(0).Limit(3).All(&photos)
+		sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(0).Limit(3).All(&videos)
 		sti = 0
 		stv = 0
 
 	} else {
 
 		if cType == "" {
-			err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&photos)
+			err := sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&photos)
 			if err != nil {
 				fmt.Println(err)
 			}
 			fmt.Println(photos)
 
-			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&videos)
+			err = sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -642,7 +834,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			sti = 0
 			stv = 0
 		} else if cType == "image" {
-			err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&photos)
+			err := sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&photos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -652,7 +844,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 				flag = false
 			}
 
-			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(nMod * limit).Limit(limit).All(&videos)
+			err = sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(nMod * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -660,13 +852,13 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			sti = st
 			stv = nMod
 		} else {
-			err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(nMod * limit).Limit(limit).All(&photos)
+			err := sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(nMod * limit).Limit(limit).All(&photos)
 			if err != nil {
 				fmt.Println(err)
 			}
 			fmt.Println(photos)
 
-			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&videos)
+			err = sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -726,9 +918,9 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	c := findUser(dbConnection, currentUser)
+	c := findUser(sess, currentUser)
 
-	albumId := createAlbum(name, c.Id, c.FirstName+" "+c.LastName, dbConnection)
+	albumId := createAlbum(name, c.Id, c.FirstName+" "+c.LastName, sess)
 
 	fmt.Fprintf(w, albumId)
 }
@@ -799,7 +991,7 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	session.Values["user"] = ""
 	session.Save(r, w)
-	u := findUser(dbConnection, session.Values["user"].(string))
+	u := findUser(sess, session.Values["user"].(string))
 
 	if u == nil {
 		u = &User{}
@@ -815,13 +1007,13 @@ func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	} else if session.Values["user"].(string) == "" {
 		fmt.Fprintf(w, "No")
 	} else {
-		message := "Yes," + findUser(dbConnection, session.Values["user"].(string)).FirstName
+		message := "Yes," + findUser(sess, session.Values["user"].(string)).FirstName
 		fmt.Fprintf(w, message)
 	}
 }
 
 func createTagCloud(w http.ResponseWriter, r *http.Request) {
-	result := getAllTags(dbConnection)
+	result := getAllTags(sess)
 	var tags string
 	var max = 0
 	for tag := range result {
@@ -857,7 +1049,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	flag := true
 
 	if cType == "" {
-		tag := findByTag(dbConnection, t)
+		tag := findByTag(sess, t)
 		photos = tag.Photos
 		if len(tag.Photos) == 0 {
 			photos = nil
@@ -870,7 +1062,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 		sti = 0
 		stv = 0
 	} else if cType == "image" {
-		err := dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&photos)
+		err := sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&photos)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -880,7 +1072,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 		}
 		//fmt.Println(photos)
 
-		err = dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(nMod * limit).Limit(limit).All(&videos)
+		err = sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(nMod * limit).Limit(limit).All(&videos)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -888,13 +1080,13 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 		sti = st
 		stv = nMod
 	} else {
-		err := dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(nMod * limit).Limit(limit).All(&photos)
+		err := sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(nMod * limit).Limit(limit).All(&photos)
 		if err != nil {
 			fmt.Println(err)
 		}
 		fmt.Println(photos)
 
-		err = dbConnection.session.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&videos)
+		err = sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&videos)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -950,10 +1142,10 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(dbConnection, currentUser)
+	user := findUser(sess, currentUser)
 
 	u := r.URL.RawQuery
-	tag := findByTag(dbConnection, u)
+	tag := findByTag(sess, u)
 
 	photoData := struct {
 		FirstName string
@@ -1034,12 +1226,12 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	id := bson.NewObjectId()
 
-	createDefaultAlbum(dbConnection, id.Hex(), fname+" "+lname)
+	createDefaultAlbum(sess, id.Hex(), fname+" "+lname)
 
 	newUser := User{id, fname, lname, email, pass, "", "", "", id.Hex()}
-	add(dbConnection, newUser)
+	add(sess, newUser)
 
-	c := find(dbConnection, email)
+	c := find(sess, email)
 
 	if c == nil {
 		fmt.Fprintf(w, "No")
@@ -1093,22 +1285,22 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
-	currentUser := findUser(dbConnection, user)
+	currentUser := findUser(sess, user)
 
 	//c := uploadToAlbum(cType, image, caption, album, lng, lat, streetN+", "+locationN, tags, currentUser)
 
 	if cType == "image" {
 		p = Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, album, image, caption, location, time.Now().Local().Format("2006-01-02"), 0, t, make([]PhotoComment, 1)}
-		addTags(dbConnection, t, p, Video{})
-		c := dbConnection.session.DB(db_name).C("photos")
+		addTags(sess, t, p, Video{})
+		c := sess.DB(db_name).C("photos")
 		err := c.Insert(p)
 		if err != nil {
 			panic(err)
 		}
 	} else {
 		v = Video{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, album, image, caption, location, time.Now().Local().Format("2006-01-02"), 0, t, make([]PhotoComment, 1)}
-		addTags(dbConnection, t, Photo{}, v)
-		c := dbConnection.session.DB(db_name).C("videos")
+		addTags(sess, t, Photo{}, v)
+		c := sess.DB(db_name).C("videos")
 		err := c.Insert(v)
 		if err != nil {
 			panic(err)
@@ -1116,7 +1308,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	insertInMostRecent(p, v, dbConnection)
+	insertInMostRecent(p, v, sess)
 
 }
 
@@ -1133,7 +1325,7 @@ func getPictures(collName string, field string, userId string, templateName stri
 	var doc bytes.Buffer
 	var photos []Photo
 	limit := 9
-	err := dbConnection.session.DB(db_name).C(collName).Find(bson.M{field: userId}).Skip(start * limit).Limit(limit).All(&photos)
+	err := sess.DB(db_name).C(collName).Find(bson.M{field: userId}).Skip(start * limit).Limit(limit).All(&photos)
 
 	if err != nil {
 		fmt.Println(err)
@@ -1204,7 +1396,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
-	currentUser := findUser(dbConnection, user)
+	currentUser := findUser(sess, user)
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
@@ -1212,7 +1404,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 	if query == "" {
 		var albums []Album
-		err := dbConnection.session.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&albums)
+		err := sess.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&albums)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -1240,13 +1432,13 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 		var stv int
 
 		if cType == "" {
-			err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&photos)
+			err := sess.DB(db_name).C("photos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&photos)
 			if err != nil {
 				fmt.Println(err)
 			}
 			fmt.Println(photos)
 
-			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&videos)
+			err = sess.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -1254,7 +1446,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			sti = 0
 			stv = 0
 		} else if cType == "image" {
-			err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&photos)
+			err := sess.DB(db_name).C("photos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&photos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -1264,7 +1456,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 				flag = false
 			}
 
-			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(nMod * limit).Limit(limit).All(&videos)
+			err = sess.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(nMod * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -1272,13 +1464,13 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			sti = st
 			stv = nMod
 		} else {
-			err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"albumId": query}).Skip(nMod * limit).Limit(limit).All(&photos)
+			err := sess.DB(db_name).C("photos").Find(bson.M{"albumId": query}).Skip(nMod * limit).Limit(limit).All(&photos)
 			if err != nil {
 				fmt.Println(err)
 			}
 			fmt.Println(photos)
 
-			err = dbConnection.session.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&videos)
+			err = sess.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -1345,13 +1537,13 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	u := session.Values["user"].(string)
-	currentUser := findUser(dbConnection, u)
+	currentUser := findUser(sess, u)
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
 
 	var albums []Album
-	err := dbConnection.session.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&albums)
+	err := sess.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&albums)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -1391,25 +1583,25 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	user2 := session.Values["user"].(string)
 
-	currentUser := findUser(dbConnection, user2)
+	currentUser := findUser(sess, user2)
 	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
 
 	photo := Photo{}
 	video := Video{}
 
 	if cType == "image" {
-		err := dbConnection.session.DB(db_name).C("photos").Find(bson.M{"photoId": picture}).One(&photo)
+		err := sess.DB(db_name).C("photos").Find(bson.M{"photoId": picture}).One(&photo)
 		photo.Comments = append(photo.Comments, com)
-		err = dbConnection.session.DB(db_name).C("photos").Update(bson.M{"photoId": picture}, bson.M{"$set": bson.M{"comments": photo.Comments}})
+		err = sess.DB(db_name).C("photos").Update(bson.M{"photoId": picture}, bson.M{"$set": bson.M{"comments": photo.Comments}})
 		if err != nil {
 			fmt.Println("could not update photos in tag db")
 			fmt.Println(err)
 			fmt.Fprintf(w, "No")
 		}
 	} else {
-		err := dbConnection.session.DB(db_name).C("videos").Find(bson.M{"videoId": picture}).One(&video)
+		err := sess.DB(db_name).C("videos").Find(bson.M{"videoId": picture}).One(&video)
 		video.Comments = append(video.Comments, com)
-		err = dbConnection.session.DB(db_name).C("videos").Update(bson.M{"videoId": picture}, bson.M{"$set": bson.M{"comments": video.Comments}})
+		err = sess.DB(db_name).C("videos").Update(bson.M{"videoId": picture}, bson.M{"$set": bson.M{"comments": video.Comments}})
 		if err != nil {
 			fmt.Println("could not update views in videos db")
 			fmt.Println(err)
@@ -1417,9 +1609,9 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updateTagDB(photo, video, dbConnection)
-	updateMostRecent(photo, video, dbConnection)
-	updateMostViewed(photo, video, dbConnection)
+	updateTagDB(photo, video, sess)
+	updateMostRecent(photo, video, sess)
+	updateMostViewed(photo, video, sess)
 
 	response := com.Body + "_" + com.User + "_" + com.Timestamp
 	fmt.Fprintf(w, "Yes_"+response)

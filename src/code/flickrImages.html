@@ -8,9 +8,11 @@
         			</div>
 			</div>
     </form>
-	<div style="visibility:hidden; clear:both; padding-top:5%;" id="cloudFlickr">
-	</div>
-           	
+	<div style="visibility:visible; clear:both; padding-top:5%; width:auto; margin:0;">
+		<h3 id="cloudHeader" style="visibility:hidden">Recommended Tags</h3>
+		<div style="visibility:hidden; clear:both; padding-top:5%;width:auto; margin:0;" id="cloudFlickr">
+		</div>
+    </div>
    	<div style="visibility:visible; clear:both; padding-top:5%;" id="resultAnd">
 	
 		<div id="pictureHelper" class="headText">
@@ -49,7 +51,7 @@
 																						</div>
 																						<div style="clear:both;">
 																							{{range $indexTag, $elementTag := $element2.Keywords}}
-																								<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrNews(tag_{{$elementTag}});">{{$elementTag}}</a>
+																								<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrMenu('getTags_{{$elementTag}}');">{{$elementTag}}</a>
 																							{{end}}
 																						</div>
 																						

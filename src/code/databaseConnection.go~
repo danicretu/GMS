@@ -5,7 +5,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	//"time"
-	//"math/rand"
+	"math/rand"
 	"strings"
 )
 
@@ -143,22 +143,40 @@ func findUser(sess *mgo.Session, id string) *User {
 	return &result
 }
 
-func getFlickrMain() []FlickrImage1 {
+func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 
-	a := rand.Intn(38626)
+	a := rand.Intn(65536)
 	b := rand.Intn(a)
 
 	source := "/resources/flickr/"
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
+	//c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
 	var flickrImage []FlickrImage1
-	//var myarr = []string{tag}
+
 	//limit := 8
 
-	err := c.Find(bson.M{}).Skip(b).Limit(8).All(&flickrImage)
-	if err != nil {
-		fmt.Println(err)
+	if tag == "" {
+		//err := c.Find(bson.M{"source": "https://www.flickr.com"}).Skip(10).Limit(8).All(&flickrImage)
+		err := c.Find(bson.M{}).Skip(10).Limit(8).All(&flickrImage)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if tag != "" && tag2 == "" {
+		var myarr = []string{tag}
+		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(10).Limit(8).All(&flickrImage)
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(10).Limit(8).All(&flickrImage)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		var myarr = []string{tag, tag2}
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(10).Limit(8).All(&flickrImage)
+		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	fmt.Println(flickrImage)
