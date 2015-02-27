@@ -297,7 +297,7 @@ func getImages(request string, init string, temp string, start int) string {
 		t, _ := template.ParseFiles(temp)
 		t.Execute(&doc, data)
 
-	} else if strings.HasPrefix(request, "getTags") || request == init {
+	} else if strings.HasPrefix(request, "getTags"){
 		response := make([]Response, 2)
 		input := ""
 		if strings.HasPrefix(request, "getTags_") {

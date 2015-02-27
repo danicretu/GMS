@@ -177,6 +177,14 @@ func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 		if err != nil {
 			fmt.Println(err)
 		}
+	} else if (tag == tag2){
+		var myarr = []string{tag}
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start*8).Limit(8).All(&flickrImage)
+		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
+		if err != nil {
+			fmt.Println(err)
+		}
+		
 	} else {
 		var myarr = []string{tag, tag2}
 		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start*8).Limit(8).All(&flickrImage)
@@ -184,6 +192,7 @@ func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 		if err != nil {
 			fmt.Println(err)
 		}
+
 	}
 
 	for i := range flickrImage {
