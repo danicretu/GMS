@@ -280,6 +280,7 @@ func newsHelper(guardian string, start int) string {
 func getImages(request string, init string, temp string, start int, cType string) string {
 	s := ""
 	var doc bytes.Buffer
+	var doc1 bytes.Buffer
 
 	if request == "start" {
 
@@ -471,7 +472,7 @@ func getImages(request string, init string, temp string, start int, cType string
 			}
 
 		} else {
-			photos := getFlickrMain(request, init, start, cType)
+			photos := getFlickrMain(request, init, start, "and")
 			sAnd := ""
 			sOr := ""
 			if len(photos) > 0 {
@@ -499,7 +500,7 @@ func getImages(request string, init string, temp string, start int, cType string
 				sAnd = "No content found with requested tags"
 			}
 
-			photos = getFlickrMain(request, init, start, cType)
+			photos = getFlickrMain(request, init, start, "or")
 			if len(photos) > 0 {
 
 				data := struct {
@@ -518,8 +519,8 @@ func getImages(request string, init string, temp string, start int, cType string
 				}
 
 				t, _ := template.ParseFiles(temp)
-				t.Execute(&doc, data)
-				sOr = doc.String()
+				t.Execute(&doc1, data)
+				sOr = doc1.String()
 			} else {
 				sOr = "No content found with requested tags"
 			}

@@ -277,13 +277,13 @@ func newsHelper(guardian string, start int) string {
 	return s
 }
 
-func getImages(request string, init string, temp string, start int) string {
+func getImages(request string, init string, temp string, start int, cType string) string {
 	s := ""
 	var doc bytes.Buffer
 
 	if request == "start" {
 
-		photos := getFlickrMain("", "", start)
+		photos := getFlickrMain("", "", start, cType)
 
 		fmt.Println(photos)
 
@@ -297,7 +297,7 @@ func getImages(request string, init string, temp string, start int) string {
 		t, _ := template.ParseFiles(temp)
 		t.Execute(&doc, data)
 
-	} else if strings.HasPrefix(request, "getTags") || request == init {
+	} else if strings.HasPrefix(request, "getTags") {
 		response := make([]Response, 2)
 		input := ""
 		if strings.HasPrefix(request, "getTags_") {
@@ -305,7 +305,7 @@ func getImages(request string, init string, temp string, start int) string {
 		} else {
 			input = request[7:]
 		}
-		photos := getFlickrMain(input, "", start)
+		photos := getFlickrMain(input, "", start, cType)
 
 		if len(photos) > 0 {
 
@@ -319,8 +319,8 @@ func getImages(request string, init string, temp string, start int) string {
 			}{
 				input,
 				photos,
-				start-1,
-				start+1,
+				start - 1,
+				start + 1,
 				"and",
 			}
 
@@ -330,10 +330,10 @@ func getImages(request string, init string, temp string, start int) string {
 
 			tags := photos[0].Keywords
 			tagString := ""
-			if (len(tags) < 15){
+			if len(tags) < 15 {
 				for img := range photos {
-					if (len(tags) > 15){
-						break;
+					if len(tags) > 15 {
+						break
 					}
 					if img > 0 {
 						for tag := range photos[img].Keywords {
@@ -360,12 +360,12 @@ func getImages(request string, init string, temp string, start int) string {
 				}
 			} else {
 				for tag := range tags {
-							if tag != len(tags)-1 {
-								tagString += tags[tag] + ","
-							} else {
-								tagString += tags[tag]
-							}
-						}
+					if tag != len(tags)-1 {
+						tagString += tags[tag] + ","
+					} else {
+						tagString += tags[tag]
+					}
+				}
 			}
 
 			response[0].Name = "tags"
@@ -387,33 +387,147 @@ func getImages(request string, init string, temp string, start int) string {
 
 	} else {
 		response := make([]Response, 2)
-		photos := getFlickrMain(request, init, start)
 
-		if len(photos) > 0 {
+		if cType == "and" {
+			photos := getFlickrMain(request, init, start, cType)
+			if len(photos) > 0 {
 
-			data := struct {
-				Tag string
-				//P   []FlickrImage
-				P      []FlickrImage1
-				PageIP int
-				PageIN int
-				Type   string
-			}{
-				request,
-				photos,
-				start-1,
-				start+1,
-				"and",
+				data := struct {
+					Tag string
+					//P   []FlickrImage
+					P      []FlickrImage1
+					PageIP int
+					PageIN int
+					Type   string
+				}{
+					request,
+					photos,
+					start - 1,
+					start + 1,
+					"and",
+				}
+
+				t, _ := template.ParseFiles(temp)
+				t.Execute(&doc, data)
+				s = doc.String()
+
+				response[0].Name = "and"
+				response[0].Content = s
+				response[1].Name = "or"
+				response[1].Content = ""
+
+				b, err := json.Marshal(response)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				//ret := (string)b
+
+				return string(b)
+
+			} else {
+				return "No content found with requested tag"
+			}
+		} else if cType == "or" {
+
+			photos := getFlickrMain(request, init, start, cType)
+			if len(photos) > 0 {
+
+				data := struct {
+					Tag string
+					//P   []FlickrImage
+					P      []FlickrImage1
+					PageIP int
+					PageIN int
+					Type   string
+				}{
+					request,
+					photos,
+					start - 1,
+					start + 1,
+					"or",
+				}
+
+				t, _ := template.ParseFiles(temp)
+				t.Execute(&doc, data)
+				s = doc.String()
+
+				response[0].Name = "and"
+				response[0].Content = ""
+				response[1].Name = "or"
+				response[1].Content = s
+
+				b, err := json.Marshal(response)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				//ret := (string)b
+
+				return string(b)
+
+			} else {
+				return "No content found with requested tag"
 			}
 
-			t, _ := template.ParseFiles(temp)
-			t.Execute(&doc, data)
-			s = doc.String()
+		} else {
+			photos := getFlickrMain(request, init, start, cType)
+			sAnd := ""
+			sOr := ""
+			if len(photos) > 0 {
+
+				data := struct {
+					Tag string
+					//P   []FlickrImage
+					P      []FlickrImage1
+					PageIP int
+					PageIN int
+					Type   string
+				}{
+					request,
+					photos,
+					start - 1,
+					start + 1,
+					"and",
+				}
+
+				t, _ := template.ParseFiles(temp)
+				t.Execute(&doc, data)
+				sAnd = doc.String()
+
+			} else {
+				sAnd = "No content found with requested tags"
+			}
+
+			photos = getFlickrMain(request, init, start, cType)
+			if len(photos) > 0 {
+
+				data := struct {
+					Tag string
+					//P   []FlickrImage
+					P      []FlickrImage1
+					PageIP int
+					PageIN int
+					Type   string
+				}{
+					request,
+					photos,
+					start - 1,
+					start + 1,
+					"or",
+				}
+
+				t, _ := template.ParseFiles(temp)
+				t.Execute(&doc, data)
+				sOr = doc.String()
+			} else {
+				sOr = "No content found with requested tags"
+			}
 
 			response[0].Name = "and"
-			response[0].Content = s
+			response[0].Content = sAnd
 			response[1].Name = "or"
-			response[1].Content = ""
+			response[1].Content = sOr
 
 			b, err := json.Marshal(response)
 			if err != nil {
@@ -424,9 +538,8 @@ func getImages(request string, init string, temp string, start int) string {
 
 			return string(b)
 
-		} else {
-			return "No content found with requested tag"
 		}
+
 	}
 
 	s = doc.String()
@@ -439,7 +552,7 @@ func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
 	request := r.FormValue("req")
 	init := r.FormValue("init")
 	st := r.FormValue("start")
-	//cType := r.FormValue("cType")
+	cType := r.FormValue("cType")
 	s := ""
 	//var doc bytes.Buffer
 	var start int
@@ -452,17 +565,17 @@ func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if request == "start" {
-		s = getImages(request, "", "flickrImages.html", start)
+		s = getImages(request, "", "flickrImages.html", start, "")
 		fmt.Fprintf(w, s)
 	} else if strings.HasPrefix(request, "getTags") {
 		input := request[7:]
 		fmt.Println("in else" + input)
-		s = getImages(request, "", "flickrHelper.html", start)
+		s = getImages(request, "", "flickrHelper.html", start, "")
 
 		fmt.Fprintf(w, s)
 
 	} else {
-		s = getImages(request, init, "flickrHelper.html", start)
+		s = getImages(request, init, "flickrHelper.html", start, cType)
 
 		fmt.Fprintf(w, s)
 

@@ -606,7 +606,9 @@ function flickrMenu(data, start, cType){
 			success: function(html){
 				if (data=="start"){
 					document.getElementById('panelBodyContent').innerHTML=html;
+					document.getElementById('resultOr').style.visibility='hidden';
 				} else if(data.indexOf("getTags") > -1){
+							document.getElementById('resultOr').style.visibility='hidden';
 							console.log("in else")
 							if (data.indexOf("getTags_") > -1){
 								console.log(data.substring(8));
@@ -622,6 +624,7 @@ function flickrMenu(data, start, cType){
 							} else {
 								document.getElementById('cloudFlickr').innerHTML=html;
 								document.getElementById('cloudFlickr').style.visibility='visible';
+								document.getElementById('resultAnd').style.visibility='hidden';
 							}
 				} else {
 					var obj = jQuery.parseJSON(html);
