@@ -773,7 +773,7 @@
 												{{if $element2.URL}}
 													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
-														<a id="{{$index2}}flickr" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr">
+														<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
 													</li>
