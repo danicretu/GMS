@@ -19,7 +19,7 @@
 															      		</div>
 															      		<div class="modal-body login-modal row" >
 																			<div class='col-md-8 imgdiv'>
-																	      		<img style="width:90%; height:100%;" src="{{$element2.URL}}" />		
+																	      		<img class="imageSize" src="{{$element2.URL}}" />		
 																				<div style="display:block; text-align:center;">																		
 																					<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}flickr">Prev</a>
 																					<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}flickr">Next</a>
