@@ -639,7 +639,6 @@ function flickrMenu(data, start, cType){
 						document.getElementById('resultOr').style.visibility='visible';
 					} 
 				}
-			carousel();
 			}
 		});
 	}
