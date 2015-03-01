@@ -5,9 +5,11 @@
 												{{if $element2.URL}}
 													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
+														<div class="imgDiv">
 														<a id="{{$index2}}flickr{{$.Type}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr{{$.Type}}">
 								          					<img class="img-thumbnail" src="{{$element2.URL}}">
 								        					</a>
+														</div>
 													</li>
 															
 													<div class="modal" id="picModal{{$index2}}flickr{{$.Type}}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -28,14 +30,24 @@
 																			<div class="col-md-4" style="padding:0;">
 																				
 																				<p style="float:right; font-size:medium; color:black; clear:both;">{{$element2.TimeStamp}}</p>
-																				<div style="clear:both; padding-top:7%; padding-left:8%;" class="row">
-																					<p style="float:left; font-size:90%; color:black;">{{$element2.Description}}</p>
-																																									
+																				<div style="clear:both; padding-top:7%; padding-left:8%;" >
+																					{{if $element2.Description}}
+																						<p class="description">Description:</p>
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
+																					{{end}}																				
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Keywords}}
 																						<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrMenu('getTags_{{$elementTag}}');">{{$elementTag}}</a>
 																					{{end}}
+																				</div>
+																				<div style="padding-top:5px; clear:both;">
+																					<form id="commentForm">
+																					<div>
+																						<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." disabled/>
+																						<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" disabled/>
+																					</div>
+																					</form>
 																				</div>
 																				
 																																						

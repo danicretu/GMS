@@ -1,12 +1,12 @@
 .pic-body-left{width:50%; padding-right:4%;float:left;}
 .pic-body-right{float:right; width:47%;}
-.tag{background-color:#337ab7; color:white; font-size:small; border-radius:10px; padding:5px; float:left;}
+.tag{background-color:#337ab7; color:white; font-size:small; border-radius:8px; padding:2px; float:left; margin-right:2px;}
 .comment{float:left; height:25px; width:70%; font-size:medium;}
 .submitComment{height:25px; font-size:medium;}
 /*.panel-heading{background-color: #0D77B6;color: white;border-radius: 4px;} */
 .uploadDiv{padding-top: 30px;width: 100%;}
 .modal-dialog {max-width: 900px; width:auto;}
-.commentList {padding: 0; list-style:none; max-height: 200px; overflow:auto;}
+.commentList {padding: 0; list-style:none; max-height: 200px; overflow:auto; clear:both;}
 .commentList li {margin:0; margin-top:10px; background-color:#EAEAEA;}
 .commentList li > div {display: table-cell;}
 .commentText p {margin:0; padding-left:5px;font-size:smaller;}
@@ -15,8 +15,15 @@
 .img-thumbnail{max-height:150px;}
 .commentBox {padding:10px; padding-left:0px;}
 .submitButton {height:40px; margin-bottom:10px;background:#0D77B6; color:white;}
+.description {font-size:small; float:left;}
+.imageDiv {height:150px;}
 #chooseFile {position:relative; overflow:hidden;}
 #chooseFile input{position:aboslute; opacity:0.001;}
+#next {float:right;}
+.internalHeader{text-align:center; background-color:#0D77B6; color:white; margin-bottom:5%;}
+.sectionHeader{background: #0D77B6; opacity: 0.5; color: white; margin-bottom:3%;}
+#pictures {margin-bottom:5%;}
+#videos {margin-bottom:5%;}
 .albumSelect{
     background-color: #0D77B6;
     border-radius: 4px;
@@ -69,6 +76,14 @@
 	color:white;
 	font-size:25px;
 	opacity:1;
+}
+
+
+
+@media only screen 
+and (min-device-width : 768px) 
+{
+	.imgDiv {height:150px;}
 }
 
 /*

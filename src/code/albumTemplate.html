@@ -1,9 +1,12 @@
-<div class="panel-heading" >
+<div class="panel-heading internalHeader" >
     <h2 class="panel-title" style="font-size: 24px">Albums</h2>
 </div>
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;" id="photos">
 	{{range $index, $element := .Albums}}
 		<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
+			<div class="imgDiv">
+			<img onclick="return getAlbumDetails({{$element.AlbumId}},'','','')" class="img-thumbnail" src="{{$element.Photo}}">
+			</div>
 			<a href="#" onclick="return getAlbumDetails({{$element.AlbumId}},'','','')">{{$element.Name}}</a>
 		</li>
 	{{end}}

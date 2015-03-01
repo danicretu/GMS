@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type User struct {
@@ -146,6 +147,12 @@ type Response struct {
 	Content string
 }
 
+type AlbumStruct struct {
+	Name    string
+	AlbumId string
+	Photo   string
+}
+
 var router = mux.NewRouter()
 
 var authKey = []byte("NCDIUyd78DBCSJBlcsd783")
@@ -187,6 +194,7 @@ func main() {
 	router.HandleFunc("/delete", handleDelete)
 	router.HandleFunc("/retrieveTag", handleMainTag)
 	router.HandleFunc("/retrieveUser", handleMainUser)
+	router.HandleFunc("/retrieveFlickrNews", handleMainFlickr)
 	router.HandleFunc("/flickrImages", handleFlickrGeneral)
 	authenticateGoogle()
 	authenticateFacebook()
@@ -607,20 +615,34 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("flickrNews.html")
 		t.Execute(&doc, nil)
 		s = doc.String()
-	} else if strings.HasPrefix(request, "getTags") {
-		input := request[7:]
-		fmt.Println("in else" + input)
-		if input == "Commonwealth Games" || input == "commonwealth games" {
-			s = "Boxing 5,Tennis 7,Cycling 13,maximum 13"
-		} else {
-			s = "No content found with requested tag"
+		tags := "Scotland 10761,Glasgow 2740,Swimming 132,Cycling 155,Weightlifting 101,Wales 74,Gymnastics 81,Netball 53,London 43,Boxing 55,Tennis 30,Triathlon 36,Wrestling 6,Diving 30,Squash 12,Photography 8,India 15,Badminton 6,maximum 10761"
+		response[0].Name = "html"
+		response[0].Content = s
+		response[1].Name = "tags"
+		response[1].Content = tags
+
+		b, err := json.Marshal(response)
+		if err != nil {
+			fmt.Println(err)
 		}
 
+		//fmt.Printf("%s", b)
+		fmt.Fprintf(w, "%s", b)
+
 	} else {
+		flickr := ""
+		guardian := ""
 
-		guardian := request
-		flickr := strings.ToLower(request)
-
+		if strings.HasPrefix(request, "tag_") {
+			flickr = request[4:]
+			a := []rune(flickr)
+			a[0] = unicode.ToUpper(a[0])
+			guardian = string(a)
+			fmt.Println(guardian, "  ****************")
+		} else {
+			guardian = request
+			flickr = strings.ToLower(request)
+		}
 		if cType == "image" {
 
 			response[0].Name = "flickr"
@@ -642,8 +664,6 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 			response[0].Content = flickrHelper(flickr, start)
 		}
 
-		//fmt.Println(s)
-
 		b, err := json.Marshal(response)
 		if err != nil {
 			fmt.Println(err)
@@ -653,8 +673,6 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", b)
 
 	}
-
-	fmt.Fprintf(w, s)
 }
 
 func handleVideos(w http.ResponseWriter, r *http.Request) {
@@ -918,6 +936,44 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handleMainFlickr(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	currentUser := session.Values["user"].(string)
+	user := findUser(sess, currentUser)
+
+	u := r.URL.RawQuery
+
+	flickr := u
+	a := []rune(flickr)
+	a[0] = unicode.ToUpper(a[0])
+	guardian := string(a)
+
+	images := getFlickrImages(flickr, 0)
+	news := getNews(guardian, 0)
+
+	fmt.Println("in handle main flickr")
+	data := struct {
+		Tag       string
+		FirstName string
+		Tags      string
+		P         []FlickrImage
+		N         []News
+		PageIP    int
+		PageIN    int
+	}{
+		u,
+		user.FirstName,
+		"Scotland 10761,Glasgow 2740,Swimming 132,Cycling 155,Weightlifting 101,Wales 74,Gymnastics 81,Netball 53,London 43,Boxing 55,Tennis 30,Triathlon 36,Wrestling 6,Diving 30,Squash 12,Photography 8,India 15,Badminton 6,maximum 10761",
+		images,
+		news,
+		-1,
+		1,
+	}
+
+	authenticated, _ := template.ParseFiles("flickr2.html")
+	authenticated.Execute(w, data)
+}
+
 func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t := r.FormValue("user")
@@ -1005,6 +1061,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	if flag == true {
 
 		photoData := struct {
+			Owner  string
 			PageIN int
 			PageIP int
 			PageVN int
@@ -1013,6 +1070,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			Photo  []Photo
 			Video  []Video
 		}{
+			findUser(sess, t).FirstName,
 			sti + 1,
 			sti - 1,
 			stv + 1,
@@ -1530,20 +1588,32 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 	flag := true
 
 	if query == "" {
-		var albums []Album
-		err := sess.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&albums)
+
+		var al []Album
+		err := sess.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&al)
 		if err != nil {
 			fmt.Println(err)
 		}
+		albums := make([]AlbumStruct, len(al))
+
+		for i := range al {
+			albums[i].Name = al[i].Name
+			albums[i].AlbumId = al[i].AlbumId
+			var photo Photo
+			err = sess.DB(db_name).C("photos").Find(bson.M{"albumId": albums[i].AlbumId}).One(&photo)
+			if err != nil {
+				fmt.Println(err)
+			}
+			albums[i].Photo = photo.URL
+		}
+
 		data := struct {
 			Page   string
-			Albums []Album
+			Albums []AlbumStruct
 		}{
 			"0",
 			albums,
 		}
-
-		fmt.Println(data)
 		t, _ := template.ParseFiles("albumTemplate.html")
 		if t == nil {
 			fmt.Println("no template******************************************")
@@ -1551,6 +1621,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 		t.Execute(&doc, data)
 		s = doc.String()
 		response[0].Name = "ownAlbums"
+
 	} else {
 		fmt.Println("in eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", query)
 		var photos []Photo

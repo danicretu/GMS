@@ -17,14 +17,14 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-//var db_name = "gmsTry"
+var db_name = "gmsTry"
 
-var db_name = "ugc"
+//var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -35,8 +35,8 @@ func (m *MongoDBConn) connect() *mgo.Session {
 }
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -143,7 +143,7 @@ func findUser(sess *mgo.Session, id string) *User {
 	return &result
 }
 
-func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
+func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrImage1 {
 
 	a := rand.Intn(65536)
 	b := rand.Intn(a)
@@ -155,7 +155,7 @@ func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
 	var flickrImage []FlickrImage1
 
-	fmt.Println(b,"    random number")
+	fmt.Println(b, "    random number")
 
 	//limit := 8
 
@@ -171,19 +171,34 @@ func getFlickrMain(tag string, tag2 string, start int) []FlickrImage1 {
 		records, _ := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Count()
 		random := rand.Intn(records)
 
-		
 		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(10).Limit(8).All(&flickrImage)
 		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(random).Limit(8).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
 		}
-	} else {
-		var myarr = []string{tag, tag2}
-		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start*8).Limit(8).All(&flickrImage)
+	} else if tag == tag2 {
+		var myarr = []string{tag}
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
 		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
 		}
+
+	} else {
+		var myarr = []string{tag, tag2}
+		if cType == "and" {
+			err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if cType == "or" {
+			err := c.Find(bson.M{"keywords": bson.M{"$in": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
+
 	}
 
 	for i := range flickrImage {

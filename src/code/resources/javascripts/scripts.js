@@ -142,6 +142,19 @@ $(document).ready(function() {
 		assign(imgList[i].id)();
 		
 	}
+	
+	
+	window.onpopstate = function(event) {
+		console.log("pathname: "+location.pathname);
+		window.alert(location.hash.substring(1));
+		//loadContent(location.pathname);
+		var func = location.hash.substring(1);
+		var func_param = location.hash.substring(1).split("?");
+		var myFunc = window[func_param[0]];
+		//setTimeout ( myFunc, 1 );
+		myFunc(func_param[1]);
+	};
+
 
 });
 
@@ -471,6 +484,8 @@ function getVideos(data){
 					console.log(document.getElementById('panelBodyContent').id);
 					//document.getElementById('panelBodyContent').innerHtml = "Hello";
 					if (obj[0].Content != ""){
+						href = $(this).attr("href");
+						history.pushState('', 'New URL: '+href, href);
 						$('#panelBodyContent').html(obj[0].Content);
 						console.log(document.getElementById('panelBodyContent').innerHtml);
 						
@@ -597,7 +612,7 @@ function flickrMenu(data, start, cType){
 		data +=$("input#srch-term").val();
 	} 
 	var init = $("input#srch-term").val();
-	
+	setActive("flickrMenu");
 	if (start != -1){
 		$.ajax({
 			type:"POST",
@@ -665,18 +680,11 @@ function flickrNews(data, start, cType){
 					$('div.sideMenu').removeClass('in');
 					console.log(html);
 					if (data=="start"){
-						document.getElementById('panelBodyContent').innerHTML=html;
-					}else if (data.indexOf("getTags") > -1){
-							console.log("in else")
-							if (html != "No content found with requested tag"){
-								document.getElementById('cloudFlickr').innerHTML="";
-								populateCloud(html,"Flickr");
-								document.getElementById('cloudFlickr').style.visibility='visible';
-							} else {
-								document.getElementById('cloudFlickr').innerHTML=html;
-								document.getElementById('cloudFlickr').style.visibility='visible';
-							}
-						
+						var obj = jQuery.parseJSON(html);
+						document.getElementById('panelBodyContent').innerHTML=obj[0].Content;
+						document.getElementById('cloudFlickr').innerHTML="";
+						populateCloud(obj[1].Content,"Flickr");
+						document.getElementById('cloudFlickr').style.visibility='visible';
 					} else {
 						var obj = jQuery.parseJSON(html);
 						console.log(obj+"            ***********")

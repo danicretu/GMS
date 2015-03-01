@@ -1,5 +1,9 @@
+<div class="panel-heading internalHeader" >
+    <h2 class="panel-title" style="font-size: 24px">{{.Owner}}'s Uploaded Content</h2>
+</div>
+
 <div id="pictures">
-<div class="panel-heading" >
+<div class="panel-heading sectionHeader" >
     <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
 </div>
 
@@ -10,9 +14,11 @@
 	{{range $element2 :=.Photo}}
 			{{if $element2.URL}}
 					<li id="li{{$element2.PhotoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
-						<a id="{{$element2.PhotoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
-							<img class="img-thumbnail" src="{{$element2.URL}}">
-						</a>
+						<div class="imgDiv">
+							<a id="{{$element2.PhotoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
+								<img class="img-thumbnail" src="{{$element2.URL}}">
+							</a>
+						</div>
 					</li>
 					<div class="modal" id="picModal{{$element2.PhotoId}}" tabindex="-1" role="dialog" aria-hidden="true">
 						<div class="modal-dialog" style="width: auto; max-width: 900px;">
@@ -39,20 +45,24 @@
 									<div class="col-md-4" style="padding:0;">
 										<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
 										<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-										<div style="clear:both; padding-top:7%;" class="row">
-											<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
-											{{if $element2.Location.Name}}
-												<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+										<div style="clear:both; padding-top:7%;">
+											{{if $element2.Description}}
+												<p class="description">Description:</p>
+												<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
 											{{end}}
-											<p id= "upvotep{{$element2.PhotoId}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
-											<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+											{{if $element2.Location.Name}}
+												<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+											{{end}}
+											<p style="float:left; font-size:small; clear:both;">Views</p>
+											<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
+											
 										</div>
 										<div style="clear:both;padding-top:4%;">
 											{{range $elementTag := $element2.Tags}}
 												<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
 											{{end}}
 										</div>
-										<div style="padding-top:5px;">
+										<div style="padding-top:5px; clear:both;">
 											<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.PhotoId}})">
 												<div>
 													<input type="text" class="comment{{$element2.PhotoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.PhotoId}}" placeholder="Enter Comment..." />
@@ -100,7 +110,7 @@
 </div>
 
 <div id="videos">
-<div class="panel-heading" >
+<div class="panel-heading sectionHeader" >
     <h2 class="panel-title" style="font-size: 24px">Videos</h2>
 </div>
 <div id="pictureTemplate" class="headText">
@@ -108,13 +118,15 @@
 									{{range $element2 :=.Video}}
 												{{if $element2.URL}}
 													<li id="li{{$element2.VideoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
-														<a id="{{$element2.VideoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}">
-								          					<video class="img-thumbnail">
-																<source src="{{$element2.URL}}" type="video/mp4">
-  																<source src="{{$element2.URL}}" type="video/ogg">
-																Your browser does not support the video tag.
-															</video>
-								        					</a>
+														<div class="imgDiv">
+															<a id="{{$element2.VideoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}">
+									          					<video class="img-thumbnail">
+																	<source src="{{$element2.URL}}" type="video/mp4">
+	  																<source src="{{$element2.URL}}" type="video/ogg">
+																	Your browser does not support the video tag.
+																</video>
+									        					</a>
+														</div>
 													</li>
 															
 													<div class="modal" id="picModal{{$element2.VideoId}}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -147,20 +159,24 @@
 																			<div class="col-md-4" style="padding:0;">
 																				<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
 																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-																				<div style="clear:both; padding-top:7%;" class="row">
-																					<p style="float:left; font-size:90%;" class="col-md-6">{{$element2.Description}}</p>
-																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;" class="col-md-6"> -at {{$element2.Location.Name}}</p> 
+																				<div style="clear:both; padding-top:7%;">
+																					{{if $element2.Description}}
+																						<p class="description">Description:</p>
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
 																					{{end}}
-																					<p id= "upvotep{{$element2.VideoId}}" style="float:left;clear:both; font-size:smaller;" class="col-md-2">{{$element2.Views}}</p>
-																					<p style="float:left; font-size:small; padding-top:1.3%;">Views</p>
+																					{{if $element2.Location.Name}}
+																						<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																					{{end}}
+																					<p style="float:left; font-size:small;clear:both; ">Views</p>
+																					<p id= "upvotep{{$element2.VideoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
+																					
 																				</div>
 																				<div style="clear:both;padding-top:4%;">
 																					{{range $indexTag, $elementTag := $element2.Tags}}
 																						<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
 																					{{end}}
 																				</div>
-																				<div style="padding-top:5px;">
+																				<div style="padding-top:5px; clear:both;">
 																					<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.VideoId}})">
 																						<div>
 																							<input type="text" class="comment{{$element2.VideoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.VideoId}}" placeholder="Enter Comment..." />

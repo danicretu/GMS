@@ -37,10 +37,10 @@
          <div class="container">
            <div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle Navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
+					<span class="sr-only">Toggle Navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
 			</button>
              
              <a class="navbar-brand" href="/">               
@@ -113,13 +113,13 @@
 					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 				    <div class="hidden-xs sideMenu">
 						<ul class="nav nav-pills nav-stacked">
-					      <li name="menuItem" id="pictureMenu"><a href="#" onclick="getPictures('');">Pictures</a></li>
-						  <li name="menuItem" id="videoMenu"><a href="#" onclick="getVideos('');">Videos</a></li>	
+					      <li name="menuItem" id="pictureMenu"><a href="#" onclick="getPictures('');">Your Personal Image Archive</a></li>
+						  <li name="menuItem" id="videoMenu"><a href="#" onclick="getVideos('');">Your Personal Video Archive</a></li>	
 					      <li name="menuItem" id="albumMenu"><a href="#" onclick="getAlbums('');">Albums</a></li>
-					      <li name="menuItem" id="uploadMenu"><a href="#" onClick="getUpload();">Upload</a></li>
-						  <li name="menuItem" id="flickrCWG"><a href="#" onclick="flickrNews('start');">Glasgow CWG 2014</a></li>
+					      <li name="menuItem" id="uploadMenu"><a href="#" onClick="getUpload();">Upload Content</a></li>
+						  <li name="menuItem" id="flickrCWG" class="active"><a href="#" onclick="flickrNews('start');">Glasgow CWG 2014</a></li>
 					   	  <li name="menuItem" id="flickrMenu"><a href="#" onclick="flickrMenu('start')">Flickr Glasgow Images</a></li>
-					    </ul>
+						 </ul>
 					    <hr>
 					    <div class="panel mypanel" style="width:auto; margin:0;">
 							<h3 style="text-align:center;">Popular Tags</h3>
@@ -131,147 +131,35 @@
 			   	<div id= "replace" class="col-md-9">
 			        <div class="panel mypanel" id="panelBodyContent">
 			            	<div class="panel-heading internalHeader">
-			            		<h2 class="panel-title" style="font-size: 24px">Tagged Content</h2>
+			            		<h2 class="panel-title" style="font-size: 24px">Glasgow Commonwealth Games 2014</h2>
 			            	</div>
 						<div class="panel-body headText" id="panelBodyContent"> 
-							
-							<div id="pictures">
+							<div id="flickrNews" class="row headText">
+	
+								<div style="visibility:visible; clear:both; padding-top:5%;" id="cloudFlickr">
+								
+								</div>
+							           	
+							   	<div style="visibility:visible; clear:both; padding-top:5%;" id="resultPhotos">
 								<div class="panel-heading sectionHeader" >
-								    <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
+								    <h2 class="panel-title" style="font-size: 24px">Images</h2>
 								</div>
-								
-								<div id="pictureTemplate">
-								<ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-								
-									{{if .Photo}}
-									{{range $element2 :=.Photo}}
-											{{if $element2.URL}}
-													<li id="li{{$element2.PhotoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
-														<div class="imgDiv">
-															<a id="{{$element2.PhotoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.PhotoId}}">
-																<img class="img-thumbnail" src="{{$element2.URL}}">
-															</a>
-														</div>
-													</li>
-													<div class="modal" id="picModal{{$element2.PhotoId}}" tabindex="-1" role="dialog" aria-hidden="true">
-														<div class="modal-dialog" style="width: auto; max-width: 900px;">
-														    	<div class="modal-content">
-																<div style="display:none">
-																	<form id="details" name={{$element2.PhotoId}}>
-																		<input type="hidden" id="picId{{$element2.PhotoId}}" value="{{$element2.PhotoId}}" />
-																		<input type="hidden" id="picAlbumId{{$element2.PhotoId}}" value="{{$element2.AlbumId}}" />
-																		<input type="hidden" id="picOwner{{$element2.PhotoId}}" value="{{$element2.Owner}}" />
-																		<input type="hidden" id="contentType{{$element2.PhotoId}}" value="image" />
-																	</form>
-																</div>
-																<div class="modal-header login_modal_header">
-												        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-												      			</div>
-																<div class="modal-body login-modal row" >
-																	<div class='col-md-8 imgdiv'>
-															      		<img class="imageSize" src="{{$element2.URL}}" />
-																			<div style="display:block; text-align:center;">																		
-																				<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.PhotoId}}">Prev</a>
-																				<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.PhotoId}}">Next</a>
-																			</div>
-																	</div>
-																	<div class="col-md-4" style="padding:0;">
-																		<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
-																		<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-																		<div style="clear:both; padding-top:7%;">
-																			{{if $element2.Description}}
-																				<p class="description">Description:</p>
-																				<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
-																			{{end}}
-																			{{if $element2.Location.Name}}
-																				<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
-																			{{end}}
-																			<p style="float:left; font-size:small; clear:both;">Views</p>
-																			<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
-																			
-																		</div>
-																		<div style="clear:both;padding-top:4%;">
-																			{{range $elementTag := $element2.Tags}}
-																				<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
-																			{{end}}
-																		</div>
-																		<div style="padding-top:5px; clear:both">
-																			<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.PhotoId}})">
-																				<div>
-																					<input type="text" class="comment{{$element2.PhotoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.PhotoId}}" placeholder="Enter Comment..." />
-																					<input type="hidden" id="cType{{$element2.PhotoId}}" value="image" />
-																					<input type="hidden" id="pictureNumber{{$element2.PhotoId}}" value="{{$element2.PhotoId}}" />
-																					<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
-																				</div>
-																			</form>
-																		</div>
-																		<div class="commentBox">
-																			<ul class="commentList" id="commentList{{$element2.PhotoId}}">
-																				{{if $element2.Comments}}
-																					{{range $indexComment, $elementComment := $element2.Comments}}
-																							{{if $elementComment.Body}}
-																								<li>
-																									<div class="commentText">
-																										<p>{{$elementComment.Body}}</p>																									
-																										<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
-																										<span class="date under">on {{$elementComment.Timestamp}}</span>
-																									</div>
-																								</li>
-																							{{end}}
-																					{{end}}
-																				{{end}}
-																			</ul>
-																		</div>
-																	</div>
-																</div>
-															</div>	
-														</div>								
-													
-													</div>		
-																							
-																							
-											{{end}}
-									{{end}}
-									{{end}}
-																			
-																			
-										
-								
-								</ul>
-								<a href="#" id="previous" onclick="getSimilarTag({{.Tag}},{{.PageIP}},'image',{{.PageVP}},{{.PageVN}})">Prev</a>
-								<a href="#" id="next"  onclick="getSimilarTag({{.Tag}},{{.PageIN}},'image',{{.PageVP}},{{.PageVN}})">Next</a>
-								</div>
-								</div>
-								
-								<div id="videos">
-								<div class="panel-heading sectionHeader" >
-								    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
-								</div>
-								<div id="pictureTemplate">
-								<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
-																	{{range $element2 :=.Video}}
+								<div id="pictureHelper" class="headText">
+
+									<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+																			{{range $index2, $element2 := .P}}
 																				{{if $element2.URL}}
-																					<li id="li{{$element2.VideoId}}" class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;min-height:150px; margin:0;">
+																					
+																					<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 																						<div class="imgDiv">
-																							<a id="{{$element2.VideoId}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$element2.VideoId}}">
-																	          					<video class="img-thumbnail">
-																									<source src="{{$element2.URL}}" type="video/mp4">
-									  																<source src="{{$element2.URL}}" type="video/ogg">
-																									Your browser does not support the video tag.
-																								</video>
-																	        					</a>
+																						<a id="{{$index2}}flickrimage" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickrimage">
+																          					<img class="img-thumbnail" src="{{$element2.URL}}">
+																        					</a>
 																						</div>
 																					</li>
 																							
-																					<div class="modal" id="picModal{{$element2.VideoId}}" tabindex="-1" role="dialog" aria-hidden="true">
-																							<div style="display:none">
-																								<form id="details" name={{$element2.VideoId}}>
-																									<input type="hidden" id="picId{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
-																									<input type="hidden" id="picAlbumId{{$element2.VideoId}}" value="{{$element2.AlbumId}}" />
-																									<input type="hidden" id="picOwner{{$element2.VideoId}}" value="{{$element2.Owner}}" />
-																									<input type="hidden" id="contentType{{$element2.VideoId}}" value="video" />
-																								</form>
-																							</div>
+																					<div class="modal" id="picModal{{$index2}}flickrimage" tabindex="-1" role="dialog" aria-hidden="true">
+																							
 																							<div class="modal-dialog" style="width: auto; max-width: 900px;">
 																							    	<div class="modal-content">
 																							      		<div class="modal-header login_modal_header">
@@ -279,76 +167,102 @@
 																							      		</div>
 																							      		<div class="modal-body login-modal row" >
 																											<div class='col-md-8 imgdiv'>
-																									      		
-																												<video class="imageSize" controls>
-																													<source src="{{$element2.URL}}" type="video/mp4"></source>
-													  																<source src="{{$element2.URL}}" type="video/ogg"></source>
-																													Your browser does not support the video tag.
-																												</video>
+																									      		<img class="imageSize" src="{{$element2.URL}}" />		
 																												<div style="display:block; text-align:center;">																		
-																													<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$element2.VideoId}}">Prev</a>
-																													<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$element2.VideoId}}">Next</a>
+																													<a href="#"  data-toggle="modal" style="float:left;" data-dismiss="modal" data-target="" id="prev{{$index2}}flickrimage">Prev</a>
+																													<a href="#"  data-toggle="modal" style="float:right;" data-dismiss="modal" data-target="" id="next{{$index2}}flickrimage">Next</a>
 																												</div>
 																											</div>
 																											<div class="col-md-4" style="padding:0;">
-																												<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
-																												<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
-																												<div style="clear:both; padding-top:7%;">
+																												
+																												<p style="float:right; font-size:medium; color:black; clear:both;">{{$element2.TimeStamp}}</p>
+																												<div style="clear:both; padding-top:7%; padding-left:8%;" >
 																													{{if $element2.Description}}
 																														<p class="description">Description:</p>
 																														<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
-																													{{end}}
-																													{{if $element2.Location.Name}}
-																														<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
-																													{{end}}
-																													<p style="float:left; font-size:small; clear:both;">Views</p>
-																													<p id= "upvotep{{$element2.VideoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
-																													
+																													{{end}}																				
 																												</div>
-																												<div style="clear:both;padding-top:4%;">
-																													{{range $indexTag, $elementTag := $element2.Tags}}
-																														<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+																												<div style="clear:both;">
+																													{{range $indexTag, $elementTag := $element2.Keywords}}
+																														<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrMenu('getTags_{{$elementTag}}');">{{$elementTag}}</a>
 																													{{end}}
 																												</div>
 																												<div style="padding-top:5px; clear:both;">
-																													<form id="commentForm" onsubmit="return commentFormSubmit({{$element2.VideoId}})">
-																														<div>
-																															<input type="text" class="comment{{$element2.VideoId}}" style="height:25px;border-radius:4px;" id="comment{{$element2.VideoId}}" placeholder="Enter Comment..." />
-																															<input type="hidden" id="cType{{$element2.VideoId}}" value="video" />
-																															<input type="hidden" id="pictureNumber{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
-																															<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
-																														</div>
+																													<form id="commentForm">
+																													<div>
+																														<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." disabled/>
+																														<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" disabled/>
+																													</div>
 																													</form>
 																												</div>
-																												<div class="commentBox">
-																													<ul class="commentList" id="commentList{{$element2.VideoId}}">
-																														{{if $element2.Comments}}
-																															{{range $indexComment, $elementComment := $element2.Comments}}
-																																{{if $elementComment.Body}}
-																																	<li>
-																																		<div class="commentText">
-																																			<p>{{$elementComment.Body}}</p>																									
-																																			<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
-																																			<span class="date under">on {{$elementComment.Timestamp}}</span>
-																																		</div>
-																																	</li>
-																																{{end}}
-																															{{end}}
-																														{{end}}
-																													</ul>
-																												</div>
+																												
+																																														
 																											</div>
 																							      		</div>	
 																							    </div>
 																						    	</div>
 																					</div>				
 																				{{end}}
+																			{{end}} 
+																			
+																			</ul>
+									
+									
+								<a href="#" id="previous" onclick="return flickrMenu({{.Tag}},{{.PageIP}},'image')">Prev</a>
+								<a href="#" id="next"  onclick="return flickrMenu({{.Tag}},{{.PageIN}},'image')">Next</a> 
+								</div>
+								
+								</div>  
+							          
+							           	
+							                
+								<div style="visibility:visible; clear:both; padding-top:5%;" id="resultNews">
+								
+								<div id = "newsHelper">
+								<div class="panel-heading sectionHeader" >
+								    <h2 class="panel-title" style="font-size: 24px">News</h2>
+								</div>
+								<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
+													{{range $index2, $element2 := .N}}
+																				
+																					
+																					<li style="list-style:none;margin-bottom:25px;">
+																						<a href={{$element2.URL}}>{{$element2.Title}}</a>
+																						
+																						<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}news">
+																          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">
+																        					</a>
+																						
+																					</li>
+																					{{if $element2.ImageUrl}}		
+																					<div class="modal" id="picModal{{$index2}}news" tabindex="-1" role="dialog" aria-hidden="true">
+																							
+																							<div class="modal-dialog" style="width: auto; max-width: 900px;">
+																							    	<div class="modal-content">
+																							      		<div class="modal-header login_modal_header">
+																							        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+																							      		</div>
+																							      		<div class="modal-body login-modal row" >
+																											<div class='col-md-8' style="padding-bottom:15px;position:relative;">
+																									      		<img style="width:90%; height:100%;" src="{{$element2.ImageUrl}}" />		
+																												
+																											</div>
+																											
+																							      		</div>	
+																							    </div>
+																						    	</div>
+																					</div>	
+																							
+																					{{end}}
 																			{{end}}
 									</ul>
-								<a href="#" id="previous" onclick="getSimilarTag({{.Tag}},{{.PageVP}},'video',{{.PageIP}},{{.PageIN}})">Prev</a>
-								<a href="#" id="next"  onclick="getSimilarTag({{.Tag}},{{.PageVN}},'video',{{.PageIP}},{{.PageIN}})">Next</a>
+									<a href="#" id="previous" onclick="return flickrNews({{.Tag}},{{.PageIP}},'news')">Prev</a>
+									<a href="#" id="next"  onclick="return flickrNews({{.Tag}},{{.PageIN}},'news')">Next</a> 
 								</div>
+								
+								
 								</div>
+							</div>
 			                		              	
 			            	</div>			               
 			        </div>          
@@ -439,6 +353,9 @@
 			</script>   
 			<script>
 				carousel();
+			</script>  
+			<script>
+				populateCloud({{.Tags}},"Flickr");
 			</script>        
     
 			 
