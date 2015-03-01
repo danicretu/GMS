@@ -146,7 +146,6 @@ $(document).ready(function() {
 	
 	window.onpopstate = function(event) {
 		console.log("pathname: "+location.pathname);
-		window.alert(location.hash.substring(1));
 		//loadContent(location.pathname);
 		var func = location.hash.substring(1);
 		var func_param = location.hash.substring(1).split("?");
