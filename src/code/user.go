@@ -906,6 +906,7 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 	user := findUser(sess, currentUser)
 
 	u := r.URL.RawQuery
+	user2 := findUser(sess, u)
 
 	var photos []Photo
 	var videos []Video
@@ -915,6 +916,7 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 
 	photoData := struct {
 		FirstName string
+		UserName  string
 		PageIN    int
 		PageIP    int
 		PageVN    int
@@ -924,6 +926,7 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 		Video     []Video
 	}{
 		user.FirstName,
+		user2.FirstName,
 		1,
 		1,
 		1,
