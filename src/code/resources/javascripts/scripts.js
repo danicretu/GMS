@@ -143,7 +143,11 @@ $(document).ready(function() {
 		var func = location.hash.substring(1);
 		var func_param = location.hash.substring(1).split("?");
 		var myFunc = window[func_param[0]];
-		myFunc(func_param[1]);
+		if (func_param[0].indexOf(",") > -1){
+			myFunc.apply(this, func_param[0].split(";"));
+		} else { 
+			myFunc(func_param[1]);
+		}
 	};
 
 
