@@ -94,7 +94,7 @@
 			  <li class="dropdown">
                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{.FirstName}} <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
-				  <li><a href="#" onclick="getPictures('');">Profile</a></li>
+				  <li><a href="#getPictures">Profile</a></li>
                    <li><a href="/logout">Log Out</a></li>                 
                  </ul>
                </li>            		
@@ -113,12 +113,12 @@
 					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 				    <div class="hidden-xs sideMenu">
 						<ul class="nav nav-pills nav-stacked">
-					      <li name="menuItem" id="pictureMenu" class="active"><a href="#getPictures" onclick="getPictures('');">Your Personal Image Archive</a></li>
-						  <li name="menuItem" id="videoMenu"><a href="#getVideos" onclick="getVideos('');" >Your Personal Video Archive</a></li>	
-					      <li name="menuItem" id="albumMenu"><a href="#albums" onclick="getAlbums('');">Albums</a></li>
-					      <li name="menuItem" id="uploadMenu"><a href="#upload" onClick="getUpload();">Upload Content</a></li>
-						  <li name="menuItem" id="flickrCWG"><a href="#commonwealth" onclick="flickrNews('start');">Glasgow CWG 2014</a></li>
-					   	  <li name="menuItem" id="flickrMenu"><a href="#flickr" onclick="flickrMenu('start')">Flickr Glasgow Images</a></li>
+					      <li name="menuItem" id="pictureMenu" class="active"><a href="#getPictures">Your Personal Image Archive</a></li>
+						  <li name="menuItem" id="videoMenu"><a href="#getVideos" >Your Personal Video Archive</a></li>	
+					      <li name="menuItem" id="albumMenu"><a href="#getAlbums?">Albums</a></li>
+					      <li name="menuItem" id="uploadMenu"><a href="#getUpload">Upload Content</a></li>
+						  <li name="menuItem" id="flickrCWG"><a href="#flickrNews?start">Glasgow CWG 2014</a></li>
+					   	  <li name="menuItem" id="flickrMenu"><a href="#flickrMenu?start">Flickr Glasgow Images</a></li>
 						 </ul>
 					    <hr>
 					    <div class="panel mypanel" style="width:auto; margin:0;">
@@ -171,7 +171,7 @@
 																		</div>
 																</div>
 																<div class="col-md-4" style="padding:0;">
-																	<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+																	<a style="float:left; font-size:medium; clear:both;" href="#getUser?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
 																	<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
 																	<div style="clear:both; padding-top:7%;">
 																		{{if $element2.Description}}
@@ -187,7 +187,7 @@
 																	</div>
 																	<div style="clear:both;padding-top:4%;">
 																		{{range $elementTag := $element2.Tags}}
-																			<a class="tag" hre="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+																			<a class="tag" href="#getSimilarTag?{{$elementTag}}">{{$elementTag}}</a>
 																		{{end}}
 																	</div>
 																	<div style="padding-top:5px; clear:both;">
@@ -208,7 +208,7 @@
 																							<li>
 																								<div class="commentText">
 																									<p>{{$elementComment.Body}}</p>																									
-																									<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
+																									<a class="user under" href="#getUser?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
 																									<span class="date under">on {{$elementComment.Timestamp}}</span>
 																								</div>
 																							</li>

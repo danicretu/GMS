@@ -5,9 +5,9 @@
 	{{range $index, $element := .Albums}}
 		<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 			<div class="imgDiv">
-			<img onclick="return getAlbumDetails({{$element.AlbumId}},'','','')" class="img-thumbnail" src="{{$element.Photo}}">
+			<a href="#getAlbumDetails?{{$element.AlbumId}}"><img class="img-thumbnail" src="{{$element.Photo}}"></a>
 			</div>
-			<a href="#" onclick="return getAlbumDetails({{$element.AlbumId}},'','','')">{{$element.Name}}</a>
+			<a href="#getAlbumDetails?{{$element.AlbumId}}">{{$element.Name}}</a>
 		</li>
 	{{end}}
 </ul>

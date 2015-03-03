@@ -1,6 +1,7 @@
 var tags=[];
 var tagNo=0;
 var tagTest=3;
+var previousUrl="";
 $(document).ready(function() {
 	
 	$('#menuButton').on('click', function(event){
@@ -55,14 +56,6 @@ $(document).ready(function() {
 					
 						$('#li'+t[1]).remove();
 						$('#picModal'+t[1]).remove();
-				
-					/*var id = "li"+picId;
-					var id2 = "picModal"+picId;
-					
-					var el = document.getElementById( id);
-					el.parentNode.removeChild( el );
-					var el = document.getElementById( id2);
-					el.parentNode.removeChild( el ); */
 				}
 			}
 		});
@@ -125,7 +118,7 @@ $(document).ready(function() {
 					$('#commentList').prepend("<li>"+
 									"<div class='commentText'>"+
 									"<p>"+t[1]+"</p>"+
-									"<a class='user under' href='/user?"+t[2]+"'>"+t[2]+"</a>"+
+									"<a class='user under' href='#getUser?"+t[2]+"'>"+t[2]+"</a>"+
 									"<span class='date under'> on "+t[3]+"</span>"+
 									"</div></li>");
 				} else {
@@ -145,12 +138,11 @@ $(document).ready(function() {
 	
 	
 	window.onpopstate = function(event) {
-		console.log("pathname: "+location.pathname);
-		//loadContent(location.pathname);
+		console.log(location.pathname,"  ", location.hash);
+		console.log(event.state);
 		var func = location.hash.substring(1);
 		var func_param = location.hash.substring(1).split("?");
 		var myFunc = window[func_param[0]];
-		//setTimeout ( myFunc, 1 );
 		myFunc(func_param[1]);
 	};
 
@@ -182,6 +174,7 @@ function onDelete(id, cType){
 	return false;
 }
 
+
 function getAlbumDetails(album,start,cType,nModP, nModN){
 	//console.log(data);
 	if (start != -1) {
@@ -190,6 +183,7 @@ function getAlbumDetails(album,start,cType,nModP, nModN){
 			type:"POST",
 			data: {"albumId":album, "start":start, "cType":cType, "nModP":nModP, "nModN" : nModN},
 			success: function(html){
+				
 				var obj = jQuery.parseJSON(html);
 				//console.log(obj[0].Content);
 				if (obj[0].Content != ""){
@@ -199,7 +193,7 @@ function getAlbumDetails(album,start,cType,nModP, nModN){
 					if (uls.length >= 1) {
 						
 						jQuery.each(uls, function(index, value) {
-						    console.log(uls.length);
+						   
 							assignClass(uls[0].id)();
 					   });
 					}
@@ -345,6 +339,7 @@ function getUpload(){
 		//url:"http://4e76fce3.ngrok.com/upload",
 		url:"/upload",
 		success: function(html) {
+
 				$('div.sideMenu').removeClass('in');
 				//console.log("in success"+html);
 				var obj = jQuery.parseJSON(html);
@@ -381,7 +376,7 @@ function commentFormSubmit(inp){
 					$('#commentList'+inp).prepend("<li>"+
 									"<div class='commentText'>"+
 									"<p>"+t[1]+"</p>"+
-									"<a class='user under' href='/user?"+t[2]+"'>"+t[2]+"</a>"+
+									"<a class='user under' href='#getUser?"+t[2]+"'>"+t[2]+"</a>"+
 									"<span class='date under'> on "+t[3]+"</span>"+
 									"</div></li>");
 				} else {
@@ -483,8 +478,6 @@ function getVideos(data){
 					console.log(document.getElementById('panelBodyContent').id);
 					//document.getElementById('panelBodyContent').innerHtml = "Hello";
 					if (obj[0].Content != ""){
-						href = $(this).attr("href");
-						history.pushState('', 'New URL: '+href, href);
 						$('#panelBodyContent').html(obj[0].Content);
 						console.log(document.getElementById('panelBodyContent').innerHtml);
 						
@@ -514,7 +507,6 @@ function getPictures(data){
 			url:"/pictures",
 			data:{"req" : data},
 			success: function(html) {
-				//console.log("in success"+html);
 				var obj = jQuery.parseJSON(html);
 				console.log(obj[0].Name+"            ***********")
 				if (obj[0].Name=="ownPictures") {		
@@ -528,7 +520,7 @@ function getPictures(data){
 					console.log(uls.length);
 					if (uls.length >= 1) {
 						jQuery.each(uls, function(index, value) {
-						    console.log(uls.length);
+						    
 							assignClass(uls[0].id)();
 					      
 					   	});
@@ -559,7 +551,6 @@ function assign(data) {
 		document.getElementById(data).addEventListener("click",function(){ return upview(data);});
 		
 	}
-	//data.addEventListener("click",function(){ return upview(data.id);});
 }
 
 function setClass(id) {
@@ -569,7 +560,7 @@ function setClass(id) {
 function setActive(lid){
 	var lis = document.getElementsByName("menuItem")
 	jQuery.each(lis, function(index, value) {
-		console.log("in jquery each ", lis[index].id);
+		
 		if (lis[index].id==lid) {
 			$('#'+lis[index].id).addClass('active');
 		}else{
@@ -579,7 +570,7 @@ function setActive(lid){
 }
 
 function getAlbums(data){
-	console.log("in get Albums");
+	console.log("in get Albums ", data);
 	
 	setActive("albumMenu");
 	if (data == "") {
@@ -589,7 +580,7 @@ function getAlbums(data){
 			data:{"req" : data},
 			success: function(html) {
 				$('div.sideMenu').removeClass('in');
-				//console.log("in success"+html);
+				console.log("in success"+html);
 				var obj = jQuery.parseJSON(html);
 				console.log(obj[0].Name+"            ***********")
 				if (obj[0].Name=="ownAlbums") {
@@ -600,7 +591,9 @@ function getAlbums(data){
 					console.log(document.getElementById('panelBodyContent').innerHtml);
 				}
 				
-			}
+			}, error: function(data) {
+                console.log(data);
+            }
 	});
 	return false;
 	}
@@ -824,11 +817,7 @@ function populateCloud(data, cloud){
 	
 	if (cloud=="Flickr2"){
 		for (var m in t){
-			var aLink = document.createElement("a");
-			aLink.text = t[m];
-			aLink.setAttribute('class', "tag");
-			addOnClick(aLink, t[m], "Flickr2")();
-			$('#cloud'+"Flickr").append(aLink);
+			$('#cloud'+cloud).append("<a class='tag' href='#flickrMenu?'" + m + "'>"+m+"</a>");
 		}
 		return;
 	}
@@ -849,13 +838,9 @@ function populateCloud(data, cloud){
 			else if ((0.5>tagMap[m]/max) && (tagMap[m]/max>0.3)) size = 4;
 			else size = 2;
 			if (cloud=="Flickr"){
-				var aLink = document.createElement("a");
-				aLink.text = m;
-				aLink.setAttribute('class', "size"+size);
-				addOnClick(aLink, m, "Flickr")();
-				$('#cloud'+cloud).append(aLink);
+				$('#cloud'+cloud).append("<a class='size"+size+"' href='#flickrNews?" + m + "'>"+m+"</a>");
 			}else{
-				$('#cloud'+cloud).append("<a class='size"+size+"'href='#' onclick=\"getSimilarTag('" + m + "')\"'>"+m+"</a>");
+				$('#cloud'+cloud).append("<a class='size"+size+"' href='#getSimilarTag?" + m + "'>"+m+"</a>");
 			}
 		}
 	}
@@ -1008,7 +993,6 @@ function addOnClick(aLink, tag, cloud){
 			aLink.onclick=function() {return flickrNews(tag);};
 		}
 	}else{
-		//var ret = "extend_"+tag;
 		return function() {
 			aLink.onclick=function() {return flickrMenu(tag);};
 		}

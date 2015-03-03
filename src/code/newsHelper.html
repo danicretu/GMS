@@ -36,6 +36,6 @@
 													{{end}}
 											{{end}}
 	</ul>
-	<a href="#" id="previous" onclick="return flickrNews({{.Tag}},{{.PageIP}},'news')">Prev</a>
-	<a href="#" id="next"  onclick="return flickrNews({{.Tag}},{{.PageIN}},'news')">Next</a> 
+	<a href="#flickrNews?{{.Tag}},{{.PageIP}},news" id="previous">Prev</a>
+	<a href="#flickrNews?{{.Tag}},{{.PageIN}},news" id="next" >Next</a> 
 </div>

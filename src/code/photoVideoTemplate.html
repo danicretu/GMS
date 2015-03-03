@@ -43,7 +43,7 @@
 											</div>
 									</div>
 									<div class="col-md-4" style="padding:0;">
-										<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+										<a style="float:left; font-size:medium; clear:both;" href="#getUser?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
 										<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
 										<div style="clear:both; padding-top:7%;">
 											{{if $element2.Description}}
@@ -59,7 +59,7 @@
 										</div>
 										<div style="clear:both;padding-top:4%;">
 											{{range $elementTag := $element2.Tags}}
-												<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+												<a class="tag" href="#getSimilarTag{{$elementTag}}" >{{$elementTag}}</a>
 											{{end}}
 										</div>
 										<div style="padding-top:5px; clear:both;">
@@ -80,7 +80,7 @@
 																<li>
 																	<div class="commentText">
 																		<p>{{$elementComment.Body}}</p>																									
-																		<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
+																		<a class="user under" href="#getUser?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
 																		<span class="date under">on {{$elementComment.Timestamp}}</span>
 																	</div>
 																</li>
@@ -104,8 +104,8 @@
 		
 
 </ul>
-<a href="#" id="previous" onclick="getUser({{.User}},{{.PageIP}},'image',{{.PageVP}},{{.PageVN}})">Prev</a>
-<a href="#" id="next"  onclick="getUser({{.User}},{{.PageIN}},'image',{{.PageVP}},{{.PageVN}})">Next</a>
+<a href="#getUser?{{.User}},{{.PageIP}},image,{{.PageVP}},{{.PageVN}}" id="previous" >Prev</a>
+<a href="#getUser?{{.User}},{{.PageIN}},image,{{.PageVP}},{{.PageVN}}" id="next" >Next</a>
 </div>
 </div>
 
@@ -157,7 +157,7 @@
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
-																				<a style="float:left; font-size:medium; clear:both;" href="#" onclick="getUser({{$element2.Owner}})">{{$element2.OwnerName}}</a>
+																				<a style="float:left; font-size:medium; clear:both;" href="#getUser?{{$element2.Owner}}">{{$element2.OwnerName}}</a>
 																				<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
@@ -173,7 +173,7 @@
 																				</div>
 																				<div style="clear:both;padding-top:4%;">
 																					{{range $indexTag, $elementTag := $element2.Tags}}
-																						<a class="tag" href="#" onclick="return getSimilarTag({{$elementTag}})">{{$elementTag}}</a>
+																						<a class="tag" href="#getSimilarTag?{{$elementTag}}">{{$elementTag}}</a>
 																					{{end}}
 																				</div>
 																				<div style="padding-top:5px; clear:both;">
@@ -194,7 +194,7 @@
 																									<li>
 																										<div class="commentText">
 																											<p>{{$elementComment.Body}}</p>																									
-																											<a class="user under" href="#" onclick="getUser({{$elementComment.UserId}})">{{$elementComment.User}}</a>
+																											<a class="user under" href="#getUser?{{$elementComment.UserId}}">{{$elementComment.User}}</a>
 																											<span class="date under">on {{$elementComment.Timestamp}}</span>
 																										</div>
 																									</li>
@@ -211,7 +211,7 @@
 												{{end}}
 											{{end}}
 	</ul>
-<a href="#" id="previous" onclick="getUser({{.User}},{{.PageVP}},'video',{{.PageIP}},{{.PageIN}})">Prev</a>
-<a href="#" id="next"  onclick="getUser({{.User}},{{.PageVN}},'video',{{.PageIP}},{{.PageIN}})">Next</a>
+<a href="#getUser?{{.User}},{{.PageVP}},video,{{.PageIP}},{{.PageIN}}" id="previous" >Prev</a>
+<a href="#getUser?{{.User}},{{.PageVN}},video,{{.PageIP}},{{.PageIN}}" id="next">Next</a>
 </div>
 </div>

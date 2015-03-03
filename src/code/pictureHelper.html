@@ -41,7 +41,7 @@
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Keywords}}
-																						<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrNews('tag_{{$elementTag}}');">{{$elementTag}}</a>
+																						<a class="tag" href="#flickrNews?tag_{{$elementTag}}" style="overflow-wrap:break-word;" >{{$elementTag}}</a>
 																					{{end}}
 																				</div>
 																				<div style="padding-top:5px; clear:both;">
@@ -65,6 +65,6 @@
 											</ul>
 	
 	
-<a href="#" id="previous" onclick="return flickrNews({{.Tag}},{{.PageIP}},'image')">Prev</a>
-<a href="#" id="next"  onclick="return flickrNews({{.Tag}},{{.PageIN}},'image')">Next</a> 
+<a href="#flickrNews?{{.Tag}},{{.PageIP}},image" id="previous">Prev</a>
+<a href="#flickrNews?{{.Tag}},{{.PageIN}},image" id="next" >Next</a> 
 </div>

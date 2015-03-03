@@ -145,9 +145,6 @@ func findUser(sess *mgo.Session, id string) *User {
 
 func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrImage1 {
 
-	a := rand.Intn(65536)
-	b := rand.Intn(a)
-
 	source := "/resources/flickr/"
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
@@ -155,13 +152,13 @@ func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrIma
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
 	var flickrImage []FlickrImage1
 
-	fmt.Println(b, "    random number")
-
-	//limit := 8
+	limit := 8
 
 	if tag == "" {
+		records, _ := c.Find(bson.M{}).Count()
+		a := rand.Intn(records - limit)
 		//err := c.Find(bson.M{"source": "https://www.flickr.com"}).Skip(10).Limit(8).All(&flickrImage)
-		err := c.Find(bson.M{}).Skip(b).Limit(8).All(&flickrImage)
+		err := c.Find(bson.M{}).Skip(a).Limit(limit).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -172,13 +169,13 @@ func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrIma
 		random := rand.Intn(records)
 
 		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(10).Limit(8).All(&flickrImage)
-		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(random).Limit(8).All(&flickrImage)
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(random).Limit(limit).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if tag == tag2 {
 		var myarr = []string{tag}
-		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+		err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
 		//err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start).Limit(8).All(&flickrImage)
 		if err != nil {
 			fmt.Println(err)
@@ -187,12 +184,12 @@ func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrIma
 	} else {
 		var myarr = []string{tag, tag2}
 		if cType == "and" {
-			err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+			err := c.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
 			if err != nil {
 				fmt.Println(err)
 			}
 		} else if cType == "or" {
-			err := c.Find(bson.M{"keywords": bson.M{"$in": myarr}}).Skip(start * 8).Limit(8).All(&flickrImage)
+			err := c.Find(bson.M{"keywords": bson.M{"$in": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -217,13 +214,24 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
 	c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
+	limit := 8
 	var flickrImage []FlickrImage
 	var myarr = []string{tag}
-	limit := 8
+	if start == 0 && tag == "" {
+		records, _ := c.Find(bson.M{"source": "https://www.flickr.com"}).Count()
+		fmt.Println(records, "     ******************")
+		start = rand.Intn(records - limit)
+		fmt.Println(start, "    images start")
+		err := c.Find(bson.M{"source": "https://www.flickr.com"}).Skip(start).Limit(limit).All(&flickrImage)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
 
-	err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
-	if err != nil {
-		fmt.Println(err)
+		err := c.Find(bson.M{"source": "https://www.flickr.com", "keywords": bson.M{"$all": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	for i := range flickrImage {
@@ -244,9 +252,20 @@ func getNews(tag string, start int) []News {
 	var newsKey = []string{tag}
 	limit := 8
 
-	err := c.Find(bson.M{"source": "http://www.theguardian.com", "keywords": bson.M{"$all": newsKey}}).Skip(start * limit).Limit(limit).All(&news)
-	if err != nil {
-		fmt.Println(err)
+	if start == 0 && tag == "" {
+		records, _ := c.Find(bson.M{"source": "http://www.theguardian.com"}).Count()
+		start = rand.Intn(records - limit)
+		fmt.Println(start, "    images start")
+		err := c.Find(bson.M{"source": "http://www.theguardian.com"}).Skip(start).Limit(limit).All(&news)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+
+		err := c.Find(bson.M{"source": "http://www.theguardian.com", "keywords": bson.M{"$all": newsKey}}).Skip(start * limit).Limit(limit).All(&news)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	for i := range news {

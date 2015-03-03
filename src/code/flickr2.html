@@ -6,7 +6,7 @@
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1">
        <meta name="description" content="">
-       <meta name="author" content="Md Sadek Ferdous" >
+       <meta name="author" content="Daniela Cretu" >
 	
        <title>Glasgow Memories Server: Home</title>
 	
@@ -113,12 +113,12 @@
 					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 				    <div class="hidden-xs sideMenu">
 						<ul class="nav nav-pills nav-stacked">
-					      <li name="menuItem" id="pictureMenu"><a href="#" onclick="getPictures('');">Your Personal Image Archive</a></li>
-						  <li name="menuItem" id="videoMenu"><a href="#" onclick="getVideos('');">Your Personal Video Archive</a></li>	
-					      <li name="menuItem" id="albumMenu"><a href="#" onclick="getAlbums('');">Albums</a></li>
-					      <li name="menuItem" id="uploadMenu"><a href="#" onClick="getUpload();">Upload Content</a></li>
-						  <li name="menuItem" id="flickrCWG" class="active"><a href="#" onclick="flickrNews('start');">Glasgow CWG 2014</a></li>
-					   	  <li name="menuItem" id="flickrMenu"><a href="#" onclick="flickrMenu('start')">Flickr Glasgow Images</a></li>
+					      <li name="menuItem" id="pictureMenu"><a href="#getPictures">Your Personal Image Archive</a></li>
+						  <li name="menuItem" id="videoMenu"><a href="#getVideos" >Your Personal Video Archive</a></li>	
+					      <li name="menuItem" id="albumMenu"><a href="#getAlbums">Albums</a></li>
+					      <li name="menuItem" id="uploadMenu"><a href="#getUpload">Upload Content</a></li>
+						  <li name="menuItem" id="flickrCWG" class="active"><a href="#flickrNews?'start'">Glasgow CWG 2014</a></li>
+					   	  <li name="menuItem" id="flickrMenu"><a href="#flickrMenu?'start'">Flickr Glasgow Images</a></li>
 						 </ul>
 					    <hr>
 					    <div class="panel mypanel" style="width:auto; margin:0;">
@@ -184,7 +184,7 @@
 																												</div>
 																												<div style="clear:both;">
 																													{{range $indexTag, $elementTag := $element2.Keywords}}
-																														<a class="tag" style="overflow-wrap:break-word;" onclick="return flickrMenu('getTags_{{$elementTag}}');">{{$elementTag}}</a>
+																														<a class="tag" href="#flickrMenu?'getTags_{{$elementTag}}'" style="overflow-wrap:break-word;">{{$elementTag}}</a>
 																													{{end}}
 																												</div>
 																												<div style="padding-top:5px; clear:both;">
@@ -208,8 +208,8 @@
 																			</ul>
 									
 									
-								<a href="#" id="previous" onclick="return flickrMenu({{.Tag}},{{.PageIP}},'image')">Prev</a>
-								<a href="#" id="next"  onclick="return flickrMenu({{.Tag}},{{.PageIN}},'image')">Next</a> 
+								<a href="#flickrMenu?{{.Tag}},{{.PageIP}},'image'" id="previous" >Prev</a>
+								<a href="#flickrMenu?{{.Tag}},{{.PageIN}},'image'" id="next" >Next</a> 
 								</div>
 								
 								</div>  
@@ -256,8 +256,8 @@
 																					{{end}}
 																			{{end}}
 									</ul>
-									<a href="#" id="previous" onclick="return flickrNews({{.Tag}},{{.PageIP}},'news')">Prev</a>
-									<a href="#" id="next"  onclick="return flickrNews({{.Tag}},{{.PageIN}},'news')">Next</a> 
+									<a href="#flickrMenu?{{.Tag}},{{.PageIP}},'news'" id="previous">Prev</a>
+									<a href="#flickrMenu?{{.Tag}},{{.PageIN}},'news'" id="next" >Next</a> 
 								</div>
 								
 								

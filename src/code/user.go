@@ -758,9 +758,9 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("could not get most viewed photos")
 	}
 
-	flickrImages := getFlickrImages("boxing", 0)
+	flickrImages := getFlickrImages("", 0)
 
-	news := getNews("Boxing", 0)
+	news := getNews("", 0)
 
 	data := struct {
 		P      DisplayPhotos
