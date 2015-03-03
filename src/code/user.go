@@ -396,9 +396,11 @@ func getImages(request string, init string, temp string, start int, cType string
 
 	} else {
 		response := make([]Response, 2)
+		fmt.Println(request, " ", init, " ", start, " ", cType)
 
 		if cType == "and" {
 			photos := getFlickrMain(request, init, start, cType)
+			fmt.Println(request, " ", init, " ", start, " ", cType, " ", len(photos))
 			if len(photos) > 0 {
 
 				data := struct {
