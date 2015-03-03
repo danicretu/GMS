@@ -817,7 +817,7 @@ function populateCloud(data, cloud){
 	
 	if (cloud=="Flickr2"){
 		for (var m in t){
-			$('#cloud'+cloud).append("<a class='tag' href='#flickrMenu?" + m + "'>"+m+"</a>");
+			$('#cloudFlickr').append("<a class='tag' href='#flickrMenu?" + m + "'>"+m+"</a>");
 		}
 		return;
 	}
