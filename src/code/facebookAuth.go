@@ -19,9 +19,9 @@ var (
 
 var oauthCfgF = &oauth.Config{
 
-	ClientId: "853319121375165",
+	ClientId: "1611489125747997",
 
-	ClientSecret: "36e6f25d4b121b11ace2d812c12c67af",
+	ClientSecret: "7a20b89ff715fee7b94540ca7e191eb7",
 
 	AuthURL: "https://www.facebook.com/dialog/oauth",
 
