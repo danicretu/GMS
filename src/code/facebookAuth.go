@@ -93,7 +93,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(db_name)
 	fmt.Println(existing)
 
-	if existing.Id != "" && existing != nil {
+	if existing != nil && existing.Id != "" {
 
 		session.Values["user"] = existing.Id
 		session.Save(r, w)
