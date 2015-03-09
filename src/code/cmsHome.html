@@ -926,6 +926,70 @@
 </div>
 	</section>
 	
+		<section class="arrows_box">
+    <div class="arrows">
+        <svg data-id="heatMap" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg data-id="news" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
+
+	<section id="map" data-speed="4" data-type="background">
+	<div id="map" class="page-section">
+	<div class="container">                  
+		<div class="row">
+		    <div>
+		             <div class="panel newsPanel">
+		               <div class="panel-heading">
+		                 <h2 class="panel-title" style="font-size: 24px; color:white">Flickr Images</h2>
+		               </div>
+			            <div class="panel-body headText"> 
+							<div id="map_article">
+								
+							</div>
+		
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	</section>
+	
+	<section class="arrows_box">
+    <div class="arrows">
+        <svg data-id="map" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg data-id="news" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
+	
+	<section id="map" data-speed="4" data-type="background">
+		<div id="map" class="page-section">
+		<div class="container">                  
+			<div class="row">
+			    <div>
+			             <div class="panel newsPanel">
+			               <div class="panel-heading">
+			                 <h2 class="panel-title" style="font-size: 24px; color:white">Flickr Images</h2>
+			               </div>
+				            <div class="panel-body headText"> 
+								<div id="map_article">
+									
+								</div>
+			
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+	
+		</div>
+	</section>
+	
 	<section class="blue_arrows_box">
     <div class="arrows">        
         <svg viewBox="0 0 32 32" class="arrow_up" id="ugc_arrow_back">
@@ -964,12 +1028,17 @@
     <script src="resources/javascripts/nivo-lightbox.min.js"></script>
 	<script src="resources/javascripts/login.js"></script>
 	<script src="resources/javascripts/scripts.js" type="text/javascript"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
 	
 	<script>
 			checkIfLoggedIn();
 	</script> 
 	<script>
 			carousel();
+	</script>
+	
+	<script>
+			initialiseMap();
 	</script>
 	
 	  

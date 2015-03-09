@@ -125,6 +125,7 @@ type FlickrImage1 struct {
 	ImageName   string   `bson:"imageName"`
 	Description string   `bson:"description"`
 	TimeStamp   string   `bson:"datePosted"`
+	Location    string   `bson:"exifLocation"`
 	Keywords    []string `bson:"keywords"`
 }
 
@@ -151,6 +152,24 @@ type AlbumStruct struct {
 	Name    string
 	AlbumId string
 	Photo   string
+}
+
+type MapImage struct {
+	Id     bson.ObjectId `bson:"_id"`
+	User   bson.ObjectId `bson:"user"`
+	Lat    string        `bson:"lat"`
+	Lon    string        `bson:"lon"`
+	Street string        `bson:"street"`
+	URL    string        `bson:"url"`
+	Places []string      `bson:"places"`
+}
+
+type CwgImage struct {
+	Lat      string   `bson:"latitude"`
+	Lon      string   `bson:"longitude"`
+	Location string   `bson:"location"`
+	Events   []string `bson:"events"`
+	Photos   int      `bson:"photoCount"`
 }
 
 var router = mux.NewRouter()
@@ -196,6 +215,8 @@ func main() {
 	router.HandleFunc("/retrieveUser", handleMainUser)
 	router.HandleFunc("/retrieveFlickrNews", handleMainFlickr)
 	router.HandleFunc("/flickrImages", handleFlickrGeneral)
+	router.HandleFunc("/mapImages", handleMapImages)
+	router.HandleFunc("/CWGmapImages", handleCWGMapImages)
 	authenticateGoogle()
 	authenticateFacebook()
 	authenticateTwitter()
@@ -208,6 +229,105 @@ func main() {
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8892", nil)
+}
+
+func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	s := ""
+	var doc bytes.Buffer
+
+	location := r.FormValue("location")
+	var pics []FlickrImage1
+	st := r.FormValue("start")
+	start, _ := strconv.Atoi(st)
+	t, _ := template.ParseFiles("flickrHelper.html")
+	fmt.Println(location)
+	if location == "" {
+		fmt.Println("in if")
+		var pics []CwgImage
+		pics = getCwgMapImages()
+
+		b, err := json.Marshal(pics)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Fprintf(w, "%s", b)
+	} else {
+		if strings.HasPrefix(location, "getTags_") {
+			tag := location[8:]
+			pics = getFlickrMain(tag, "", start, "location", "")
+			data := struct {
+				Tag string
+				//P   []FlickrImage
+				P        []FlickrImage1
+				PageIP   int
+				PageIN   int
+				Type     string
+				Function string
+			}{
+				location,
+				pics,
+				start - 1,
+				start + 1,
+				"",
+				"getMoreMapImages",
+			}
+			t.Execute(&doc, data)
+
+		} else {
+			fmt.Println(location)
+			loc := strings.Replace(location, "_", " ", -1)
+			pics = getFlickrMain("", "", start, "location", loc)
+
+			data := struct {
+				Tag string
+				//P   []FlickrImage
+				P        []FlickrImage1
+				PageIP   int
+				PageIN   int
+				Type     string
+				Function string
+			}{
+				location,
+				pics,
+				start - 1,
+				start + 1,
+				"",
+				"getMoreMapImages",
+			}
+			t.Execute(&doc, data)
+		}
+
+		s = doc.String()
+		fmt.Println(location, "**************************************")
+		fmt.Println(s)
+		fmt.Fprintf(w, s)
+
+	}
+}
+
+func handleMapImages(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie")
+	var pics []MapImage
+	fmt.Println("in map images")
+
+	if session.Values["user"] == nil {
+		//no
+		pics = getMapImages("")
+	} else if session.Values["user"].(string) == "" {
+		//no
+		pics = getMapImages("")
+	} else {
+		//yes
+		//pics = getMapImages(session.Values["user"].(string))
+		//pics = getMapImages("54d3d2ffbc2e8b6933000007")
+		pics = getMapImages("")
+		b, err := json.Marshal(pics)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Fprintf(w, "%s", b)
+	}
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
@@ -292,7 +412,7 @@ func getImages(request string, init string, temp string, start int, cType string
 
 	if request == "start" {
 
-		photos := getFlickrMain("", "", start, cType)
+		photos := getFlickrMain("", "", start, cType, "")
 
 		fmt.Println(photos)
 
@@ -314,23 +434,25 @@ func getImages(request string, init string, temp string, start int, cType string
 		} else {
 			input = request[7:]
 		}
-		photos := getFlickrMain(input, "", start, cType)
+		photos := getFlickrMain(input, "", start, cType, "")
 
 		if len(photos) > 0 {
 
 			data := struct {
 				Tag string
 				//P   []FlickrImage
-				P      []FlickrImage1
-				PageIP int
-				PageIN int
-				Type   string
+				P        []FlickrImage1
+				PageIP   int
+				PageIN   int
+				Type     string
+				Function string
 			}{
 				input,
 				photos,
 				start - 1,
 				start + 1,
 				"and",
+				"flickrMenu",
 			}
 
 			t, _ := template.ParseFiles(temp)
@@ -399,23 +521,25 @@ func getImages(request string, init string, temp string, start int, cType string
 		fmt.Println(request, " ", init, " ", start, " ", cType)
 
 		if cType == "and" {
-			photos := getFlickrMain(request, init, start, cType)
+			photos := getFlickrMain(request, init, start, cType, "")
 			fmt.Println(request, " ", init, " ", start, " ", cType, " ", len(photos))
 			if len(photos) > 0 {
 
 				data := struct {
 					Tag string
 					//P   []FlickrImage
-					P      []FlickrImage1
-					PageIP int
-					PageIN int
-					Type   string
+					P        []FlickrImage1
+					PageIP   int
+					PageIN   int
+					Type     string
+					Function string
 				}{
 					request,
 					photos,
 					start - 1,
 					start + 1,
 					"and",
+					"flickrMenu",
 				}
 
 				t, _ := template.ParseFiles(temp)
@@ -441,22 +565,24 @@ func getImages(request string, init string, temp string, start int, cType string
 			}
 		} else if cType == "or" {
 
-			photos := getFlickrMain(request, init, start, cType)
+			photos := getFlickrMain(request, init, start, cType, "")
 			if len(photos) > 0 {
 
 				data := struct {
 					Tag string
 					//P   []FlickrImage
-					P      []FlickrImage1
-					PageIP int
-					PageIN int
-					Type   string
+					P        []FlickrImage1
+					PageIP   int
+					PageIN   int
+					Type     string
+					Function string
 				}{
 					request,
 					photos,
 					start - 1,
 					start + 1,
 					"or",
+					"flickrMenu",
 				}
 
 				t, _ := template.ParseFiles(temp)
@@ -482,7 +608,7 @@ func getImages(request string, init string, temp string, start int, cType string
 			}
 
 		} else {
-			photos := getFlickrMain(request, init, start, "and")
+			photos := getFlickrMain(request, init, start, "and", "")
 			sAnd := ""
 			sOr := ""
 			if len(photos) > 0 {
@@ -490,16 +616,18 @@ func getImages(request string, init string, temp string, start int, cType string
 				data := struct {
 					Tag string
 					//P   []FlickrImage
-					P      []FlickrImage1
-					PageIP int
-					PageIN int
-					Type   string
+					P        []FlickrImage1
+					PageIP   int
+					PageIN   int
+					Type     string
+					Function string
 				}{
 					request,
 					photos,
 					start - 1,
 					start + 1,
 					"and",
+					"flickrMenu",
 				}
 
 				t, _ := template.ParseFiles(temp)
@@ -510,22 +638,24 @@ func getImages(request string, init string, temp string, start int, cType string
 				sAnd = "No content found with requested tags"
 			}
 
-			photos = getFlickrMain(request, init, start, "or")
+			photos = getFlickrMain(request, init, start, "or", "")
 			if len(photos) > 0 {
 
 				data := struct {
 					Tag string
 					//P   []FlickrImage
-					P      []FlickrImage1
-					PageIP int
-					PageIN int
-					Type   string
+					P        []FlickrImage1
+					PageIP   int
+					PageIN   int
+					Type     string
+					Function string
 				}{
 					request,
 					photos,
 					start - 1,
 					start + 1,
 					"or",
+					"flickrMenu",
 				}
 
 				t, _ := template.ParseFiles(temp)

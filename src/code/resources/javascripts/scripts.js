@@ -137,6 +137,7 @@ $(document).ready(function() {
 	}
 	
 	
+	
 	window.onpopstate = function(event) {
 		console.log(location.pathname,"  ", location.hash);
 		console.log(event.state);
@@ -154,6 +155,232 @@ $(document).ready(function() {
 
 
 });
+
+function flickrCwgMap(){
+	console.log("in flickr cwg map");
+	$.ajax({
+			url:"/CWGmapImages",
+			type:"POST",
+			data:{"location":"", "start" : 0},
+			success: function(html){
+				var obj = jQuery.parseJSON(html);
+				console.log(obj.length);
+				console.log(obj[0]);
+				$('div.sideMenu').removeClass('in');
+				$('panelHeader').html("Glasgow Commonwealth Games 2014 Map Overview");
+				populateMap("panelBodyContent",obj)
+			}
+	});
+	
+}
+
+function getMoreMapImages(tag, start){
+	if (start != -1){
+		$.ajax({
+			url:"/CWGmapImages",
+			type:"POST",
+			data:{"location":tag, "start" : start},
+				success: function(html){
+					//console.log(html);
+				//console.log('#'+container);
+				//console.log(document.querySelector('#'+container));
+				var resultDiv = document.getElementById('resultDiv');
+				resultDiv.innerHTML = html;
+				carousel();
+			}
+		});
+	}
+}
+
+function populateMap(cont, obj) {
+	var container;
+	if (cont==""){
+		container = 'map_article';
+	}else {
+		container = cont;
+	}
+	
+	var mapContainer = document.getElementById('mapcontainer');
+	var c = document.getElementById(container);
+	if (mapContainer == null && c != null){
+		mapContainer = document.createElement('div');
+		mapContainer.id='mapcontainer';
+		mapContainer.style.height='500px';
+		var query = '#'+container;
+		if (cont == ""){
+			document.querySelector('#'+container).appendChild(mapContainer);
+		} else {
+			$('#'+container).html(mapContainer);
+		}
+	    var glasgowMap = new google.maps.LatLng(55.864237,-4.251806);
+		var options = {
+			center:glasgowMap,
+			zoom:12
+		}
+	    
+	}
+	
+	map = new google.maps.Map(document.getElementById('mapcontainer'), options);
+	
+	var marker;
+	var globalIndex = 0;
+	var infowindow = new google.maps.InfoWindow({disableAutoPan:true});
+	
+	var googlePoints=[];
+	var imageNum=10;
+	var index = 0;
+	
+	for (i=0; i<obj.length; i++){
+		marker = new google.maps.Marker({
+			position : new google.maps.LatLng(obj[i].Lat,obj[i].Lon),
+			map:map,
+			title:obj[i].Street
+		});
+		if (cont==""){		
+			google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
+			    return function() { 
+			        infowindow.setContent('<IMG BORDER="0" WIDTH="500" ALIGN="Left" SRC="' +"./resources/images/userUploaded/54e1ddb4c1bae210fd000007" +'">'+
+			        '<br>');
+			        infowindow.open(map, marker);
+			        infowindow.setOptions()
+			    }
+			})(marker, globalIndex));
+		}else {
+			google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
+			    return function() { 
+					var content = "";
+					if (obj[globalIndex].Location!=null){
+						content+="<b>Location: </b>";
+						content+=obj[globalIndex].Location;
+						content+='<br>';
+					} 
+					if (obj[globalIndex].Events.length != 0){
+						content+="<b>Events: </b>";
+						for (var event in obj[globalIndex].Events){
+							content+=obj[globalIndex].Events[event];
+							content+='<br>';
+						}
+					}
+					if (obj[globalIndex].Photos != null){
+						content+="<b>Number of photos taken at this location: </b>";
+						content+=obj[globalIndex].Photos;
+						content+='<br>';
+						content+="Click to view photos taken at this location";
+					}
+					
+					
+					
+			        infowindow.setContent(content);
+			        infowindow.open(map, marker);
+			        infowindow.setOptions()
+			    }
+			})(marker, globalIndex)); 
+			
+			
+			google.maps.event.addListener(marker, 'click', (function(marker, globalIndex) {
+			    return function() { 
+					var loc = obj[globalIndex].Location;
+					if (loc.indexOf(" ")>-1){
+						loc = loc.split(" ").join("_");
+					}
+					$.ajax({
+						url:"/CWGmapImages",
+						type:"POST",
+						data:{"location":loc, "start" : 0},
+						success: function(html){
+							//console.log(html);
+							console.log('#'+container);
+							console.log(document.querySelector('#'+container));
+							
+							var resultDiv = document.getElementById('resultDiv');
+							if (resultDiv == null){
+								var result = document.createElement('div');
+								result.class='panel-heading sectionHeader';
+								result.id='headerDiv'
+								var header = document.createElement('h3');
+								header.id = 'header';
+								//var inner = "Pictures from selected location"; 
+								header.innerHTML="Pictures from selected location";
+								
+								
+								var div = document.createElement('div');
+								div.id='resultDiv';
+								div.innerHTML=html;
+								document.getElementById(container).appendChild(result);
+								document.getElementById('headerDiv').appendChild(header);
+								document.getElementById('headerDiv').className+="panel-heading sectionHeader";
+								document.getElementById('headerDiv').style.marginTop='2%';
+								document.getElementById('header').className+="panel-title";
+								document.getElementById('header').style.fontSize='24px';
+								document.getElementById(container).appendChild(div);
+							} else {
+								resultDiv.innerHTML = html;
+								document.getElementById(container).appendChild(resultDiv);
+							}
+							carousel();
+						}
+					});
+					
+			    }
+			})(marker, globalIndex));
+		}
+		google.maps.event.addListener(marker, 'mouseout', function() {
+		    infowindow.close();
+		});
+				
+		marker.setMap(map)
+		globalIndex++;
+					
+		googlePoints.push(new google.maps.LatLng(obj[i].Lat,obj[i].Lon));
+	}
+	
+	var pointArray = new google.maps.MVCArray(googlePoints);
+	var heatmap = new google.maps.visualization.HeatmapLayer({
+	    data: pointArray,
+	    maxIntensity: 3,  //adjust intensity according to number of points 
+	});
+	if (cont==""	){	
+		heatmap.setMap(map);
+		var gradient = [
+		    'rgba(0, 255, 255, 0)',
+		    'rgba(0, 255, 255, 1)',
+		    'rgba(0, 191, 255, 1)',
+		    'rgba(0, 127, 255, 1)',
+		    'rgba(0, 63, 255, 1)',
+		    'rgba(0, 0, 255, 1)',
+		    'rgba(0, 0, 223, 1)',
+		    'rgba(0, 0, 191, 1)',
+		    'rgba(0, 0, 159, 1)',
+		    'rgba(0, 0, 127, 1)',
+		    'rgba(63, 0, 91, 1)',
+		    'rgba(127, 0, 63, 1)',
+		    'rgba(191, 0, 31, 1)',
+		    'rgba(255, 0, 0, 1)'
+		]
+		heatmap.set('gradient', heatmap.get('gradient') ? null : gradient); 
+	}
+	google.maps.event.trigger(map, 'resize');
+}
+
+function initialiseMap(){
+	
+	$.ajax({
+			url:"/mapImages",
+			type:"POST",
+			success: function(html){
+				var obj = jQuery.parseJSON(html);
+				console.log(obj.length);
+				populateMap("", obj);
+				//points = obj;
+			}
+		});
+	
+	
+	
+	
+	console.log("in initialiseMap ");
+	
+}
 
 
 function onDelete(id, cType){
@@ -552,7 +779,6 @@ function assignClass(data) {
 }
 
 function assign(data) {
-	console.log("in assign", data);
 	return function() {
 		document.getElementById(data).addEventListener("click",function(){ return upview(data);});
 		

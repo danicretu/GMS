@@ -130,9 +130,9 @@
 			   	<div id= "replace" class="col-md-9">
 			        <div class="panel mypanel" id="panelBodyContent">
 			            	<div class="panel-heading internalHeader">
-			            		<h2 class="panel-title" style="font-size: 24px">{{.UserName}}'s Uploaded Content</h2>
+			            		<h2 id="panelHeader" class="panel-title" style="font-size: 24px">{{.UserName}}'s Uploaded Content</h2>
 			            	</div>
-						<div class="panel-body headText" id="panelBodyContent"> 
+						<div class="panel-body headText" id="replacePanelBodyContent"> 
 							<div id="pictures">
 								<div class="panel-heading sectionHeader" >
 								    <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
@@ -387,6 +387,8 @@
 	<script src="resources/javascripts/scripts.js"></script> 
 	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
 	<script src="resources/javascripts/jquery.geocomplete.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+
 	
     <script type="text/javascript">
                   $(document).ready(function() {

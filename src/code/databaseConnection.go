@@ -17,14 +17,14 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-//var db_name = "gmsTry"
+var db_name = "gmsTry"
 
-var db_name = "ugc"
+//var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -35,8 +35,8 @@ func (m *MongoDBConn) connect() *mgo.Session {
 }
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -143,17 +143,46 @@ func findUser(sess *mgo.Session, id string) *User {
 	return &result
 }
 
-func getFlickrMain(tag string, tag2 string, start int, cType string) []FlickrImage1 {
+func getFlickrMain(tag string, tag2 string, start int, cType string, location string) []FlickrImage1 {
 
 	source := "/resources/flickr/"
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
 	//c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
+	c1 := dbConn.session.DB(flickrDB).C("flickrCWG")
 	var flickrImage []FlickrImage1
 
 	limit := 8
+	if cType == "location" {
+		if location != "" {
+			fmt.Println(location)
+			err := c1.Find(bson.M{"exifLocation": location}).Skip(start * limit).Limit(limit).All(&flickrImage)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			var myarr = []string{tag}
+			err := c1.Find(bson.M{"keywords": bson.M{"$all": myarr}}).Skip(start * limit).Limit(limit).All(&flickrImage)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+		fmt.Println(len(flickrImage))
 
+		for i := range flickrImage {
+			date := strings.Split(flickrImage[i].TimeStamp, " ")
+			t := strings.Split(date[0], "/")
+			folderName := t[0] + "_" + t[1] + "_" + t[2]
+			flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
+
+			/*for tag := range flickrImage[i].Keywords{
+				if flickrImage[i].Keywords[tag]
+			}*/
+		}
+
+		return flickrImage
+	}
 	if tag == "" {
 		records, _ := c.Find(bson.M{}).Count()
 		a := rand.Intn(records - limit)
@@ -644,4 +673,31 @@ func updateMostRecent(photo Photo, video Video, sess *mgo.Session) {
 
 	}
 
+}
+
+func getMapImages(user string) []MapImage {
+	var pics []MapImage
+	if user == "" {
+		err := sess.DB(db_name).C("locationDB").Find(bson.M{}).All(&pics)
+		if err != nil {
+			fmt.Println("could not get map images from db")
+		}
+	} else {
+		fmt.Println(user)
+		err := sess.DB(db_name).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
+		if err != nil {
+			fmt.Println("could not get map images for user from DB")
+		}
+		fmt.Println(pics)
+	}
+	return pics
+}
+
+func getCwgMapImages() []CwgImage {
+	var pics []CwgImage
+	err := sess.DB(db_name).C("cwgLocations").Find(bson.M{}).All(&pics)
+	if err != nil {
+		fmt.Println("could not get CWG images from db")
+	}
+	return pics
 }

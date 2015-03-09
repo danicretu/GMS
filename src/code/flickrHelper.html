@@ -38,7 +38,7 @@
 																				</div>
 																				<div style="clear:both;">
 																					{{range $indexTag, $elementTag := $element2.Keywords}}
-																						<a class="tag" style="overflow-wrap:break-word;" href="#flickrMenu?getTags_{{$elementTag}}" >{{$elementTag}}</a>
+																						<a class="tag" style="overflow-wrap:break-word;" href="#{{$.Function}}?getTags_{{$elementTag}}" >{{$elementTag}}</a>
 																					{{end}}
 																				</div>
 																				<div style="padding-top:5px; clear:both;">
@@ -62,6 +62,6 @@
 											</ul>
 	
 	
-<a href="#flickrMenu?{{.Tag}},{{.PageIP}},{{.Type}}" id="previous" >Prev</a>
-<a href="#flickrMenu?{{.Tag}},{{.PageIN}},{{.Type}}" id="next" >Next</a> 
+<a href="#{{.Function}}?{{.Tag}},{{.PageIP}},{{.Type}}" id="previous" >Prev</a>
+<a href="#{{.Function}}?{{.Tag}},{{.PageIN}},{{.Type}}" id="next" >Next</a> 
 </div>
