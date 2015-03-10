@@ -17,14 +17,14 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-var db_name = "gmsTry"
+//var db_name = "gmsTry"
 
-//var db_name = "ugc"
+var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	//session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
-	session, err := mgo.Dial("127.0.0.1")
+	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
+	//session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -35,8 +35,8 @@ func (m *MongoDBConn) connect() *mgo.Session {
 }
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
-	//session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
-	session, err := mgo.Dial("127.0.0.1")
+	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
+	//session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -150,7 +150,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	_ = dbConn.connectFlickr()
 	//c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
-	c1 := dbConn.session.DB(flickrDB).C("flickrCWG")
+	c1 := dbConn.session.DB(flickrDB).C("flickrCWGUpdated")
 	var flickrImage []FlickrImage1
 
 	limit := 8
@@ -676,15 +676,17 @@ func updateMostRecent(photo Photo, video Video, sess *mgo.Session) {
 }
 
 func getMapImages(user string) []MapImage {
+	dbConn := NewMongoDBConn()
+	_ = dbConn.connectFlickr()
 	var pics []MapImage
 	if user == "" {
-		err := sess.DB(db_name).C("locationDB").Find(bson.M{}).All(&pics)
+		err := dbConn.session.DB(db_name).C("locationDB").Find(bson.M{}).All(&pics)
 		if err != nil {
 			fmt.Println("could not get map images from db")
 		}
 	} else {
 		fmt.Println(user)
-		err := sess.DB(db_name).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
+		err := dbConn.session.DB(db_name).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
 		if err != nil {
 			fmt.Println("could not get map images for user from DB")
 		}
@@ -694,8 +696,10 @@ func getMapImages(user string) []MapImage {
 }
 
 func getCwgMapImages() []CwgImage {
+	dbConn := NewMongoDBConn()
+	_ = dbConn.connectFlickr()
 	var pics []CwgImage
-	err := sess.DB(db_name).C("cwgLocations").Find(bson.M{}).All(&pics)
+	err := dbConn.session.DB(db_name).C("cwgLocations").Find(bson.M{}).All(&pics)
 	if err != nil {
 		fmt.Println("could not get CWG images from db")
 	}
