@@ -150,7 +150,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	_ = dbConn.connectFlickr()
 	//c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
-	c1 := dbConn.session.DB(flickrDB).C("flickrCWGUpdated")
+	c1 := dbConn.session.DB(flickrDB).C("gmsFlickrCWGUpdated")
 	var flickrImage []FlickrImage1
 
 	limit := 8
