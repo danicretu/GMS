@@ -680,13 +680,13 @@ func getMapImages(user string) []MapImage {
 	_ = dbConn.connectFlickr()
 	var pics []MapImage
 	if user == "" {
-		err := dbConn.session.DB(db_name).C("locationDB").Find(bson.M{}).All(&pics)
+		err := dbConn.session.DB(flickrDB).C("locationDB").Find(bson.M{}).All(&pics)
 		if err != nil {
 			fmt.Println("could not get map images from db")
 		}
 	} else {
 		fmt.Println(user)
-		err := dbConn.session.DB(db_name).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
+		err := dbConn.session.DB(flickrDB).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
 		if err != nil {
 			fmt.Println("could not get map images for user from DB")
 		}
@@ -699,7 +699,7 @@ func getCwgMapImages() []CwgImage {
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
 	var pics []CwgImage
-	err := dbConn.session.DB(db_name).C("cwgLocations").Find(bson.M{}).All(&pics)
+	err := dbConn.session.DB(flickrDB).C("cwgLocations").Find(bson.M{}).All(&pics)
 	if err != nil {
 		fmt.Println("could not get CWG images from db")
 	}
