@@ -222,10 +222,11 @@
 	<!--<a class="btn btn-default" data-toggle="collapse" data-target=".sideMenu">View Menu</a> -->
 	<div class="hidden-xs sideMenu">
       <ul  id = "main-nav" class="nav nav-pills nav-stacked">
-        <li class="active"><a href="#"  class="scroll-link" data-id="images">User Images</a></li>
-		<li><a href="#" class="scroll-link" data-id="video">Videos</a></li>
+		<li><a href="#" class="scroll-link" data-id="map">Map</a></li>
+        <li><a href="#"  class="scroll-link" data-id="images">User Images</a></li>
+		<li><a href="#" class="scroll-link" data-id="video">User Videos</a></li>
         <li><a href="#" class="scroll-link" data-id="flickrImages">Flickr Images</a></li>
-		<li><a href="#" class="scroll-link" data-id="news">Sample News</a></li>
+		<li><a href="#" class="scroll-link" data-id="news">The Guardian News</a></li>
         
       </ul>
       <hr>
@@ -285,16 +286,50 @@
         <svg viewBox="0 0 32 32" class="scroll-link arrow_down" id="about_arrow_next" data-id="images">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>        
     </div>
+	
+	</section>
+	
+	
+<section id="map" data-speed="4" data-type="background">
+	<div id="map" class="page-section">
+	<div class="container">                  
+		<div class="row">
+		    <div>
+		             <div class="panel newsPanel">
+		               <div class="panel-heading">
+		                 <h2 class="panel-title" style="font-size: 24px; color:white">Map</h2>
+		               </div>
+			            <div class="panel-body headText"> 
+							<div id="map_article">
+								
+							</div>
+		
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
+
+	</div>
 </section>
+<section class="blue_arrows_box">
+    <div class="arrows">
+        <svg data-id="popularImages" viewBox="0 0 32 32" class="scroll-link arrow_down" id="news_arrow_next">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
+        <svg data-id="map" viewBox="0 0 32 32" class="scroll-link arrow_up" id="news_arrow_back">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
+    </div>
+	</section>
+	
 <!-- Section #2 -->
 	<section id="popularImages" data-speed="4" data-type="background">
 	<div id="images" class="page-section">
 	<div class="container">                  
 		  <div class="row">
 		    <div>
-		             <div class="panel newsPanel">
+		             <div class="panel mypanel">
 		               <div class="panel-heading">
-		                 <h2 class="panel-title" style="font-size: 24px; color:white">Most Popular Images</h2>
+		                 <h2 class="panel-title" style="font-size: 24px;">Most Popular Images</h2>
 		               </div>
 		               <div class="panel-body headText">            	
 		                <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0; ">
@@ -398,7 +433,7 @@
 		  </div>
 		</div>
 	</section>
-   <section class="blue_arrows_box">
+   <section class="arrows_box">
     <div class="arrows">
         <svg data-id="recentImages" viewBox="0 0 32 32" class="scroll-link arrow_down" id="news_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
@@ -413,9 +448,9 @@
          <div class="container-fluid">
   <div class="row">
     <div>
-             <div class="panel mypanel">
+             <div class="panel newsPanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px">Recently Uploaded Images</h2>
+                 <h2 class="panel-title" style="font-size: 24px; color:white;">Recently Uploaded Images</h2>
                </div>
                <div class="panel-body headText">            	
                   <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
@@ -517,7 +552,7 @@
   </div>
 </div>
 	</section>
-	<section class="arrows_box">
+	<section class="blue_arrows_box">
     <div class="arrows">
         <svg data-id="video" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
@@ -531,9 +566,9 @@
 	<div class="container">                  
   <div class="row">
     <div>
-             <div class="panel newsPanel">
+             <div class="panel mypanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px; color:white">Most Popular Videos</h2>
+                 <h2 class="panel-title" style="font-size: 24px;">Most Popular Videos</h2>
                </div>
                <div class="panel-body headText">            	
                   <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0; ">
@@ -659,9 +694,9 @@
 	         <div class="container-fluid">
 	  <div class="row">
 	    <div>
-	             <div class="panel mypanel">
+	             <div class="panel newsPanel">
 	               <div class="panel-heading">
-	                 <h2 class="panel-title" style="font-size: 24px">Recently Uploaded Videos</h2>
+	                 <h2 class="panel-title" style="font-size: 24px; color:white;">Recently Uploaded Videos</h2>
 	               </div>
 	               <div class="panel-body headText">            	
 	                  <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
@@ -769,7 +804,7 @@
 	  </div>
 	</div>
 	</section>
-	<section class="arrows_box">
+	<section class="blue_arrows_box">
     <div class="arrows">
         <svg data-id="flickrImages" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
@@ -783,9 +818,9 @@
 	<div class="container">                  
 		  <div class="row">
 		    <div>
-		             <div class="panel newsPanel">
+		             <div class="panel mypanel">
 		               <div class="panel-heading">
-		                 <h2 class="panel-title" style="font-size: 24px; color:white">Flickr Images</h2>
+		                 <h2 class="panel-title" style="font-size: 24px; ">Flickr Images</h2>
 		               </div>
 		               <div class="panel-body headText"> 
 
@@ -863,7 +898,7 @@
 </div>
 	</section>
 	
-	<section class="blue_arrows_box">
+	<section class="arrows_box">
     <div class="arrows">
         <svg data-id="news" viewBox="0 0 32 32" class="scroll-link arrow_down" id="news_arrow_next">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
@@ -878,9 +913,9 @@
          <div class="container-fluid">
   <div class="row">
     <div>
-             <div class="panel mypanel">
+             <div class="panel newsPanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px">News</h2>
+                 <h2 class="panel-title" style="font-size: 24px; color:white">News</h2>
                </div>
                <div class="panel-body headText">  
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
@@ -924,70 +959,6 @@
 	</div>
 	</div>
 </div>
-	</section>
-	
-		<section class="arrows_box">
-    <div class="arrows">
-        <svg data-id="heatMap" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
-            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg data-id="news" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
-            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
-    </div>
-	</section>
-
-	<section id="map" data-speed="4" data-type="background">
-	<div id="map" class="page-section">
-	<div class="container">                  
-		<div class="row">
-		    <div>
-		             <div class="panel newsPanel">
-		               <div class="panel-heading">
-		                 <h2 class="panel-title" style="font-size: 24px; color:white">Flickr Images</h2>
-		               </div>
-			            <div class="panel-body headText"> 
-							<div id="map_article">
-								
-							</div>
-		
-						</div>
-					</div>
-			</div>
-		</div>
-	</div>
-
-	</div>
-	</section>
-	
-	<section class="arrows_box">
-    <div class="arrows">
-        <svg data-id="map" viewBox="0 0 32 32" class="scroll-link arrow_down" id="lifelog_arrow_next">
-            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#right-arrow"></use></svg>
-        <svg data-id="news" viewBox="0 0 32 32" class="scroll-link arrow_up" id="lifelog_arrow_back">
-            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#left-arrow"></use></svg>
-    </div>
-	</section>
-	
-	<section id="map" data-speed="4" data-type="background">
-		<div id="map" class="page-section">
-		<div class="container">                  
-			<div class="row">
-			    <div>
-			             <div class="panel newsPanel">
-			               <div class="panel-heading">
-			                 <h2 class="panel-title" style="font-size: 24px; color:white">Recommended Places</h2>
-			               </div>
-				            <div class="panel-body headText"> 
-								<div>
-									
-								</div>
-			
-							</div>
-						</div>
-				</div>
-			</div>
-		</div>
-	
-		</div>
 	</section>
 	
 	<section class="blue_arrows_box">
@@ -1115,6 +1086,7 @@
 							<label id="errorLabel"></label>
 				            	<input style="color:white;" type="submit" name="submit" value="Login" class="btn modal-login-btn">
 						</form>
+						<button id="passReminderButton">Forgot your password?</button>
 		        		</div>
 	        	
 		        		<div class='modal-body-right'>

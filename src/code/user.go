@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/rwcarlsen/goexif/exif"
+	"gopkg.in/gomail.v1"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
@@ -194,6 +195,7 @@ func main() {
 	router.HandleFunc("/logout", handleLogout)
 	router.HandleFunc("/register", handleRegister)
 	router.HandleFunc("/authenticated", handleAuthenticated)
+	router.HandleFunc("/passReminder", handlePassReminder)
 	router.HandleFunc("/pictures", handlePictures)
 	router.HandleFunc("/videos", handleVideos)
 	router.HandleFunc("/flickrCwg", handleFlickrNews)
@@ -225,6 +227,7 @@ func main() {
 	sess = dbConnection.connect()
 
 	http.Handle("/resources/flickr/", http.StripPrefix("/resources/flickr/", http.FileServer(http.Dir("/local/imcd1/gms/flickrData"))))
+	http.Handle("/resources/news/", http.StripPrefix("/resources/news/", http.FileServer(http.Dir("/local/imcd1/gms/gmsNewsImages"))))
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
 
 	http.Handle("/", router)
@@ -309,7 +312,10 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	var pics []MapImage
+	//var heat []FlickrImage1
 	fmt.Println("in map images")
+
+	//heat = getFlickrMap()
 
 	if session.Values["user"] == nil {
 		//no
@@ -318,16 +324,24 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 		//no
 		pics = getMapImages("")
 	} else {
-		//yes
-		//pics = getMapImages(session.Values["user"].(string))
-		//pics = getMapImages("54d3d2ffbc2e8b6933000007")
 		pics = getMapImages("")
-		b, err := json.Marshal(pics)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Fprintf(w, "%s", b)
 	}
+
+	flickrData := struct {
+		Heat []MapImage //replace with below
+		//Heat   []FlickrImage1
+		Marker []MapImage
+	}{
+		pics,
+		pics,
+	}
+
+	b, err := json.Marshal(flickrData)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Fprintf(w, "%s", b)
+
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
@@ -957,6 +971,19 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Yes_"+strconv.Itoa(video.Views))
 	}
 
+}
+
+func handlePassReminder(w http.ResponseWriter, r *http.Request) {
+	msg := gomail.NewMessage()
+	msg.SetAddressHeader("From", "reminder@gms.dcs.gla.ac.uk", "Glasgow Memories Server")
+	msg.SetAddressHeader("To", "dani.cretu9@gmail.com", "Dani")
+	msg.SetHeader("Subject", "Password Reminder")
+	msg.SetBody("text/plain", "This is your password")
+
+	mailer := gomail.NewMailer("smtp.gmail.com", "user", "123456", 587)
+	if err := mailer.Send(msg); err != nil {
+		panic(err)
+	}
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {

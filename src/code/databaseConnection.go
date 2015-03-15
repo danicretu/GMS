@@ -142,6 +142,20 @@ func findUser(sess *mgo.Session, id string) *User {
 
 	return &result
 }
+func getFlickrMap() []FlickrImage1 {
+	dbConn := NewMongoDBConn()
+	_ = dbConn.connectFlickr()
+	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
+
+	var flickrImage []FlickrImage1
+
+	err := c.Find(bson.M{"exifLocation": ""}).All(&flickrImage)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return flickrImage
+}
 
 func getFlickrMain(tag string, tag2 string, start int, cType string, location string) []FlickrImage1 {
 
@@ -149,8 +163,8 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
-	c1 := dbConn.session.DB(flickrDB).C("gmsFlickrCWGUpdated")
-	//c1 := dbConn.session.DB(flickrDB).C("flickrCWG")
+	//c1 := dbConn.session.DB(flickrDB).C("gmsFlickrCWGUpdated")
+	c1 := dbConn.session.DB(flickrDB).C("flickrCWG")
 	var flickrImage []FlickrImage1
 
 	limit := 8
@@ -305,6 +319,13 @@ func getNews(tag string, start int) []News {
 		}
 
 	}
+
+	/*for i := range flickrImage {
+		date := strings.Split(flickrImage[i].TimeStamp, " ")
+		t := strings.Split(date[0], "/")
+		folderName := t[0] + "_" + t[1] + "_" + t[2]
+		flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
+	} */
 
 	return news
 }

@@ -95,6 +95,20 @@ $(document).ready(function() {
 		
 	});
 	
+	$("#passReminderButton").click(function(){
+		console.log("in test button");
+		$.ajax({
+			url:"/passReminder",
+			type:"POST",
+			success: function(html){			
+				console.log("password sent");
+			}
+		});
+		return false;
+		
+	});
+	
+	
 	$('.scroll-link').on('click', function(event){
 		event.preventDefault();
 		var sectionID = $(this).attr("data-id");
@@ -154,6 +168,8 @@ $(document).ready(function() {
 	};
 
 
+	initialiseMap();
+
 });
 
 function flickrCwgMap(){
@@ -193,7 +209,7 @@ function getMoreMapImages(tag, start){
 	}
 }
 
-function populateMap(cont, obj) {
+function populateMap(cont, mapPoints) {
 	var container;
 	if (cont==""){
 		container = 'map_article';
@@ -230,7 +246,13 @@ function populateMap(cont, obj) {
 	var googlePoints=[];
 	var imageNum=10;
 	var index = 0;
+	var obj;
 	
+	if (cont==""){
+		obj = mapPoints.Marker;
+	} else {
+		obj = mapPoints;
+	}
 	for (i=0; i<obj.length; i++){
 		marker = new google.maps.Marker({
 			position : new google.maps.LatLng(obj[i].Lat,obj[i].Lon),
@@ -332,15 +354,25 @@ function populateMap(cont, obj) {
 		marker.setMap(map)
 		globalIndex++;
 					
-		googlePoints.push(new google.maps.LatLng(obj[i].Lat,obj[i].Lon));
+		
 	}
 	
-	var pointArray = new google.maps.MVCArray(googlePoints);
-	var heatmap = new google.maps.visualization.HeatmapLayer({
-	    data: pointArray,
-	    maxIntensity: 3,  //adjust intensity according to number of points 
-	});
+	
 	if (cont==""	){	
+	
+		obj = mapPoints.Heat;
+		for (i=0; i<obj.length; i++){
+			googlePoints.push(new google.maps.LatLng(obj[i].Lat,obj[i].Lon));
+		}
+		
+		
+		
+		var pointArray = new google.maps.MVCArray(googlePoints);
+		var heatmap = new google.maps.visualization.HeatmapLayer({
+		    data: pointArray,
+		    maxIntensity: 3,  //adjust intensity according to number of points 
+		});
+		
 		heatmap.setMap(map);
 		var gradient = [
 		    'rgba(0, 255, 255, 0)',
@@ -370,7 +402,9 @@ function initialiseMap(){
 			type:"POST",
 			success: function(html){
 				var obj = jQuery.parseJSON(html);
-				console.log(obj.length);
+				console.log("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
+				console.log(obj);
+				console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
 				populateMap("", obj);
 				//points = obj;
 			}

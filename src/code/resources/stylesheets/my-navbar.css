@@ -237,7 +237,7 @@ only screen and (min-device-pixel-ratio : 1.5) {
     position: relative;
 	 padding-top: 50px; 
     padding-bottom: 50px;
-    background-color: white;
+    background-color: #0D77B6;
 }
 #popularImages {  
     height: auto;  
@@ -246,7 +246,7 @@ only screen and (min-device-pixel-ratio : 1.5) {
     position: relative; 
     padding-top: 50px; 
     padding-bottom: 50px;
-    background-color: #0D77B6;
+    background-color: white;
 }
 
 #recentVideos {  
@@ -256,7 +256,7 @@ only screen and (min-device-pixel-ratio : 1.5) {
     position: relative;
 	 padding-top: 50px; 
     padding-bottom: 50px;
-    background-color: white;
+    background-color: #0D77B6;
 }
 
 #popularVideos {  
@@ -266,7 +266,7 @@ only screen and (min-device-pixel-ratio : 1.5) {
     position: relative; 
     padding-top: 50px; 
     padding-bottom: 50px;
-    background-color: #0D77B6;
+    background-color: white;
 }
 
 #news {  
@@ -276,7 +276,7 @@ only screen and (min-device-pixel-ratio : 1.5) {
     position: relative;
 	 padding-top: 50px; 
     padding-bottom: 50px;
-    background-color: white;
+    background-color: #0D77B6;
 }
 
 #flickrImages {  
@@ -286,7 +286,7 @@ only screen and (min-device-pixel-ratio : 1.5) {
     position: relative; 
     padding-top: 50px; 
     padding-bottom: 50px;
-    background-color: #0D77B6;
+    background-color: white;
 }
 
 
