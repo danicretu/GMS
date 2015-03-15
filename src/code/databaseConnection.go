@@ -148,9 +148,9 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	source := "/resources/flickr/"
 	dbConn := NewMongoDBConn()
 	_ = dbConn.connectFlickr()
-	//c := dbConn.session.DB(flickrDB).C("gmsNewsScottish")
 	c := dbConn.session.DB(flickrDB).C("gmsFlickr1")
 	c1 := dbConn.session.DB(flickrDB).C("gmsFlickrCWGUpdated")
+	//c1 := dbConn.session.DB(flickrDB).C("flickrCWG")
 	var flickrImage []FlickrImage1
 
 	limit := 8

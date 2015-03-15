@@ -158,6 +158,7 @@ $(document).ready(function() {
 
 function flickrCwgMap(){
 	console.log("in flickr cwg map");
+	setActive("flickrCWGMap");
 	$.ajax({
 			url:"/CWGmapImages",
 			type:"POST",
