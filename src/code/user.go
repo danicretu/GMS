@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/rwcarlsen/goexif/exif"
-	"gopkg.in/gomail.v1"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
@@ -195,7 +194,6 @@ func main() {
 	router.HandleFunc("/logout", handleLogout)
 	router.HandleFunc("/register", handleRegister)
 	router.HandleFunc("/authenticated", handleAuthenticated)
-	router.HandleFunc("/passReminder", handlePassReminder)
 	router.HandleFunc("/pictures", handlePictures)
 	router.HandleFunc("/videos", handleVideos)
 	router.HandleFunc("/flickrCwg", handleFlickrNews)
@@ -991,19 +989,6 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Yes_"+strconv.Itoa(video.Views))
 	}
 
-}
-
-func handlePassReminder(w http.ResponseWriter, r *http.Request) {
-	msg := gomail.NewMessage()
-	msg.SetAddressHeader("From", "reminder@gms.dcs.gla.ac.uk", "Glasgow Memories Server")
-	msg.SetAddressHeader("To", "dani.cretu9@gmail.com", "Dani")
-	msg.SetHeader("Subject", "Password Reminder")
-	msg.SetBody("text/plain", "This is your password")
-
-	mailer := gomail.NewMailer("smtp.gmail.com", "user", "123456", 587)
-	if err := mailer.Send(msg); err != nil {
-		panic(err)
-	}
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
