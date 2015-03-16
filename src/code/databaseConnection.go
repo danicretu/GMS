@@ -185,7 +185,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	dbConn := NewMongoDBConn()
 	sess1 := dbConn.connectFlickr()
 	c := sess1.DB(flickrDB).C("gmsFlickr1")
-	c1 := dbConn.session.DB(flickrDB).C("gmsFlickrCWGUpdated")
+	c1 := sess1.DB(flickrDB).C("gmsFlickrCWGUpdated")
 	//c1 := sess1.DB(flickrDB).C("flickrCWG")
 	var flickrImage []FlickrImage1
 
