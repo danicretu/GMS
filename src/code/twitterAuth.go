@@ -99,8 +99,8 @@ func GetTwitterToken(w http.ResponseWriter, r *http.Request) {
 		id := bson.NewObjectId()
 
 		newUser := User{id, user.Name, "", "", "", "", "", user.Id_Str, user.Id_Str}
-		add(sess, newUser)
-		createDefaultAlbum(sess, newUser.Id, user.Name)
+		add(newUser)
+		createDefaultAlbum(newUser.Id, user.Name)
 
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)

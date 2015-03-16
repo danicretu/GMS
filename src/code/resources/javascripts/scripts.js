@@ -937,7 +937,6 @@ function flickrNews(data, start, cType){
 				data:{"req" : data, "start" : start, "cType" : cType},
 				success: function(html) {
 					$('div.sideMenu').removeClass('in');
-					console.log(html);
 					if (data=="start"){
 						var obj = jQuery.parseJSON(html);
 						document.getElementById('panelBodyContent').innerHTML=obj[0].Content;
@@ -946,7 +945,6 @@ function flickrNews(data, start, cType){
 						document.getElementById('cloudFlickr').style.visibility='visible';
 					} else {
 						var obj = jQuery.parseJSON(html);
-						console.log(obj+"            ***********")
 						
 							if (cType == "image" && obj[0].Content!=""){
 								document.getElementById('resultPhotos').innerHTML=obj[0].Content;
@@ -964,6 +962,7 @@ function flickrNews(data, start, cType){
 							
 						
 					}
+					carousel();
 				}
 		});
 	}
@@ -1212,6 +1211,10 @@ function carousel() {
 				
 				var next1 = ul[m+1]
 				var prev1 = ul[ul.length-1]
+				
+				console.log(ul[m]);
+				console.log(ul[m].id);
+				
 				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+next1.id);
 				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+prev1.id);
 				//document.getElementById("next"+ul[m].id).addEventListener("click",function(){ print(next1.id); });

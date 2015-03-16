@@ -95,8 +95,8 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 		id := bson.NewObjectId()
 
 		newUser := User{id, user.Given_Name, user.Family_Name, "", "", user.Id, "", "", user.Id}
-		add(sess, newUser)
-		createDefaultAlbum(sess, newUser.Id, user.Given_Name+" "+user.Family_Name)
+		add(newUser)
+		createDefaultAlbum(newUser.Id, user.Given_Name+" "+user.Family_Name)
 
 		session.Values["user"] = newUser.Id
 		session.Save(r, w)

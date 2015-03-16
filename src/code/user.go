@@ -223,9 +223,6 @@ func main() {
 	authenticateFacebook()
 	authenticateTwitter()
 
-	dbConnection = NewMongoDBConn()
-	sess = dbConnection.connect()
-
 	http.Handle("/resources/flickr/", http.StripPrefix("/resources/flickr/", http.FileServer(http.Dir("/local/imcd1/gms/flickrData"))))
 	http.Handle("/resources/news/", http.StripPrefix("/resources/news/", http.FileServer(http.Dir("/local/imcd1/gms/gmsNewsImages"))))
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
@@ -353,12 +350,16 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	cType := r.FormValue("cType")
 
 	fmt.Println("in delete", picture, cType)
-	deleteFromOthers(sess, picture, cType)
+	deleteFromOthers(picture, cType)
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	if cType == "image" {
 		err := sess.DB(db_name).C("photos").Remove(bson.M{"photoId": picture})
 		if err != nil {
 			fmt.Println(err)
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
 			return
 		}
@@ -366,13 +367,16 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 		err := sess.DB(db_name).C("videos").Remove(bson.M{"videoId": picture})
 		if err != nil {
 			fmt.Println(err)
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
 			return
 		}
 	}
 
-	deleteFromOthers(sess, picture, cType)
+	deleteFromOthers(picture, cType)
 	resp := "Yes_" + picture
+
+	defer sess.Close()
 
 	fmt.Fprintf(w, resp)
 
@@ -828,11 +832,14 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 	limit := 9
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	u := findUser(sess, currentUser)
+	u := findUser(currentUser)
 
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	var videos []Video
 	err := sess.DB(db_name).C("videos").Find(bson.M{"owner": u.Id}).Skip(start * limit).Limit(limit).All(&videos)
@@ -870,6 +877,8 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	defer sess.Close()
+
 	//fmt.Printf("%s", b)
 	fmt.Fprintf(w, "%s", b)
 	return
@@ -887,8 +896,11 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 	} else if session.Values["user"].(string) == "" {
 		u = &User{}
 	} else {
-		u = findUser(sess, session.Values["user"].(string))
+		u = findUser(session.Values["user"].(string))
 	}
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	var p DisplayPhotos
 	c := sess.DB(db_name).C("displayPhotos")
@@ -922,6 +934,7 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 		*u,
 	}
 
+	defer sess.Close()
 	authenticated, _ := template.ParseFiles("cmsHome.html")
 	authenticated.Execute(w, data)
 
@@ -941,6 +954,9 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 	photo := Photo{}
 	video := Video{}
 
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+
 	if cType == "image" {
 		err := sess.DB(db_name).C("photos").Find(bson.M{"photoId": picId}).One(&photo)
 		photo.Views = photo.Views + 1
@@ -948,6 +964,7 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println("could not update photos in tag db")
 			fmt.Println(err)
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
 		}
 	} else {
@@ -957,13 +974,16 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println("could not update views in videos db")
 			fmt.Println(err)
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
 		}
 	}
 
-	updateTagDB(photo, video, sess)
-	updateMostViewed(photo, video, sess)
-	updateMostRecent(photo, video, sess)
+	updateTagDB(photo, video)
+	updateMostViewed(photo, video)
+	updateMostRecent(photo, video)
+
+	defer sess.Close()
 
 	if cType == "image" {
 		fmt.Fprintf(w, "Yes_"+strconv.Itoa(photo.Views))
@@ -988,12 +1008,16 @@ func handlePassReminder(w http.ResponseWriter, r *http.Request) {
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("in login")
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 	r.ParseForm()
 	email := r.FormValue("email")
 	pass := r.FormValue("pass")
-	c := find(sess, email)
+	c := find(email)
 	fmt.Println(c == nil)
 	if c == nil {
+		defer sess.Close()
 		fmt.Fprintf(w, "No")
 	} else {
 		if c.Password == pass {
@@ -1001,8 +1025,10 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 			session.Values["user"] = c.Id
 			session.Save(r, w)
 			fmt.Println(c.FirstName)
+			defer sess.Close()
 			fmt.Fprintf(w, "Yes_"+c.FirstName)
 		} else {
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
 		}
 	}
@@ -1011,8 +1037,11 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	u := findUser(sess, currentUser)
+	u := findUser(currentUser)
 	var photos []Photo
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	err := sess.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(9).All(&photos)
 	if err != nil {
@@ -1030,7 +1059,7 @@ func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 		1,
 		photos,
 	}
-
+	defer sess.Close()
 	authenticated, _ := template.ParseFiles("pictures2.html")
 	authenticated.Execute(w, photoData)
 }
@@ -1060,13 +1089,16 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 func handleMainUser(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(sess, currentUser)
+	user := findUser(currentUser)
 
 	u := r.URL.RawQuery
-	user2 := findUser(sess, u)
+	user2 := findUser(u)
 
 	var photos []Photo
 	var videos []Video
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	sess.DB(db_name).C("photos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&photos)
 	sess.DB(db_name).C("videos").Find(bson.M{"owner": u}).Skip(0).Limit(3).All(&videos)
@@ -1093,6 +1125,8 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 		videos,
 	}
 
+	defer sess.Close()
+
 	authenticated, _ := template.ParseFiles("otherUsers.html")
 	authenticated.Execute(w, photoData)
 
@@ -1101,7 +1135,7 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 func handleMainFlickr(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(sess, currentUser)
+	user := findUser(currentUser)
 
 	u := r.URL.RawQuery
 
@@ -1148,6 +1182,9 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	nMod += 1
 	limit := 9
 	flag := true
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	var photos []Photo
 	var videos []Video
@@ -1232,7 +1269,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			Photo  []Photo
 			Video  []Video
 		}{
-			findUser(sess, t).FirstName,
+			findUser(t).FirstName,
 			sti + 1,
 			sti - 1,
 			stv + 1,
@@ -1253,6 +1290,8 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 		s = ""
 	}
 
+	defer sess.Close()
+
 	fmt.Fprintf(w, s)
 
 }
@@ -1265,9 +1304,9 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	c := findUser(sess, currentUser)
+	c := findUser(currentUser)
 
-	albumId := createAlbum(name, c.Id, c.FirstName+" "+c.LastName, sess)
+	albumId := createAlbum(name, c.Id, c.FirstName+" "+c.LastName)
 
 	fmt.Fprintf(w, albumId)
 }
@@ -1338,7 +1377,7 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	session.Values["user"] = ""
 	session.Save(r, w)
-	u := findUser(sess, session.Values["user"].(string))
+	u := findUser(session.Values["user"].(string))
 
 	if u == nil {
 		u = &User{}
@@ -1354,13 +1393,13 @@ func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	} else if session.Values["user"].(string) == "" {
 		fmt.Fprintf(w, "No")
 	} else {
-		message := "Yes," + findUser(sess, session.Values["user"].(string)).FirstName
+		message := "Yes," + findUser(session.Values["user"].(string)).FirstName
 		fmt.Fprintf(w, message)
 	}
 }
 
 func createTagCloud(w http.ResponseWriter, r *http.Request) {
-	result := getAllTags(sess)
+	result := getAllTags()
 	var tags string
 	var max = 0
 	for tag := range result {
@@ -1395,8 +1434,11 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	s := ""
 	flag := true
 
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+
 	if cType == "" {
-		tag := findByTag(sess, t)
+		tag := findByTag(t)
 		photos = tag.Photos
 		if len(tag.Photos) == 0 {
 			photos = nil
@@ -1483,16 +1525,18 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(s)
 
+	defer sess.Close()
+
 	fmt.Fprintf(w, s)
 }
 
 func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
-	user := findUser(sess, currentUser)
+	user := findUser(currentUser)
 
 	u := r.URL.RawQuery
-	tag := findByTag(sess, u)
+	tag := findByTag(u)
 
 	photoData := struct {
 		FirstName string
@@ -1573,12 +1617,12 @@ func handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	id := bson.NewObjectId()
 
-	createDefaultAlbum(sess, id.Hex(), fname+" "+lname)
+	createDefaultAlbum(id.Hex(), fname+" "+lname)
 
 	newUser := User{id, fname, lname, email, pass, "", "", "", id.Hex()}
-	add(sess, newUser)
+	add(newUser)
 
-	c := find(sess, email)
+	c := find(email)
 
 	if c == nil {
 		fmt.Fprintf(w, "No")
@@ -1632,30 +1676,38 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
-	currentUser := findUser(sess, user)
+	currentUser := findUser(user)
 
 	//c := uploadToAlbum(cType, image, caption, album, lng, lat, streetN+", "+locationN, tags, currentUser)
 
 	if cType == "image" {
-		p = Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, album, image, caption, location, time.Now().Local().Format("2006-01-02"), 0, t, make([]PhotoComment, 1)}
-		addTags(sess, t, p, Video{})
+		p = Photo{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, album, image, caption, location, time.Now().Local().Format("02/01/2006"), 0, t, make([]PhotoComment, 1)}
+		addTags(t, p, Video{})
+
+		dbConnection = NewMongoDBConn()
+		sess := dbConnection.connect()
 		c := sess.DB(db_name).C("photos")
 		err := c.Insert(p)
 		if err != nil {
 			panic(err)
 		}
+		defer sess.Close()
 	} else {
-		v = Video{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, album, image, caption, location, time.Now().Local().Format("2006-01-02"), 0, t, make([]PhotoComment, 1)}
-		addTags(sess, t, Photo{}, v)
+		v = Video{id, id.Hex(), currentUser.Id, currentUser.FirstName + " " + currentUser.LastName, album, image, caption, location, time.Now().Local().Format("02/01/2006"), 0, t, make([]PhotoComment, 1)}
+		addTags(t, Photo{}, v)
+		dbConnection = NewMongoDBConn()
+		sess := dbConnection.connect()
 		c := sess.DB(db_name).C("videos")
 		err := c.Insert(v)
 		if err != nil {
 			panic(err)
 		}
 
+		defer sess.Close()
+
 	}
 
-	insertInMostRecent(p, v, sess)
+	insertInMostRecent(p, v)
 
 }
 
@@ -1667,6 +1719,8 @@ func parseTags(tags string, filename string) []string {
 }
 
 func getPictures(collName string, field string, userId string, templateName string, start int) string {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	s := ""
 	var doc bytes.Buffer
@@ -1698,6 +1752,8 @@ func getPictures(collName string, field string, userId string, templateName stri
 	} else {
 		s = ""
 	}
+
+	defer sess.Close()
 	return s
 
 }
@@ -1743,11 +1799,14 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
-	currentUser := findUser(sess, user)
+	currentUser := findUser(user)
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
 	flag := true
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	if query == "" {
 
@@ -1783,7 +1842,6 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 		t.Execute(&doc, data)
 		s = doc.String()
 		response[0].Name = "ownAlbums"
-
 	} else {
 		fmt.Println("in eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", query)
 		var photos []Photo
@@ -1888,8 +1946,11 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	defer sess.Close()
+
 	//fmt.Printf("%s", b)
 	fmt.Fprintf(w, "%s", b)
+
 	return
 
 }
@@ -1897,10 +1958,13 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	u := session.Values["user"].(string)
-	currentUser := findUser(sess, u)
+	currentUser := findUser(u)
 	response := make([]Response, 1)
 	s := ""
 	var doc bytes.Buffer
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	var albums []Album
 	err := sess.DB(db_name).C("albums").Find(bson.M{"owner": currentUser.Id}).All(&albums)
@@ -1926,6 +1990,8 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	defer sess.Close()
+
 	fmt.Fprintf(w, "%s", b)
 }
 
@@ -1943,11 +2009,14 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	user2 := session.Values["user"].(string)
 
-	currentUser := findUser(sess, user2)
+	currentUser := findUser(user2)
 	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
 
 	photo := Photo{}
 	video := Video{}
+
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
 
 	if cType == "image" {
 		err := sess.DB(db_name).C("photos").Find(bson.M{"photoId": picture}).One(&photo)
@@ -1956,7 +2025,9 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println("could not update photos in tag db")
 			fmt.Println(err)
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
+			return
 		}
 	} else {
 		err := sess.DB(db_name).C("videos").Find(bson.M{"videoId": picture}).One(&video)
@@ -1965,14 +2036,16 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println("could not update views in videos db")
 			fmt.Println(err)
+			defer sess.Close()
 			fmt.Fprintf(w, "No")
+			return
 		}
 	}
 
-	updateTagDB(photo, video, sess)
-	updateMostRecent(photo, video, sess)
-	updateMostViewed(photo, video, sess)
-
+	updateTagDB(photo, video)
+	updateMostRecent(photo, video)
+	updateMostViewed(photo, video)
+	defer sess.Close()
 	response := com.Body + "_" + com.User + "_" + com.Timestamp
 	fmt.Fprintf(w, "Yes_"+response)
 }

@@ -9,7 +9,7 @@
 													
 													<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 														<div class="imgDiv">
-															<a id="{{$element2.ImageName}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr">
+															<a id="{{$index2}}flickr" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}flickr">
 									          					<img class="img-thumbnail" src="{{$element2.URL}}">
 									        					</a>
 														</div>
@@ -33,10 +33,10 @@
 																			<div class="col-md-4" style="padding:0;">
 																				<p style="float:left; font-size:medium; clear:both;" name="logA">Flickr</p>
 																				<p style="float:right; font-size:medium; color:black; ">{{$element2.TimeStamp}}</p>
-																				<div style="clear:both; padding-top:7%; padding-left:8%;">
+																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
-																						<p class="description">Description:</p>
-																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
+																						
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}																				
 																				</div>
 																				<div style="clear:both;">

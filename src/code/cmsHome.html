@@ -372,13 +372,12 @@
 																				<div style="clear:both; padding-top:7%;">
 																					
 																					{{if $element2.Description}}
-																						<p class="description">Description:</p>
-																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
 																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
 																					{{end}}
-																					<p style="float:left; font-size:small;clear:both; color:black;">Views</p>
+																					<p style="float:left; font-size:small;clear:both; color:black;"><b>Views</b></p>
 																					<p id= "upvotep{{$element2.PhotoId}}{{$.P.Name}}" style="float:left; font-size:small;color:black;" class="col-md-2">{{$element2.Views}}</p>
 																					
 																				</div>
@@ -492,13 +491,13 @@
 																				<p style="float:right; font-size:medium; color:black;">{{$element3.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;">
 																					{{if $element3.Description}}
-																						<p class="description">Description:</p>
-																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element3.Description}}</p>
+																						
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element3.Description}}</p>
 																					{{end}}
 																					{{if $element3.Location.Name}}
 																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element3.Location.Name}}</p> 
 																					{{end}}
-																					<p style="float:left; font-size:small; clear:both; color:black;">Views</p>
+																					<p style="float:left; font-size:small; clear:both; color:black;"><b>Views</b></p>
 																					<p id= "upvotep{{$element3.PhotoId}}{{$.R.Name}}" style="float:left; font-size:small;color:black;" class="col-md-2">{{$element3.Views}}</p>
 																					
 																				</div>
@@ -618,14 +617,14 @@
 																				<p style="float:right; font-size:medium; color:black;">{{$element2.Timestamp}}</p>
 																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
-																						<p class="description">Description:</p>
+																						
 																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
 																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
 																					{{end}}
 																					
-																					<p style="float:left; font-size:small; clear:both; color:black;">Views</p>
+																					<p style="float:left; font-size:small; clear:both; color:black;"><b>Views</b></p>
 																					<p id= "upvotep{{$element2.VideoId}}{{$.P.Name}}" style="float:left; font-size:small;color:black;" class="col-md-2">{{$element2.Views}}</p>
 																					
 																				</div>
@@ -746,8 +745,8 @@
 																					<p style="float:right; font-size:medium; color:black;">{{$element3.Timestamp}}</p>
 																					<div style="clear:both; padding-top:7%;">
 																						{{if $element3.Description}}
-																							<p class="description">Description:</p>
-																							<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element3.Description}}</p>
+																							
+																							<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;">{{$element3.Description}}</p>
 																						{{end}}
 																						{{if $element3.Location.Name}}
 																							<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element3.Location.Name}}</p> 
@@ -855,12 +854,11 @@
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0; padding-left:2%; ">
-																				<a style="float:left; font-size:medium; clear:both;" name="logA">Flickr</a>
+																				<a style="float:left; font-size:medium; clear:both;" name="logA">Source:Flickr</a>
 																				<p style="float:right; font-size:medium; color:black; ">{{$element2.TimeStamp}}</p>
-																				<div style="clear:both; padding-top:7%; padding-left:8%;">
+																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
-																						<p class="description">Description:</p>
-																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																																									
 																				</div>
@@ -923,7 +921,7 @@
 												
 													
 													<li style="list-style:none;margin-bottom:25px;">
-														<a href={{$element2.URL}}>{{$element2.Title}}</a>
+														<a href={{$element2.URL}} style="color:white;">{{$element2.Title}}</a>
 														<div class="imgDiv">
 															<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}news">
 									          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">

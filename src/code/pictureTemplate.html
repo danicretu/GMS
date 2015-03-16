@@ -43,13 +43,13 @@
 										<p style="float:right; font-size:medium;">{{$element2.Timestamp}}</p>
 										<div style="clear:both; padding-top:7%;">
 											{{if $element2.Description}}
-												<p class="description">Description:</p>
-												<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
+												
+												<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 											{{end}}
 											{{if $element2.Location.Name}}
 												<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
 											{{end}}
-											<p style="float:left; font-size:small; clear:both;">Views</p>
+											<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
 											<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 											
 										</div>
