@@ -19,18 +19,18 @@ var (
 
 var oauthCfgF = &oauth.Config{
 
-	//ClientId: "1611489125747997",
-	ClientId: "1554421091506709",
+	ClientId: "1611489125747997",
+	//ClientId: "1554421091506709",
 
-	//ClientSecret: "7a20b89ff715fee7b94540ca7e191eb7",
-	ClientSecret: "7ea03222076a4a53fade5226e2183e1c",
+	ClientSecret: "7a20b89ff715fee7b94540ca7e191eb7",
+	//ClientSecret: "7ea03222076a4a53fade5226e2183e1c",
 
 	AuthURL: "https://www.facebook.com/dialog/oauth",
 
 	TokenURL: "https://graph.facebook.com/oauth/access_token",
 
-	//RedirectURL: "http://mirugc.dcs.gla.ac.uk/oauth2callbackF",
-	RedirectURL: "http://localhost:8892/oauth2callbackF",
+	RedirectURL: "http://mirugc.dcs.gla.ac.uk/oauth2callbackF",
+	//RedirectURL: "http://localhost:8892/oauth2callbackF",
 }
 
 type UserF struct {
@@ -84,18 +84,11 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 
-	fmt.Println(string(body), "    *********************")
-
 	json.Unmarshal(body, &user)
-
-	fmt.Println(user, "    *********************")
 
 	var existing *User
 	sess.DB(db_name).C("user").Find(bson.M{"fId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
-
-	fmt.Println(db_name)
-	fmt.Println(existing)
 
 	if existing != nil && existing.Id != "" {
 
