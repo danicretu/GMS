@@ -28,8 +28,8 @@
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
-																				
-																				<p style="float:right; font-size:medium; color:black; clear:both;">{{$element2.TimeStamp}}</p>
+																				<p style="float:left; font-size:medium; clear:both;" name="logA">Source: flickr.com</p>
+																				<p style="float:right; font-size:medium; color:black; ">{{$element2.TimeStamp}}</p>
 																				<div style="clear:both; padding-top:7%;" >
 																					{{if $element2.Description}}
 																						
@@ -61,7 +61,8 @@
 											
 											</ul>
 	
-	
+<div class="nextPrev">
 <a href="#{{.Function}}?{{.Tag}},{{.PageIP}},{{.Type}}" id="previous" >Prev</a>
 <a href="#{{.Function}}?{{.Tag}},{{.PageIN}},{{.Type}}" id="next" >Next</a> 
+</div>
 </div>

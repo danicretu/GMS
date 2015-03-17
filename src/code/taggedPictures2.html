@@ -6,7 +6,7 @@
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1">
        <meta name="description" content="">
-       <meta name="author" content="Md Sadek Ferdous" >
+       <meta name="author" content="Daniela Cretu" >
 	
        <title>Glasgow Memories Server: Home</title>
 	
@@ -113,16 +113,16 @@
 					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 				    <div class="hidden-xs sideMenu">
 						<ul class="nav nav-pills nav-stacked">
-					      <li name="menuItem" id="pictureMenu"><a href="#getPictures">Your Personal Image Archive</a></li>
-						  <li name="menuItem" id="videoMenu"><a href="#getVideos" >Your Personal Video Archive</a></li>	
-					      <li name="menuItem" id="albumMenu"><a href="#getAlbums?">Albums</a></li>
+					      <li name="menuItem" id="pictureMenu"><a href="#getPictures">{{.FirstName}}'s Images</a></li>
+						  <li name="menuItem" id="videoMenu"><a href="#getVideos" >{{.FirstName}}'s Videos</a></li>	
+					      <li name="menuItem" id="albumMenu"><a href="#getAlbums?">{{.FirstName}}'s Albums</a></li>
 					      <li name="menuItem" id="uploadMenu"><a href="#getUpload">Upload Content</a></li>
-						  <li name="menuItem" id="flickrCWG"><a href="#flickrNews?start">Glasgow CWG 2014</a></li>
-					   	  <li name="menuItem" id="flickrCWGMap"><a href="#flickrCwgMap">Glasgow CWG 2014 Map View</a></li>
+						  <li name="menuItem" id="flickrCWG"><a href="#flickrNews?start">Glasgow CWG 2014 in Images</a></li>
+					   	  <li name="menuItem" id="flickrCWGMap"><a href="#flickrCwgMap">Glasgow CWG 2014 on Map</a></li>
 						  <li name="menuItem" id="flickrMenu"><a href="#flickrMenu?start">Flickr Glasgow Images</a></li>
 						 </ul>
 					    <hr>
-					    <div class="panel mypanel" style="width:auto; margin:0;">
+					    <div class="panel mypanel tagCloud">
 							<h3 style="text-align:center;">Trending Tags</h3>
 	      					<div class="row" id="cloudUser" style="width:auto; margin:0;">
 	        					</div>            	      	
@@ -132,16 +132,17 @@
 			   	<div id= "replace" class="col-md-9">
 			        <div class="panel mypanel" id="panelBodyContent">
 			            	<div class="panel-heading internalHeader">
-			            		<h2 id="panelHeader" class="panel-title" style="font-size: 24px">Tagged Content</h2>
+			            		<h2 id="panelHeader" class="panel-title" style="font-size: 24px">Content with tag <b>'{{.Tag}}'</b></h2>
 			            	</div>
 						<div class="panel-body headText" id="replacePanelBodyContent"> 
 							
 							<div id="pictures">
-								<div class="panel-heading sectionHeader" >
-								    <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
+								<div class="panel-heading sectionHeader" style="padding-bottom:0; margin-bottom:0;">
+								    <h3 class="headText personalHead" style="font-size: 24px">Images</h3>
 								</div>
 								
 								<div id="pictureTemplate">
+								<h4 class="headText personalSubtitle">This section shows a collection of 8 images tagged with <b>'{{.Tag}}'</b><br>Press <b>'Next'</b> to explore more or scroll down for videos</h4>
 								<ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 								
 									{{if .Photo}}
@@ -185,9 +186,9 @@
 																				<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" ><b>Description: </b>{{$element2.Description}}</p>
 																			{{end}}
 																			{{if $element2.Location.Name}}
-																				<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																				<p style="clear:both; font-size:small;"> <b>@</b> {{$element2.Location.Name}}</p> 
 																			{{end}}
-																			<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
+																			<p style="float:left; font-size:small; clear:both;"><b>Views: </b></p>
 																			<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 																			
 																		</div>
@@ -239,16 +240,19 @@
 										
 								
 								</ul>
+								<div class="nextPrev">
 								<a href="#getSimilarTag?{{.Tag}},{{.PageIP}},image,{{.PageVP}},{{.PageVN}}" id="previous" >Prev</a>
 								<a href="#getSimilarTag?{{.Tag}},{{.PageIN}},image,{{.PageVP}},{{.PageVN}}" id="next">Next</a>
 								</div>
 								</div>
+								</div>
 								
 								<div id="videos">
-								<div class="panel-heading sectionHeader" >
-								    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
+								<div class="panel-heading sectionHeader" style="padding-bottom:0; margin-bottom:0;">
+								    <h3 class="headText personalHead" style="font-size: 24px">Videos</h3>
 								</div>
 								<div id="pictureTemplate">
+								<h4 class="headText personalSubtitle">This section shows a collection of 8 videos tagged with <b>'{{.Tag}}'</b><br>Press <b>'Next'</b> to explore more</h4>
 								<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 																	{{range $element2 :=.Video}}
 																				{{if $element2.URL}}
@@ -300,9 +304,9 @@
 																														<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" ><b>Description: </b>{{$element2.Description}}</p>
 																													{{end}}
 																													{{if $element2.Location.Name}}
-																														<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																														<p style="clear:both; font-size:small;"><b> @</b> {{$element2.Location.Name}}</p> 
 																													{{end}}
-																													<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
+																													<p style="float:left; font-size:small; clear:both;"><b>Views: </b></p>
 																													<p id= "upvotep{{$element2.VideoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 																													
 																												</div>
@@ -346,8 +350,10 @@
 																				{{end}}
 																			{{end}}
 									</ul>
+									<div class="nextPrev">
 								<a href="#getSimilarTag?{{.Tag}},{{.PageVP}},video,{{.PageIP}},{{.PageIN}}" id="previous">Prev</a>
 								<a href="#getSimilarTag?{{.Tag}},{{.PageVN}},video,{{.PageIP}},{{.PageIN}}" id="next">Next</a>
+								</div>
 								</div>
 								</div>
 			                		              	
@@ -389,9 +395,8 @@
    	<script src="resources/javascripts/nivo-lightbox.min.js"></script>
 	<script src="resources/javascripts/login.js"></script> 
 	<script src="resources/javascripts/scripts.js"></script> 
-	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places,visualization"></script>
 	<script src="resources/javascripts/jquery.geocomplete.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
 
 	
     <script type="text/javascript">

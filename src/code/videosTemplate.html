@@ -1,8 +1,9 @@
 <div class="panel-heading internalHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
+    <h3 class="panel-title" style="font-size: 24px">Videos</h3>
 </div>
 
 <div id="pictureTemplate" class="headText">
+<h4 class="headText personalSubtitle">This page shows a collection of 8 of your uploaded videos<br>Press <b>'Next'</b> to explore more</h4>
 <ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 {{range $index2, $element2 :=.Video}}
 												{{if $element2.URL}}
@@ -55,9 +56,9 @@
 																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" ><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																						<p style="clear:both; font-size:small;"><b> @</b> {{$element2.Location.Name}}</p> 
 																					{{end}}
-																					<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
+																					<p style="float:left; font-size:small; clear:both;"><b>Views: </b></p>
 																					<p id= "upvotep{{$element2.VideoId}}" style="float:left;  font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 																					
 																				</div>
@@ -101,6 +102,8 @@
 												{{end}}
 											{{end}}
 	</ul>
+<div class="nextPrev">
 <a href="#getVideos?{{.PageP}}" id="previous">Prev</a>
 <a href="#getVideos?{{.PageN}}" id="next" >Next</a>
+<div class="nextPrev">
 </div>

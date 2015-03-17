@@ -1,0 +1,11 @@
+{ "_id" : { "$oid" : "54e1cbd5c1bae20ea5000001" }, "firstname" : "Jane", "lastname" : "Doe", "email" : "jane@yahoo.com", "password" : "parola", "gId" : "", "fId" : "", "tId" : "", "userId" : "54e1cbd5c1bae20ea5000001" }
+{ "_id" : { "$oid" : "54e239f1c1bae2263f000004" }, "firstname" : "Daniela", "lastname" : "Cretu", "email" : "", "password" : "", "gId" : "116773878100782815934", "fId" : "", "tId" : "", "userId" : "116773878100782815934" }
+{ "_id" : { "$oid" : "54e23a53c1bae2263f000007" }, "firstname" : "Dani C", "lastname" : "", "email" : "", "password" : "", "gId" : "", "fId" : "", "tId" : "3014812413", "userId" : "3014812413" }
+{ "_id" : { "$oid" : "5505d852c1bae2513a000001" }, "firstname" : "Dani", "lastname" : "Cretu", "email" : "", "password" : "", "gId" : "", "fId" : "10206804971949882", "tId" : "", "userId" : "10206804971949882" }
+{ "_id" : { "$oid" : "5506e0d5c1bae20d92000001" }, "firstname" : "test", "lastname" : "teste", "email" : "test", "password" : "test", "gId" : "", "fId" : "", "tId" : "", "userId" : "5506e0d5c1bae20d92000001" }
+{ "_id" : { "$oid" : "5506e14dc1bae20e63000001" }, "firstname" : "test", "lastname" : "test", "email" : "test", "password" : "test", "gId" : "", "fId" : "", "tId" : "", "userId" : "5506e14dc1bae20e63000001" }
+{ "_id" : { "$oid" : "5506e198c1bae20eba000001" }, "firstname" : "test", "lastname" : "test", "email" : "test", "password" : "test", "gId" : "", "fId" : "", "tId" : "", "userId" : "5506e198c1bae20eba000001" }
+{ "_id" : { "$oid" : "5506e198c1bae20eba000003" }, "firstname" : "test", "lastname" : "test", "email" : "test", "password" : "test", "gId" : "", "fId" : "", "tId" : "", "userId" : "5506e198c1bae20eba000003" }
+{ "_id" : { "$oid" : "5506e198c1bae20eba000005" }, "firstname" : "test", "lastname" : "test", "email" : "test", "password" : "test", "gId" : "", "fId" : "", "tId" : "", "userId" : "5506e198c1bae20eba000005" }
+{ "_id" : { "$oid" : "550768adc1bae2402f000001" }, "firstname" : "Dani", "lastname" : "C", "email" : "dani@yahoo.com", "password" : "parola", "gId" : "", "fId" : "", "tId" : "", "userId" : "550768adc1bae2402f000001" }
+{ "_id" : { "$oid" : "55076a6cc1bae2402f000017" }, "firstname" : "Dani2", "lastname" : "C", "email" : "dani2@yahoo.com", "password" : "parola", "gId" : "", "fId" : "", "tId" : "", "userId" : "55076a6cc1bae2402f000017" }

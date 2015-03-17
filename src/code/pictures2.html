@@ -6,7 +6,7 @@
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1">
        <meta name="description" content="">
-       <meta name="author" content="Md Sadek Ferdous" >
+       <meta name="author" content="Daniela Cretu" >
 	
        <title>Glasgow Memories Server: Home</title>
 	
@@ -113,16 +113,16 @@
 					<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 				    <div class="hidden-xs sideMenu">
 						<ul class="nav nav-pills nav-stacked">
-					      <li name="menuItem" id="pictureMenu" class="active"><a href="#getPictures">Your Personal Image Archive</a></li>
-						  <li name="menuItem" id="videoMenu"><a href="#getVideos" >Your Personal Video Archive</a></li>	
-					      <li name="menuItem" id="albumMenu"><a href="#getAlbums?">Albums</a></li>
+					      <li name="menuItem" id="pictureMenu" class="active"><a href="#getPictures">{{.FirstName}}'s Images</a></li>
+						  <li name="menuItem" id="videoMenu"><a href="#getVideos" >{{.FirstName}}'s Videos</a></li>	
+					      <li name="menuItem" id="albumMenu"><a href="#getAlbums?">{{.FirstName}}'s Albums</a></li>
 					      <li name="menuItem" id="uploadMenu"><a href="#getUpload">Upload Content</a></li>
-						  <li name="menuItem" id="flickrCWG"><a href="#flickrNews?start">Glasgow CWG 2014</a></li>
-					   	  <li name="menuItem" id="flickrCWGMap"><a href="#flickrCwgMap">Glasgow CWG 2014 Map View</a></li>
+						  <li name="menuItem" id="flickrCWG"><a href="#flickrNews?start">Glasgow CWG 2014 in Images</a></li>
+					   	  <li name="menuItem" id="flickrCWGMap"><a href="#flickrCwgMap">Glasgow CWG 2014 on Map</a></li>
 						  <li name="menuItem" id="flickrMenu"><a href="#flickrMenu?start">Flickr Glasgow Images</a></li>
 						 </ul>
 					    <hr>
-					    <div class="panel mypanel" style="width:auto; margin:0;">
+					    <div class="panel mypanel tagCloud">
 							<h3 style="text-align:center;">Trending Tags</h3>
 	      					<div class="row" id="cloudUser" style="width:auto; margin:0;">
 	        					</div>            	      	
@@ -132,9 +132,11 @@
 			   	<div id= "replace" class="col-md-9">
 			        <div class="panel mypanel" id="panelBodyContent">
 			            	<div class="panel-heading internalHeader">
-			            		<h2 id="panelHeader" class="panel-title" style="font-size: 24px">Pictures</h2>
+			            		<h2 id="panelHeader" class="panel-title" style="font-size: 24px">Images</h2>
 			            	</div>
+						
 						<div class="panel-body headText" id="replacePanelBodyContent"> 
+							<h4 class="headText personalSubtitle">This page shows a collection of 8 of your uploaded images<br>Press <b>'Next'</b> to explore more</h4>
 							<div id="pictureTemplate">
 							<ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 							
@@ -177,12 +179,12 @@
 																	<div style="clear:both; padding-top:7%;">
 																		{{if $element2.Description}}
 																			
-																			<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description:</b>{{$element2.Description}}</p>
+																			<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 																		{{end}}
 																		{{if $element2.Location.Name}}
-																			<p style="clear:both; font-size:small;"> @ {{$element2.Location.Name}}</p> 
+																			<p style="clear:both; font-size:small;"><b> @</b> {{$element2.Location.Name}}</p> 
 																		{{end}}
-																		<p style="float:left; font-size:small; clear:both;  padding-left:2%;"><b>Views</b></p>
+																		<p style="float:left; font-size:small; clear:both;  padding-left:2%;"><b>Views: </b></p>
 																		<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 																		
 																	</div>
@@ -233,8 +235,10 @@
 									
 							
 							</ul>
+							<div class="nextPrev">
 							<a href="#getPictures?{{.PageP}}" id="previous">Prev</a>
 							<a href="#getPictures?{{.PageN}}" id="next">Next</a>
+							</div>
 							</div>  	
 			                		              	
 			            	</div>			               

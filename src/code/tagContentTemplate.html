@@ -1,14 +1,14 @@
 <div id="pictures">
 <div class="panel-heading internalHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Tagged Content</h2>
+    <h2 class="panel-title" style="font-size: 24px">Content with tag <b>'{{.Tag}}'</b></h2>
 </div>
 
 <div id="pictureTemplate" class="headText">
 
 <div class="panel-heading sectionHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
+    <h3 class="headText personalHead" style="font-size: 24px">Images</h3>
 </div>
-
+<h4 class="headText personalSubtitle">This section shows a collection of 8 images tagged with <b>'{{.Tag}}'</b><br>Press next to explore more or scroll down for videos</h4>
 <ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 
 	{{if .Photo}}
@@ -52,9 +52,9 @@
 												<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" ><b>Description: </b>{{$element2.Description}}</p>
 											{{end}}
 											{{if $element2.Location.Name}}
-												<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+												<p style="clear:both; font-size:small;"> <b>@</b> {{$element2.Location.Name}}</p> 
 											{{end}}
-											<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
+											<p style="float:left; font-size:small; clear:both;"><b>Views: </b></p>
 											<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 											
 										</div>
@@ -106,16 +106,19 @@
 		
 
 </ul>
+<div class="nextPrev">
 <a href="#getSimilarTag?{{.Tag}},{{.PageIP}},image,{{.PageVP}},{{.PageVN}}" id="previous">Prev</a>
 <a href="#getSimilarTag?{{.Tag}},{{.PageIN}},image,{{.PageVP}},{{.PageVN}}" id="next"  >Next</a>
+</div>
 </div>
 </div>
 
 <div id="videos">
 <div class="panel-heading sectionHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
+    <h3 class="headText personalHead" style="font-size: 24px">Videos</h3>
 </div>
 <div id="pictureTemplate" class="headText">
+<h4 class="headText personalSubtitle">This section shows a collection of 8 videos tagged with <b>'{{.Tag}}'</b><br>Press next to explore more</h4>
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 									{{range $element2 :=.Video}}
 												{{if $element2.URL}}
@@ -168,9 +171,9 @@
 																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" ><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																						<p style="clear:both; font-size:small;"> <b>@</b> {{$element2.Location.Name}}</p> 
 																					{{end}}
-																					<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
+																					<p style="float:left; font-size:small; clear:both;"><b>Views: </b></p>
 																					<p id= "upvotep{{$element2.VideoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 																					
 																				</div>
@@ -214,7 +217,9 @@
 												{{end}}
 											{{end}}
 	</ul>
+<div class="nextPrev">
 <a href="#getSimilarTag?{{.Tag}},{{.PageVP}},video,{{.PageIP}},{{.PageIN}}" id="previous" >Prev</a>
 <a href="#getSimilarTag?{{.Tag}},{{.PageVN}},video,{{.PageIP}},{{.PageIN}}" id="next" >Next</a>
+</div>
 </div>
 </div>

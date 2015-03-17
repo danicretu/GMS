@@ -5,9 +5,10 @@
 	
 <div id="uploadDiv" class="uploadDiv headText">
 	<form action="#" onsubmit="return contentForm()" id="contentForm">
+		<h4 class="headText personalSubtitle" style="text-align:left; margin-left:0; padding-left:0;">Please <b>select</b> what type of content you wish to upload</h4>
 		<input type="radio" name="optradio" class="radio-inline" value="image">Image
 		<input type="radio" name="optradio" class="radio-inline" value="video" required>Video
-		<p>Choose a file to upload: <p>
+		<p style="padding-top:5%;">Choose a file to upload: <p>
 		<input style="float:left;" type="file" name="file" id="imgInp" required> 
 		<input id="submit" class="btn submitButton" type="submit" name="submit" value="Submit">            	
 	</form>
@@ -20,7 +21,7 @@
 		<input type="hidden" name="contentType" id="contentType">
 		<div id="preview">
 			<h3 style="float:left;" class="col-md-5">Uploaded image </h3>
-			<img style="float:left; width:40%;" id="blah" class="img-thumbnail col-md-7" src="#" alt="your image" />
+			<img style="float:left; width:40%;" id="blah" class="col-md-7" src="#" alt="your image" />
 		</div>
 		<div style="clear:both; padding-top:1%;">
 			<p class="col-md-5" style="float:left;">Add a description</p>
@@ -46,7 +47,7 @@
 			<input id="formatted_address" type="hidden" name="formatted_address" value="" data-geo="formatted_address">
 		</div>
 		<div style="clear:both;">
-			<p style="float:left;" class="col-md-5">Add a tag</p>
+			<p style="float:left;" class="col-md-5">Add a tag <b>(press enter to add)</b></p>
 			<input type="text" name="tag" class="email col-md-6" style="border-radius:4px;" id="enterTag" placeholder="Add a tag..."/>
 		</div>
 		<div id ="displayTags" style="visibility:hidden; margin-bottom: 20px; margin-top: 10px; clear:both;">
@@ -79,7 +80,7 @@
 
 
 <div class="modal fade" id="albumModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog" style="width:30%;">
 		<div class="modal-content">
 		<div class="modal-header login_modal_header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

@@ -1,11 +1,12 @@
 <div class="panel-heading internalHeader" >
     <h2 class="panel-title" style="font-size: 24px">Albums</h2>
 </div>
+<h4 class="headText personalSubtitle">This page shows all your albums <br> <b>Select</b> one to explore more</h4>
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;" id="photos">
 	{{range $index, $element := .Albums}}
 		<li class="col-lg-3 col-md-2 col-sm-3 col-xs-4" style="list-style:none;margin-bottom:25px;">
 			<div class="imgDiv">
-			<a href="#getAlbumDetails?{{$element.AlbumId}}"><img class="img-thumbnail" src="{{$element.Photo}}"></a>
+			<a href="#getAlbumDetails?{{$element.AlbumId}}"><img class="img-thumbnail" src="{{$element.Photo}}" style="padding-bottom:3%;"></a>
 			</div>
 			<a href="#getAlbumDetails?{{$element.AlbumId}}">{{$element.Name}}</a>
 		</li>

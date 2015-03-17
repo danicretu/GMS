@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 	//"time"
 	"math/rand"
 	"strings"
@@ -170,7 +171,7 @@ func getFlickrMap() []FlickrImage1 {
 
 	var flickrImage []FlickrImage1
 
-	err := c.Find(bson.M{"exifLocation": ""}).All(&flickrImage)
+	err := c.Find(bson.M{"$and": []bson.M{bson.M{"latitude": bson.M{"$ne": 0}}, bson.M{"longitude": bson.M{"$ne": 0}}}}).All(&flickrImage)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -207,14 +208,23 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 		fmt.Println(len(flickrImage))
 
 		for i := range flickrImage {
+
 			date := strings.Split(flickrImage[i].TimeStamp, " ")
 			t := strings.Split(date[0], "/")
 			folderName := t[0] + "_" + t[1] + "_" + t[2]
 			flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
-
-			/*for tag := range flickrImage[i].Keywords{
-				if flickrImage[i].Keywords[tag]
-			}*/
+			k := 0
+			for k < len(flickrImage[i].Keywords) {
+				fmt.Println(len(flickrImage[i].Keywords), "        ", k)
+				if strings.Contains(flickrImage[i].Keywords[k], "|") {
+					flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
+					k -= 1
+				} else {
+					k += 1
+				}
+			}
+			tim, _ := time.Parse("02/01/2006 15:04:05", flickrImage[i].TimeStamp)
+			flickrImage[i].TimeStamp = tim.Format("02/01/2006")
 		}
 		defer sess1.Close()
 		return flickrImage
@@ -264,6 +274,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	}
 
 	for i := range flickrImage {
+
 		date := strings.Split(flickrImage[i].TimeStamp, " ")
 		t := strings.Split(date[0], "/")
 		folderName := t[0] + "_" + t[1] + "_" + t[2]
@@ -278,6 +289,8 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 				k += 1
 			}
 		}
+		tim, _ := time.Parse("02/01/2006 15:04:05", flickrImage[i].TimeStamp)
+		flickrImage[i].TimeStamp = tim.Format("02/01/2006")
 	}
 	defer sess1.Close()
 	return flickrImage
@@ -308,6 +321,7 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 	}
 
 	for i := range flickrImage {
+
 		date := strings.Split(flickrImage[i].TimeStamp, " ")
 		t := strings.Split(date[0], "/")
 		folderName := t[0] + "_" + t[1] + "_" + t[2]
@@ -322,6 +336,8 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 				k += 1
 			}
 		}
+		tim, _ := time.Parse("02/01/2006 15:04:05", flickrImage[i].TimeStamp)
+		flickrImage[i].TimeStamp = tim.Format("02/01/2006")
 	}
 	defer sess1.Close()
 	return flickrImage
@@ -588,7 +604,7 @@ func updateMostViewed(photo Photo, video Video) {
 		}
 		return
 	} else if photo.PhotoId != "" {
-		if len(p.Photos) < 5 {
+		if len(p.Photos) < 8 {
 			flag := false
 			for m := range p.Photos {
 				if p.Photos[m].PhotoId == photo.PhotoId {
@@ -624,7 +640,7 @@ func updateMostViewed(photo Photo, video Video) {
 		}
 		err = c.Update(bson.M{"name": "views"}, bson.M{"$set": bson.M{"photos": p.Photos}})
 	} else {
-		if len(p.Videos) < 5 {
+		if len(p.Videos) < 8 {
 			flag := false
 			for m := range p.Videos {
 				if p.Videos[m].VideoId == video.VideoId {
@@ -696,7 +712,7 @@ func insertInMostRecent(photo Photo, video Video) {
 		return
 
 	} else if photo.PhotoId != "" {
-		if len(p.Photos) < 5 {
+		if len(p.Photos) < 8 {
 			fmt.Println(p.Photos)
 			p.Photos = append(p.Photos, photo)
 		} else {
@@ -705,7 +721,7 @@ func insertInMostRecent(photo Photo, video Video) {
 		}
 		err = c.Update(bson.M{"name": "recent"}, bson.M{"$set": bson.M{"photos": p.Photos}})
 	} else {
-		if len(p.Videos) < 5 {
+		if len(p.Videos) < 8 {
 			fmt.Println(p.Videos)
 			p.Videos = append(p.Videos, video)
 		} else {

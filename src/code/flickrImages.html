@@ -1,3 +1,9 @@
+<div class="panel-heading internalHeader">
+	<h2 id="panelHeader" class="panel-title" style="font-size: 24px">Flickr Glasgow Images</h2>
+</div>
+
+<h4 class="headText personalSubtitle">This page enables you to explore a collection of Images of Glasgow from flickr.com<br><b>Enter</b> a tag below to explore</h4>
+
 <div class="row headText">
 	<h3 class="col-md-6">Please enter a tag to search</h3>
 	<form action="#" class="navbar-form col-md-6" role="search" style="padding-top:2%;">
@@ -16,9 +22,13 @@
 		<div style="visibility:hidden; clear:both; padding-top:5%;width:auto; margin:0;" id="cloudFlickr">
 		</div>
     </div>
+	<div class="panel-heading sectionHeader" style="clear:both;">
+	    <h4 class="headText personalSubtitle" id="resultAndHeader"></h4>
+	</div>
    	<div style="visibility:visible; clear:both; padding-top:5%;" id="resultAnd">
 	
 		<div id="pictureHelper" class="headText">
+		
 
 			<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0; ">
 													{{range $index2, $element2 := .P}}
@@ -48,8 +58,8 @@
 																						</div>
 																					</div>
 																					<div class="col-md-4" style="padding:0;">
-																						
-																						<p style="float:right; font-size:medium; color:black; clear:both;">{{$element2.TimeStamp}}</p>
+																						<p style="float:left; font-size:medium; clear:both;" name="logA">Source: flickr.com</p>
+																						<p style="float:right; font-size:medium; color:black;">{{$element2.TimeStamp}}</p>
 																						<div style="clear:both; padding-top:7%;" >
 																							{{if $element2.Description}}
 																								
@@ -85,7 +95,10 @@
 	</div>  
           
            	
-                
+    <div class="panel-heading sectionHeader"  style="visibility:hidden;">
+	    
+		<h4 class="headText personalSubtitle" id="resultOrHeader"></h4>
+	</div>
 	<div style="visibility:hidden; clear:both; padding-top:5%;" id="resultOr">
 	</div>
 </div>

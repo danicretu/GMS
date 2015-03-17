@@ -8,7 +8,7 @@
        <meta name="description" content="">
        <meta name="author" content="Md Sadek Ferdous" >
 	
-       <title>Glasgow Memories Server: Home</title>
+       <title>Citizen Memories Server: Home</title>
 	
        <!-- Bootstrap core CSS -->
        <link href="resources/stylesheets/bootstrap.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
 				<span class="icon-bar"></span>
 			</button>
              <a class="navbar-brand" href="/">               
-             	GMS:Glasgow Memories Server
+             	Citizen Memories Server
              </a>
            </div>
            <div id="navbar" class="navbar-collapse collapse navbar-my-text">
@@ -222,28 +222,13 @@
 	<!--<a class="btn btn-default" data-toggle="collapse" data-target=".sideMenu">View Menu</a> -->
 	<div class="hidden-xs sideMenu">
       <ul  id = "main-nav" class="nav nav-pills nav-stacked">
-		<li><a href="#" class="scroll-link" data-id="map">Map</a></li>
+		<li><a href="#" class="scroll-link" data-id="map">Trending Locations</a></li>
         <li><a href="#"  class="scroll-link" data-id="images">User Images</a></li>
 		<li><a href="#" class="scroll-link" data-id="video">User Videos</a></li>
-        <li><a href="#" class="scroll-link" data-id="flickrImages">Flickr Images</a></li>
-		<li><a href="#" class="scroll-link" data-id="news">The Guardian News</a></li>
+        <li><a href="#" class="scroll-link" data-id="flickrImages">CWG 2014 Flickr Images</a></li>
+		<li><a href="#" class="scroll-link" data-id="news">CWG 2014 Guardian News</a></li>
         
       </ul>
-      <hr>
-      <div class="panel mypanel">
-      	<div class="row">
-              <div class="col-md-8">
-              		<a href="http://ubdc.ac.uk/"><img src="resources/images/ubdc_logo.png" class="img-responsive" height="20%" alt="Cinque Terre"/></a>
-              </div>                                          
-			</div>
-			<hr>
-			<div class="row">                           
-              <div class="col-md-8">
-              
-              <a href="http://www.esrc.ac.uk/"><img src="resources/images/esrc_logo.png" class="img-responsive" alt="Cinque Terre"/></a>
-              </div>              
-			</div>       	      	
-      </div>
 	</div>
 	
     </div>    
@@ -297,9 +282,10 @@
 		    <div>
 		             <div class="panel newsPanel">
 		               <div class="panel-heading">
-		                 <h2 class="panel-title" style="font-size: 24px; color:white">Map</h2>
+		                 <h2 class="panel-title" style="font-size: 40px; color:white">Trending Locations</h2>
 		               </div>
 			            <div class="panel-body headText"> 
+						<h4 class="headText personalSubtitle" style="background: transparent;color: white;text-align: center;">The Flickr heat map contains popular locations from lifelog and citizen memories server</h4>
 							<div id="map_article">
 								
 							</div>
@@ -329,9 +315,10 @@
 		    <div>
 		             <div class="panel mypanel">
 		               <div class="panel-heading">
-		                 <h2 class="panel-title" style="font-size: 24px;">Most Popular Images</h2>
+		                 <h2 class="panel-title" style="font-size: 40px;">Trending Images</h2>
 		               </div>
-		               <div class="panel-body headText">            	
+		               <div class="panel-body headText"> 
+						<h4 class="headText personalSubtitle">A display of the most popular user images based on the number of views</h4>           	
 		                <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0; ">
 											{{range $index2, $element2 :=.P.Photos}}
 												{{if $element2.URL}}
@@ -375,7 +362,7 @@
 																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																						<p style="clear:both; font-size:small;color:black;"> <b>@</b> {{$element2.Location.Name}}</p> 
 																					{{end}}
 																					<p style="float:left; font-size:small;clear:both; color:black;"><b>Views</b></p>
 																					<p id= "upvotep{{$element2.PhotoId}}{{$.P.Name}}" style="float:left; font-size:small;color:black;" class="col-md-2">{{$element2.Views}}</p>
@@ -386,16 +373,16 @@
 																						<a class="tag" name="logT" href="/retrieveTag?{{$elementTag}}">{{$elementTag}}</a>
 																					{{end}}
 																				</div>
-																				<div name="logP">
+																				<div name=>
 																					<div style="padding-top:5px; clear:both;">
 																						<form id="commentForm">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="logP" placeholder="Enter Comment..." />
 																								<input type="hidden" id="cType" value="image" />
 																								<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP" value="submit" />
 																							</div>
 																						</form>
 																					</div>
@@ -449,9 +436,10 @@
     <div>
              <div class="panel newsPanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px; color:white;">Recently Uploaded Images</h2>
+                 <h2 class="panel-title" style="font-size: 40px; color:white;">Recently Uploaded Images</h2>
                </div>
-               <div class="panel-body headText">            	
+               <div class="panel-body headText">   
+			<h4 class="headText personalSubtitle" style="background: transparent;color: white;text-align: center;">A display of the most recently uploaded user images</h4>         	
                   <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 											{{range $index3, $element3 :=.R.Photos}}
 												{{if $element3.URL}}
@@ -495,9 +483,9 @@
 																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element3.Description}}</p>
 																					{{end}}
 																					{{if $element3.Location.Name}}
-																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element3.Location.Name}}</p> 
+																						<p style="clear:both; font-size:small;color:black;"><b> @</b> {{$element3.Location.Name}}</p> 
 																					{{end}}
-																					<p style="float:left; font-size:small; clear:both; color:black;"><b>Views</b></p>
+																					<p style="float:left; font-size:small; clear:both; color:black;"><b>Views: </b></p>
 																					<p id= "upvotep{{$element3.PhotoId}}{{$.R.Name}}" style="float:left; font-size:small;color:black;" class="col-md-2">{{$element3.Views}}</p>
 																					
 																				</div>
@@ -510,11 +498,11 @@
 																					<div style="padding-top:5px; clear:both;">
 																						<form id="commentForm">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="logP" placeholder="Enter Comment..." />
 																								<input type="hidden" id="pictureNumber" value="{{$element3.PhotoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element3.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP" value="submit" />
 																							</div>
 																						</form>
 																					</div>
@@ -567,9 +555,10 @@
     <div>
              <div class="panel mypanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px;">Most Popular Videos</h2>
+                 <h2 class="panel-title" style="font-size: 40px;">Trending Videos</h2>
                </div>
-               <div class="panel-body headText">            	
+               <div class="panel-body headText">  
+					<h4 class="headText personalSubtitle">A display of the most popular user videos based on the number of views</h4>          	
                   <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0; ">
 											{{range $index2, $element2 :=.P.Videos}}
 												{{if $element2.URL}}
@@ -618,13 +607,13 @@
 																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
 																						
-																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8">{{$element2.Description}}</p>
+																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" class="col-md-8"><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																						<p style="clear:both; font-size:small;color:black;"> <b>@</b> {{$element2.Location.Name}}</p> 
 																					{{end}}
 																					
-																					<p style="float:left; font-size:small; clear:both; color:black;"><b>Views</b></p>
+																					<p style="float:left; font-size:small; clear:both; color:black;"><b>Views: </b></p>
 																					<p id= "upvotep{{$element2.VideoId}}{{$.P.Name}}" style="float:left; font-size:small;color:black;" class="col-md-2">{{$element2.Views}}</p>
 																					
 																				</div>
@@ -637,12 +626,12 @@
 																					<div style="padding-top:5px; clear:both;">
 																						<form id="commentForm">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" name="logP" id="comment" placeholder="Enter Comment..." />
 																								<input type="hidden" id="cType" value="image" />
 																								<input type="hidden" id="pictureNumber" value="{{$element2.VideoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP" value="submit" />
 																							</div>
 																						</form>
 																					</div>
@@ -695,9 +684,10 @@
 	    <div>
 	             <div class="panel newsPanel">
 	               <div class="panel-heading">
-	                 <h2 class="panel-title" style="font-size: 24px; color:white;">Recently Uploaded Videos</h2>
+	                 <h2 class="panel-title" style="font-size: 40px; color:white;">Recently Uploaded Videos</h2>
 	               </div>
-	               <div class="panel-body headText">            	
+	               <div class="panel-body headText"> 
+					<h4 class="headText personalSubtitle" style="background: transparent;color: white;text-align: center;">A display of the most recently uploaded user videos</h4>           	
 	                  <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 												{{range $index3, $element3 :=.R.Videos}}
 													{{if $element3.URL}}
@@ -746,10 +736,10 @@
 																					<div style="clear:both; padding-top:7%;">
 																						{{if $element3.Description}}
 																							
-																							<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;">{{$element3.Description}}</p>
+																							<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element3.Description}}</p>
 																						{{end}}
 																						{{if $element3.Location.Name}}
-																							<p style="clear:both; font-size:small;color:black;" class="col-md-6"> @ {{$element3.Location.Name}}</p> 
+																							<p style="clear:both; font-size:small;color:black;"><b> @</b> {{$element3.Location.Name}}</p> 
 																						{{end}}
 																					</div>
 																					<div style="clear:both;">
@@ -761,11 +751,11 @@
 																						<div style="padding-top:5px; clear:both;">
 																							<form id="commentForm">
 																								<div>
-																									<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" placeholder="Enter Comment..." />
+																									<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="logP" placeholder="Enter Comment..." />
 																									<input type="hidden" id="pictureNumber" value="{{$element3.VideoId}}" />
 																									<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
 																									<input type="hidden" id="owner" value="{{$element3.Owner}}" />
-																									<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																									<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP"  value="submit" />
 																								</div>
 																							</form>
 																						</div>
@@ -819,9 +809,10 @@
 		    <div>
 		             <div class="panel mypanel">
 		               <div class="panel-heading">
-		                 <h2 class="panel-title" style="font-size: 24px; ">Flickr Images</h2>
+		                 <h2 class="panel-title" style="font-size: 40px; ">CWG 2014 Flickr Images</h2>
 		               </div>
 		               <div class="panel-body headText"> 
+						<h4 class="headText personalSubtitle">Images from flickr.com related to the Glasgow 2014 Commonwealth Games</h4>
 
 	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 
@@ -854,7 +845,7 @@
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0; padding-left:2%; ">
-																				<a style="float:left; font-size:medium; clear:both;" name="logA">Source:Flickr</a>
+																				<p style="float:left; font-size:medium; clear:both;" name="logA">Source: flickr.com</p>
 																				<p style="float:right; font-size:medium; color:black; ">{{$element2.TimeStamp}}</p>
 																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
@@ -913,20 +904,21 @@
     <div>
              <div class="panel newsPanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px; color:white">News</h2>
+                 <h2 class="panel-title" style="font-size: 40px; color:white">CWG 2014 Guardian News</h2>
                </div>
-               <div class="panel-body headText">  
+               <div class="panel-body headText">
+			<h4 class="headText personalSubtitle" style="background: transparent;color: white;padding-bottom:5%;text-align: center;">News headlines from The Guardian related to the Glasgow 2014 Commonwealth Games</h4>  
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 					{{range $index2, $element2 := .N}}
 												
 													
 													<li style="list-style:none;margin-bottom:25px;">
 														<a href={{$element2.URL}} style="color:white;">{{$element2.Title}}</a>
-														<div class="imgDiv">
+														<!-- <div class="imgDiv">
 															<a id="{{$element2.URL}}" name="lia" href="#" data-toggle="modal" data-target="#picModal{{$index2}}news">
 									          					<img class="img-thumbnail" src="{{$element2.ImageUrl}}">
 									        					</a>
-														</div>
+														</div> -->
 													</li>
 													{{if $element2.ImageUrl}}		
 													<div class="modal" id="picModal{{$index2}}news" tabindex="-1" role="dialog" aria-hidden="true">
@@ -1004,10 +996,6 @@
 	</script> 
 	<script>
 			carousel();
-	</script>
-	
-	<script>
-			initialiseMap();
 	</script>
 	
 	  

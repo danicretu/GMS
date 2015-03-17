@@ -122,11 +122,14 @@ type FlickrImage struct {
 type FlickrImage1 struct {
 	//PhotoID     string
 	URL         string
-	ImageName   string   `bson:"imageName"`
-	Description string   `bson:"description"`
-	TimeStamp   string   `bson:"datePosted"`
-	Location    string   `bson:"exifLocation"`
-	Keywords    []string `bson:"keywords"`
+	ImageName   string  `bson:"imageName"`
+	Description string  `bson:"description"`
+	TimeStamp   string  `bson:"datePosted"`
+	Location    string  `bson:"exifLocation"`
+	Latitude    float32 `bson:"latitude"`
+	Longitude   float32 `bson:"longitude"`
+
+	Keywords []string `bson:"keywords"`
 }
 
 type News struct {
@@ -307,10 +310,12 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	var pics []MapImage
-	//var heat []FlickrImage1
+	var heat []FlickrImage1
 	fmt.Println("in map images")
 
-	//heat = getFlickrMap()
+	heat = getFlickrMap()
+
+	fmt.Println(len(heat))
 
 	if session.Values["user"] == nil {
 		//no
@@ -323,11 +328,11 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	}
 
 	flickrData := struct {
-		Heat []MapImage //replace with below
-		//Heat   []FlickrImage1
+		//Heat []MapImage //replace with below
+		Heat   []FlickrImage1
 		Marker []MapImage
 	}{
-		pics,
+		heat,
 		pics,
 	}
 
@@ -827,7 +832,7 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	start, _ := strconv.Atoi(r.FormValue("req"))
-	limit := 9
+	limit := 8
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
 	u := findUser(currentUser)
@@ -1028,7 +1033,7 @@ func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
 
-	err := sess.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(9).All(&photos)
+	err := sess.DB(db_name).C("photos").Find(bson.M{"owner": u.Id}).Skip(0).Limit(8).All(&photos)
 	if err != nil {
 		fmt.Println("could not get images from DB")
 	}
@@ -1165,7 +1170,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	st, _ := strconv.Atoi(start)
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
-	limit := 9
+	limit := 8
 	flag := true
 
 	dbConnection = NewMongoDBConn()
@@ -1373,11 +1378,16 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 
+	fmt.Println("in check login")
+
 	if session.Values["user"] == nil {
+		fmt.Println("in check login no")
 		fmt.Fprintf(w, "No")
 	} else if session.Values["user"].(string) == "" {
+		fmt.Println("in check login no")
 		fmt.Fprintf(w, "No")
 	} else {
+		fmt.Println("in check login yes")
 		message := "Yes," + findUser(session.Values["user"].(string)).FirstName
 		fmt.Fprintf(w, message)
 	}
@@ -1409,7 +1419,7 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	st, _ := strconv.Atoi(start)
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
-	limit := 9
+	limit := 8
 
 	var photos []Photo
 	var videos []Video
@@ -1422,53 +1432,74 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
 
+	tagStruct := findByTag(t)
+
 	if cType == "" {
-		tag := findByTag(t)
-		photos = tag.Photos
-		if len(tag.Photos) == 0 {
-			photos = nil
+		if len(tagStruct.Photos) < limit {
+			photos = tagStruct.Photos[:len(tagStruct.Photos)]
+		} else {
+			photos = tagStruct.Photos[:limit]
 		}
-		videos = tag.Videos
-		if len(tag.Videos) == 0 {
-			videos = nil
+
+		if len(tagStruct.Videos) < limit {
+			videos = tagStruct.Videos[:len(tagStruct.Videos)]
+		} else {
+			videos = tagStruct.Videos[:limit]
 		}
 
 		sti = 0
 		stv = 0
 	} else if cType == "image" {
-		err := sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&photos)
-		if err != nil {
-			fmt.Println(err)
+		if st*limit > len(tagStruct.Photos) {
+			st -= 1
+			photos = tagStruct.Photos[st*limit : len(tagStruct.Photos)]
+		} else {
+			if st*limit+limit > len(tagStruct.Photos) {
+				photos = tagStruct.Photos[st*limit : len(tagStruct.Photos)]
+			} else {
+				photos = tagStruct.Photos[st*limit : st*limit+limit]
+			}
+		}
+		if len(tagStruct.Videos) < nMod*limit {
+			nMod -= 1
+			videos = tagStruct.Videos[nMod*limit : len(tagStruct.Videos)]
+		} else {
+			if nMod*limit+limit > len(tagStruct.Videos) {
+
+				videos = tagStruct.Videos[nMod*limit : len(tagStruct.Videos)]
+			} else {
+				videos = tagStruct.Videos[nMod*limit : nMod*limit+limit]
+			}
+
 		}
 
-		if len(photos) == 0 {
-			flag = false
-		}
-		//fmt.Println(photos)
-
-		err = sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(nMod * limit).Limit(limit).All(&videos)
-		if err != nil {
-			fmt.Println(err)
-		}
-		//fmt.Println(photos)
 		sti = st
 		stv = nMod
 	} else {
-		err := sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(nMod * limit).Limit(limit).All(&photos)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(photos)
 
-		err = sess.DB(db_name).C("tags").Find(bson.M{"tag": t}).Skip(st * limit).Limit(limit).All(&videos)
-		if err != nil {
-			fmt.Println(err)
+		if st*limit > len(tagStruct.Videos) {
+			st -= 1
+			videos = tagStruct.Videos[st*limit : len(tagStruct.Videos)]
+		} else {
+			if st*limit+limit > len(tagStruct.Videos) {
+				videos = tagStruct.Videos[st*limit : len(tagStruct.Videos)]
+			} else {
+				videos = tagStruct.Videos[st*limit : st*limit+limit]
+			}
+		}
+		if len(tagStruct.Photos) < nMod*limit {
+			nMod -= 1
+			photos = tagStruct.Photos[nMod*limit : len(tagStruct.Photos)]
+		} else {
+			if nMod*limit+limit > len(tagStruct.Photos) {
+
+				photos = tagStruct.Photos[nMod*limit : len(tagStruct.Photos)]
+			} else {
+				photos = tagStruct.Photos[nMod*limit : nMod*limit+limit]
+			}
+
 		}
 
-		if len(videos) == 0 {
-			flag = false
-		}
-		fmt.Println(photos)
 		sti = nMod
 		stv = st
 
@@ -1520,8 +1551,28 @@ func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	currentUser := session.Values["user"].(string)
 	user := findUser(currentUser)
 
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+
 	u := r.URL.RawQuery
-	tag := findByTag(u)
+	tagStruct := findByTag(u)
+
+	var photos []Photo
+	var videos []Video
+
+	limit := 8
+
+	if len(tagStruct.Photos) < limit {
+		photos = tagStruct.Photos[:len(tagStruct.Photos)]
+	} else {
+		photos = tagStruct.Photos[:limit]
+	}
+
+	if len(tagStruct.Videos) < limit {
+		videos = tagStruct.Videos[:len(tagStruct.Videos)]
+	} else {
+		videos = tagStruct.Videos[:limit]
+	}
 
 	photoData := struct {
 		FirstName string
@@ -1535,13 +1586,14 @@ func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	}{
 		user.FirstName,
 		1,
+		-1,
 		1,
-		1,
-		1,
-		tag.Name,
-		tag.Photos,
-		tag.Videos,
+		-1,
+		u,
+		photos,
+		videos,
 	}
+	defer sess.Close()
 
 	authenticated, _ := template.ParseFiles("taggedPictures2.html")
 	authenticated.Execute(w, photoData)
@@ -1710,7 +1762,7 @@ func getPictures(collName string, field string, userId string, templateName stri
 	s := ""
 	var doc bytes.Buffer
 	var photos []Photo
-	limit := 9
+	limit := 8
 	err := sess.DB(db_name).C(collName).Find(bson.M{field: userId}).Skip(start * limit).Limit(limit).All(&photos)
 
 	if err != nil {
@@ -1778,7 +1830,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 	st, _ := strconv.Atoi(start)
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
-	limit := 9
+	limit := 8
 
 	fmt.Println(query, " ", start, " ", cType, " ", nModP)
 
@@ -1995,7 +2047,7 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	user2 := session.Values["user"].(string)
 
 	currentUser := findUser(user2)
-	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("2006-01-02")}
+	com := PhotoComment{currentUser.FirstName + " " + currentUser.LastName, currentUser.Id, comment, time.Now().Local().Format("02/01/2006")}
 
 	photo := Photo{}
 	video := Video{}

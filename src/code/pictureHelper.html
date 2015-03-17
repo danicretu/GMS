@@ -1,8 +1,8 @@
 <div id="pictureHelper" class="headText">
-<div class="panel-heading sectionHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Images</h2>
+<div class="panel-heading sectionHeader" style="padding-bottom:0; margin-bottom:0;">
+    <h3 class="headText personalHead" style="font-size: 24px">Images</h3>
 </div>
-
+<h4 class="headText personalSubtitle">8 images from flickr.com, tagged with <b>'{{.Tag}}'</b>, are displayed below<br>Press <b>'Next'</b> to explore more or scroll down for <b>News</b></h4>
 	<ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 											{{range $index2, $element2 := .P}}
 												{{if $element2.URL}}
@@ -31,7 +31,7 @@
 																				</div>
 																			</div>
 																			<div class="col-md-4" style="padding:0;">
-																				<p style="float:left; font-size:medium; clear:both;" name="logA">Flickr</p>
+																				<p style="float:left; font-size:medium; clear:both;" name="logA">Source: flickr.com</p>
 																				<p style="float:right; font-size:medium; color:black; ">{{$element2.TimeStamp}}</p>
 																				<div style="clear:both; padding-top:7%;">
 																					{{if $element2.Description}}
@@ -64,7 +64,8 @@
 											
 											</ul>
 	
-	
+<div class="nextPrev">
 <a href="#flickrNews?{{.Tag}},{{.PageIP}},image" id="previous">Prev</a>
-<a href="#flickrNews?{{.Tag}},{{.PageIN}},image" id="next" >Next</a> 
+<a href="#flickrNews?{{.Tag}},{{.PageIN}},image" id="next" >Next</a>
+</div> 
 </div>

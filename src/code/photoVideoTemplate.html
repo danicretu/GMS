@@ -4,10 +4,11 @@
 
 <div id="pictures">
 <div class="panel-heading sectionHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Pictures</h2>
+    <h3 class="headText personalHead" style="font-size: 24px">Images</h3>
 </div>
 
 <div id="pictureTemplate" class="headText">
+<h4 class="headText personalSubtitle">This section shows a collection of 8 <b>{{.Owner}}</b>'s uploaded images<br>Press <b>'Next'</b> to explore more or scroll down for {{.Owner}}'s videos</h4>
 <ul id="picList" class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 
 
@@ -51,9 +52,9 @@
 												<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;"><b>Description: </b>{{$element2.Description}}</p>
 											{{end}}
 											{{if $element2.Location.Name}}
-												<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+												<p style="clear:both; font-size:small;"> <b>@</b> {{$element2.Location.Name}}</p> 
 											{{end}}
-											<p style="float:left; font-size:small; clear:both;"><b>Views</b></p>
+											<p style="float:left; font-size:small; clear:both;"><b>Views: </b></p>
 											<p id= "upvotep{{$element2.PhotoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
 											
 										</div>
@@ -104,16 +105,19 @@
 		
 
 </ul>
+<div class="nextPrev">
 <a href="#getUser?{{.User}},{{.PageIP}},image,{{.PageVP}},{{.PageVN}}" id="previous" >Prev</a>
 <a href="#getUser?{{.User}},{{.PageIN}},image,{{.PageVP}},{{.PageVN}}" id="next" >Next</a>
+</div>
 </div>
 </div>
 
 <div id="videos">
 <div class="panel-heading sectionHeader" >
-    <h2 class="panel-title" style="font-size: 24px">Videos</h2>
+    <h3 class="headText personalHead" style="font-size: 24px">Videos</h3>
 </div>
 <div id="pictureTemplate" class="headText">
+<h4 class="headText personalSubtitle">This section shows a collection of 8 of <b>{{.Owner}}</b>'s uploaded videos<br>Press <b>'Next'</b> to explore more</h4>
 <ul class="row" style="padding:0 0 0 0;margin:0 0 0 0;">
 									{{range $element2 :=.Video}}
 												{{if $element2.URL}}
@@ -165,7 +169,7 @@
 																						<p style="float:left; font-size:small;color:black; max-height:250px; overflow:overlay;" ><b>Description: </b>{{$element2.Description}}</p>
 																					{{end}}
 																					{{if $element2.Location.Name}}
-																						<p style="clear:both; font-size:small;" class="col-md-6"> @ {{$element2.Location.Name}}</p> 
+																						<p style="clear:both; font-size:small;"> <b>@</b> {{$element2.Location.Name}}</p> 
 																					{{end}}
 																					<p style="float:left; font-size:small;clear:both; "><b>Views</b></p>
 																					<p id= "upvotep{{$element2.VideoId}}" style="float:left; font-size:small;" class="col-md-2">{{$element2.Views}}</p>
@@ -211,7 +215,9 @@
 												{{end}}
 											{{end}}
 	</ul>
+	<div class="nextPrev">
 <a href="#getUser?{{.User}},{{.PageVP}},video,{{.PageIP}},{{.PageIN}}" id="previous" >Prev</a>
 <a href="#getUser?{{.User}},{{.PageVN}},video,{{.PageIP}},{{.PageIN}}" id="next">Next</a>
+</div>
 </div>
 </div>

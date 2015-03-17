@@ -1,6 +1,8 @@
 .pic-body-left{width:50%; padding-right:4%;float:left;}
 .pic-body-right{float:right; width:47%;}
-.tag{background-color:#0D77B6; color:white; font-size:small; border-radius:5px; padding:2px; float:left; margin-right:2px; margin-bottom:2px;}
+.tag {background-color:#0D77B6; color:white; font-size:small; border-radius:5px; padding:2px; float:left; margin-right:2px; margin-bottom:2px; word-break:break-word;}
+.tag > a:hover {color:white;}
+.tagCloud {width:auto; margin:0; border: 1px solid;border-color: #0D77B6;padding: 4%;text-align: center;}
 .comment{float:left; height:25px; width:70%; font-size:medium;}
 .submitComment{height:25px; font-size:medium;}
 /*.panel-heading{background-color: #0D77B6;color: white;border-radius: 4px;} */
@@ -9,8 +11,11 @@
 .commentList {padding: 0; list-style:none; max-height: 200px; overflow:auto; clear:both;}
 .commentList li {margin:0; margin-top:10px; background-color:#EAEAEA;}
 .commentList li > div {display: table-cell;}
+.personalHead {font-weight:bold; text-align:center;}
+.personalSubtitle {text-align:center; background:white; color:black;}
 .commentText p {margin:0; padding-left:5px;font-size:smaller;}
 .under {color:#aaa; font-size: small;}
+.nextPrev{margin-top:5%; margin-bottom:5%;}
 .imageSize{width:100%; height:100%;}
 .img-thumbnail{max-height:150px;}
 .commentBox {padding:10px; padding-left:0px;}
@@ -21,7 +26,7 @@
 #chooseFile input{position:aboslute; opacity:0.001;}
 #next {float:right;}
 .internalHeader{text-align:center; background-color:#0D77B6; color:white; margin-bottom:5%;}
-.sectionHeader{background: #0D77B6; opacity: 0.5; color: white; margin-bottom:3%;}
+.sectionHeader{color: #0D77B6; margin-bottom:3%; font-size:30px;}
 #pictures {margin-bottom:5%;}
 #videos {margin-bottom:5%;}
 .albumSelect{
@@ -34,33 +39,38 @@
 .tagUpload {margin-bottom:10px;background:#0D77B6; color:white; border-radius:4px; padding:3px; margin-right:5px;}
 .size8{
 	font-size:200%;
-	color:#002B6B;
+	color:#191970;
 	float:left;	
 	margin-right:3%;
+	font-weight:bold;
 }
 .size7{
 	font-size:180%;
-	color:#002B6B;
+	color:#1616BE;
 	float:left;
 	margin-right:3%;
+	font-weight:bold;
 }
 .size6{
 	font-size:150%;
-	color:#1959BA;
+	color:#0000CD;
 	float:left;
 	margin-right:3%;
+	font-weight:bold;
 }
 .size4{
 	font-size:120%;
-	color:#477AC8;
+	color:#1959BA;
 	float:left;
 	margin-right:3%;
+	font-weight:bold;
 }
 .size2 {
 	font-size:90%;
-	color:#477AC8;
+	color:#1E90FF;
 	float:left;
 	margin-right:3%;
+	font-weight:bold;
 	
 }
 

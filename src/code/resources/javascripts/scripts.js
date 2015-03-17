@@ -185,7 +185,31 @@ function flickrCwgMap(){
 				console.log(obj[0]);
 				$('div.sideMenu').removeClass('in');
 				$('panelHeader').html("Glasgow Commonwealth Games 2014 Map Overview");
-				populateMap("panelBodyContent",obj)
+				mapContainer = document.createElement('div');
+				mapContainer.id='outerContainer';
+				mapContainer.style.height='510px';
+				mapContainer.style.border='5px solid';
+				
+				header = document.createElement('div');
+				header.className='panel-heading internalHeader';
+				header.id='mapHeader';
+				
+				title = document.createElement('h2');
+				title.className='panel-title';
+				title.style.fontSize = '24px';
+				title.innerHTML = 'Glasgow Commonwealth Games 2014 on Map';
+				$('#mapHeader').html(title);
+				$('#panelBodyContent').html(header);
+				
+				subtitle = document.createElement('h4');
+				subtitle.className='headText personalSubtitle';
+				subtitle.innerHTML='The Map below displays all the locations where Glasgow 2014 CWG events took place <br> Select one to view photos from that location';
+				
+				document.querySelector('#panelBodyContent').appendChild(subtitle);
+				
+				document.querySelector('#mapHeader').appendChild(title);
+				document.querySelector('#panelBodyContent').appendChild(mapContainer);
+				populateMap("outerContainer",obj)
 			}
 	});
 	
@@ -203,6 +227,9 @@ function getMoreMapImages(tag, start){
 				//console.log(document.querySelector('#'+container));
 				var resultDiv = document.getElementById('resultDiv');
 				resultDiv.innerHTML = html;
+				
+				var resultHeader = document.getElementById('header');
+				resultHeader.innerHTML = "Pictures with tag <b>'"+tag.substring(8)+"'</b>";
 				carousel();
 			}
 		});
@@ -222,7 +249,7 @@ function populateMap(cont, mapPoints) {
 	if (mapContainer == null && c != null){
 		mapContainer = document.createElement('div');
 		mapContainer.id='mapcontainer';
-		mapContainer.style.height='500px';
+		mapContainer.style.height='700px';
 		var query = '#'+container;
 		if (cont == ""){
 			document.querySelector('#'+container).appendChild(mapContainer);
@@ -262,8 +289,7 @@ function populateMap(cont, mapPoints) {
 		if (cont==""){		
 			google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
 			    return function() { 
-			        infowindow.setContent('<IMG BORDER="0" WIDTH="500" ALIGN="Left" SRC="' +"./resources/images/userUploaded/54e1ddb4c1bae210fd000007" +'">'+
-			        '<br>');
+			        infowindow.setContent('');
 			        infowindow.open(map, marker);
 			        infowindow.setOptions()
 			    }
@@ -320,10 +346,12 @@ function populateMap(cont, mapPoints) {
 								var result = document.createElement('div');
 								result.class='panel-heading sectionHeader';
 								result.id='headerDiv'
-								var header = document.createElement('h3');
+								var header = document.createElement('h4');
 								header.id = 'header';
+								header.className='headText personalSubtitle'
 								//var inner = "Pictures from selected location"; 
-								header.innerHTML="Pictures from selected location";
+								header.innerHTML="Pictures from "+obj[globalIndex].Location;
+								
 								
 								
 								var div = document.createElement('div');
@@ -333,7 +361,7 @@ function populateMap(cont, mapPoints) {
 								document.getElementById('headerDiv').appendChild(header);
 								document.getElementById('headerDiv').className+="panel-heading sectionHeader";
 								document.getElementById('headerDiv').style.marginTop='2%';
-								document.getElementById('header').className+="panel-title";
+								
 								document.getElementById('header').style.fontSize='24px';
 								document.getElementById(container).appendChild(div);
 							} else {
@@ -362,7 +390,7 @@ function populateMap(cont, mapPoints) {
 	
 		obj = mapPoints.Heat;
 		for (i=0; i<obj.length; i++){
-			googlePoints.push(new google.maps.LatLng(obj[i].Lat,obj[i].Lon));
+			googlePoints.push(new google.maps.LatLng(obj[i].Latitude,obj[i].Longitude));
 		}
 		
 		
@@ -593,6 +621,7 @@ function uploadForm(){
 		success: function(html) {
 			getPictures('');
 			tagCloud('User');
+			tags.length = 0;
 		}
 	}); 
 	return false;
@@ -602,6 +631,9 @@ function uploadForm(){
 
 function getUpload(){
 	setActive("uploadMenu");
+	tags=[];
+	tags.length = 0;
+	
 	$.ajax({
 		type:"GET",
 		//url:"http://4e76fce3.ngrok.com/upload",
@@ -881,8 +913,12 @@ function flickrMenu(data, start, cType){
 				if (data=="start"){
 					document.getElementById('panelBodyContent').innerHTML=html;
 					document.getElementById('resultOr').style.visibility='hidden';
+					document.getElementById('resultOrHeader').style.visibility='hidden';
+					document.getElementById('resultAndHeader').innerHTML='Sample Images from the collection';
 				} else if(data.indexOf("getTags") > -1){
 							document.getElementById('resultOr').style.visibility='hidden';
+							document.getElementById('resultOrHeader').style.visibility='hidden';
+							
 							console.log("in else")
 							if (data.indexOf("getTags_") > -1){
 								console.log(data.substring(8));
@@ -895,6 +931,7 @@ function flickrMenu(data, start, cType){
 								document.getElementById('cloudFlickr').style.visibility='visible';
 								document.getElementById('cloudHeader').style.visibility='visible';
 								document.getElementById('resultAnd').innerHTML=obj[1].Content;
+								document.getElementById('resultAndHeader').innerHTML='Images tagged with <b>'+data.substring(7)+'</b>';
 							} else {
 								document.getElementById('cloudFlickr').innerHTML=html;
 								document.getElementById('cloudFlickr').style.visibility='visible';
@@ -902,6 +939,8 @@ function flickrMenu(data, start, cType){
 							}
 				} else {
 					var obj = jQuery.parseJSON(html);
+					document.getElementById('resultAndHeader').innerHTML="Images tagged with <b>'"+data+"'</b> AND with <b>'"+init+"'</b>";
+					document.getElementById('resultOrHeader').innerHTML="Images tagged with <b>'"+data+"'</b> OR with <b>'"+init+"'</b>";
 					
 					if (cType == "and" && obj[0].Content!=""){
 						document.getElementById('resultAnd').innerHTML=obj[0].Content;
@@ -909,11 +948,13 @@ function flickrMenu(data, start, cType){
 					} else if (cType=="or" && obj[1].Content!="") {
 						document.getElementById('resultOr').innerHTML=obj[1].Content;
 						document.getElementById('resultOr').style.visibility='visible';
+						document.getElementById('resultOrHeader').style.visibility='visible';
 					}else{
 						document.getElementById('resultAnd').innerHTML=obj[0].Content;
 						document.getElementById('resultAnd').style.visibility='visible';
 						document.getElementById('resultOr').innerHTML=obj[1].Content;
 						document.getElementById('resultOr').style.visibility='visible';
+						document.getElementById('resultOrHeader').style.visibility='visible';
 					} 
 				}
 			carousel();
@@ -1155,6 +1196,7 @@ function checkIfLoggedIn() {
 			type:"GET",
 			url:"/checkLogIn",
 			success: function(html) {
+				console.log("==================================", html);
 				var t=html.split(',');
 				if (t[0]=='Yes') {
 					$('#loggedIn').attr('class', 'dropdown');
@@ -1168,13 +1210,9 @@ function checkIfLoggedIn() {
 					var uls = document.getElementsByName('logP');
 					for (var i = 0; i < uls.length; i++){
 						
-						uls[i].style.display='none';
+						uls[i].disabled = true;
 					}
-					var uls1 = document.getElementsByName('logR');
-					for (var i = 0; i < uls1.length; i++){
-						
-						uls1[i].style.display='none';
-					}
+					
 					
 					var retrieveUsers = document.getElementsByName('logA');
 					for (var i=0; i<retrieveUsers.length; i++){
