@@ -19,18 +19,15 @@ var (
 
 var oauthCfgF = &oauth.Config{
 
-	ClientId: "1611489125747997",
-	//ClientId: "1554421091506709",
+	ClientId: "583627198440666",
 
-	ClientSecret: "7a20b89ff715fee7b94540ca7e191eb7",
-	//ClientSecret: "7ea03222076a4a53fade5226e2183e1c",
+	ClientSecret: "0554c954561004b6b0f646f31b6dc387",
 
 	AuthURL: "https://www.facebook.com/dialog/oauth",
 
 	TokenURL: "https://graph.facebook.com/oauth/access_token",
 
 	RedirectURL: "http://mirugc.dcs.gla.ac.uk/oauth2callbackF",
-	//RedirectURL: "http://localhost:8892/oauth2callbackF",
 }
 
 type UserF struct {
