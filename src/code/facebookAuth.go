@@ -87,12 +87,12 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(user, "    *********************")
 
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+
 	var existing *User
 	sess.DB(db_name).C("user").Find(bson.M{"fId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
-
-	fmt.Println(db_name)
-	fmt.Println(existing)
 
 	if existing != nil && existing.Id != "" {
 
@@ -111,6 +111,8 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w)
 
 	}
+
+	defer sess.Close()
 
 	http.Redirect(w, r, "/authenticated", http.StatusFound)
 	return

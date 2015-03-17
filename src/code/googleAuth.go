@@ -84,6 +84,9 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(body, &user)
 
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+
 	var existing *User
 	sess.DB(db_name).C("user").Find(bson.M{"gId": user.Id}).One(&existing)
 	session, _ := store.Get(r, "cookie")
@@ -102,6 +105,7 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w)
 
 	}
+	defer sess.Close()
 
 	http.Redirect(w, r, "/authenticated", http.StatusFound)
 	return
