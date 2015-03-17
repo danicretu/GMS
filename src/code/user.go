@@ -242,9 +242,9 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 	st := r.FormValue("start")
 	start, _ := strconv.Atoi(st)
 	t, _ := template.ParseFiles("flickrHelper.html")
-	fmt.Println(location)
+
 	if location == "" {
-		fmt.Println("in if")
+
 		var pics []CwgImage
 		pics = getCwgMapImages()
 
@@ -276,7 +276,7 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 			t.Execute(&doc, data)
 
 		} else {
-			fmt.Println(location)
+
 			loc := strings.Replace(location, "_", " ", -1)
 			pics = getFlickrMain("", "", start, "location", loc)
 
@@ -300,8 +300,7 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 		}
 
 		s = doc.String()
-		fmt.Println(location, "**************************************")
-		fmt.Println(s)
+
 		fmt.Fprintf(w, s)
 
 	}
@@ -311,11 +310,8 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	var pics []MapImage
 	var heat []FlickrImage1
-	fmt.Println("in map images")
 
 	heat = getFlickrMap()
-
-	fmt.Println(len(heat))
 
 	if session.Values["user"] == nil {
 		//no
@@ -352,7 +348,6 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	//owner := r.FormValue("owner")
 	cType := r.FormValue("cType")
 
-	fmt.Println("in delete", picture, cType)
 	deleteFromOthers(picture, cType)
 
 	dbConnection = NewMongoDBConn()
@@ -434,8 +429,6 @@ func getImages(request string, init string, temp string, start int, cType string
 	if request == "start" {
 
 		photos := getFlickrMain("", "", start, cType, "")
-
-		fmt.Println(photos)
 
 		data := struct {
 			//P []FlickrImage
@@ -539,11 +532,9 @@ func getImages(request string, init string, temp string, start int, cType string
 
 	} else {
 		response := make([]Response, 2)
-		fmt.Println(request, " ", init, " ", start, " ", cType)
 
 		if cType == "and" {
 			photos := getFlickrMain(request, init, start, cType, "")
-			fmt.Println(request, " ", init, " ", start, " ", cType, " ", len(photos))
 			if len(photos) > 0 {
 
 				data := struct {
@@ -730,8 +721,6 @@ func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
 		s = getImages(request, "", "flickrImages.html", start, "")
 		fmt.Fprintf(w, s)
 	} else if strings.HasPrefix(request, "getTags") {
-		input := request[7:]
-		fmt.Println("in else" + input)
 		s = getImages(request, "", "flickrHelper.html", start, "")
 
 		fmt.Fprintf(w, s)
@@ -745,7 +734,6 @@ func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("in handle ")
 	r.ParseForm()
 	request := r.FormValue("req")
 	st := r.FormValue("start")
@@ -760,8 +748,6 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	} else {
 		start, _ = strconv.Atoi(st)
 	}
-
-	fmt.Println(request, "in handle flickr 2")
 
 	if request == "start" {
 
@@ -791,7 +777,6 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 			a := []rune(flickr)
 			a[0] = unicode.ToUpper(a[0])
 			guardian = string(a)
-			fmt.Println(guardian, "  ****************")
 		} else {
 			guardian = request
 			flickr = strings.ToLower(request)
@@ -862,7 +847,7 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 
 		t, _ := template.ParseFiles("videosTemplate.html")
 		if t == nil {
-			fmt.Println("no template******************************************")
+			fmt.Println("no template - videosTemplate")
 		}
 		t.Execute(&doc, data)
 		s = doc.String()
@@ -997,7 +982,6 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("in login")
 
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
@@ -1005,7 +989,6 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	pass := r.FormValue("pass")
 	c := find(email)
-	fmt.Println(c == nil)
 	if c == nil {
 		defer sess.Close()
 		fmt.Fprintf(w, "No")
@@ -1014,7 +997,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 			session, _ := store.Get(r, "cookie")
 			session.Values["user"] = c.Id
 			session.Save(r, w)
-			fmt.Println(c.FirstName)
+
 			defer sess.Close()
 			fmt.Fprintf(w, "Yes_"+c.FirstName)
 		} else {
@@ -1136,8 +1119,6 @@ func handleMainFlickr(w http.ResponseWriter, r *http.Request) {
 
 	images := getFlickrImages(flickr, 0)
 	news := getNews(guardian, 0)
-
-	fmt.Println("in handle main flickr")
 	data := struct {
 		Tag       string
 		FirstName string
@@ -1196,7 +1177,6 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println(photos)
 
 			err = sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
@@ -1228,7 +1208,6 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println(photos)
 
 			err = sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
@@ -1239,13 +1218,10 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 				flag = false
 			}
 
-			fmt.Println(photos)
 			sti = nMod
 			stv = st
 		}
 	}
-
-	fmt.Println(t, " ", start, " ", cType, " ", nModP)
 
 	if flag == true {
 
@@ -1271,7 +1247,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 
 		temp, _ := template.ParseFiles("photoVideoTemplate.html")
 		if temp == nil {
-			fmt.Println("no template******************************************")
+			fmt.Println("no template photo video template")
 		}
 
 		temp.Execute(&doc, photoData)
@@ -1378,16 +1354,11 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 
-	fmt.Println("in check login")
-
 	if session.Values["user"] == nil {
-		fmt.Println("in check login no")
 		fmt.Fprintf(w, "No")
 	} else if session.Values["user"].(string) == "" {
-		fmt.Println("in check login no")
 		fmt.Fprintf(w, "No")
 	} else {
-		fmt.Println("in check login yes")
 		message := "Yes," + findUser(session.Values["user"].(string)).FirstName
 		fmt.Fprintf(w, message)
 	}
@@ -1505,8 +1476,6 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	fmt.Println(t, " ", start, " ", cType, " ", nModP)
-
 	if flag == true {
 
 		photoData := struct {
@@ -1526,11 +1495,10 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 			photos,
 			videos,
 		}
-		fmt.Println(photoData)
 
 		temp, _ := template.ParseFiles("tagContentTemplate.html")
 		if temp == nil {
-			fmt.Println("no template******************************************")
+			fmt.Println("no template tag content template")
 		}
 
 		temp.Execute(&doc, photoData)
@@ -1538,8 +1506,6 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	} else {
 		s = ""
 	}
-
-	fmt.Println(s)
 
 	defer sess.Close()
 
@@ -1678,7 +1644,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	caption := r.FormValue("caption")
 	cType := r.FormValue("contentType")
 	album := r.FormValue("albumSelect")
-	loc := r.FormValue("location")
 	lng := r.FormValue("lng")
 	lat := r.FormValue("lat")
 	locationN := r.FormValue("locality")
@@ -1687,11 +1652,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		lat = ""
 		locationN = ""
 	} */
-
-	fmt.Println(loc, " loc")
-	fmt.Println(lng, " lng")
-	fmt.Println(lat, " lat")
-	fmt.Println(locationN, " locN")
 
 	streetN := r.FormValue("formatted_address")
 	streetN = strings.Split(streetN, ",")[0]
@@ -1781,7 +1741,7 @@ func getPictures(collName string, field string, userId string, templateName stri
 
 		t, _ := template.ParseFiles(templateName)
 		if t == nil {
-			fmt.Println("no template******************************************")
+			fmt.Println("no template", templateName)
 		}
 
 		t.Execute(&doc, photoData)
@@ -1799,7 +1759,7 @@ func handlePictures(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	start := r.FormValue("req")
 	s, _ := strconv.Atoi(start)
-	fmt.Println(s)
+
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
 	response := make([]Response, 1)
@@ -1831,8 +1791,6 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 	nMod, _ := strconv.Atoi(nModP)
 	nMod += 1
 	limit := 8
-
-	fmt.Println(query, " ", start, " ", cType, " ", nModP)
 
 	session, _ := store.Get(r, "cookie")
 	user := session.Values["user"].(string)
@@ -1874,13 +1832,13 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 		}
 		t, _ := template.ParseFiles("albumTemplate.html")
 		if t == nil {
-			fmt.Println("no template******************************************")
+			fmt.Println("no template album template")
 		}
 		t.Execute(&doc, data)
 		s = doc.String()
 		response[0].Name = "ownAlbums"
 	} else {
-		fmt.Println("in eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", query)
+
 		var photos []Photo
 		var videos []Video
 		var sti int
@@ -1891,7 +1849,6 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println(photos)
 
 			err = sess.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
@@ -1923,7 +1880,6 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println(photos)
 
 			err = sess.DB(db_name).C("videos").Find(bson.M{"albumId": query}).Skip(st * limit).Limit(limit).All(&videos)
 			if err != nil {
@@ -1933,12 +1889,10 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 			if len(videos) == 0 {
 				flag = false
 			}
-			fmt.Println(photos)
+
 			sti = nMod
 			stv = st
 		}
-
-		fmt.Println(query, " ", start, " ", cType, " ", nModP)
 
 		if flag == true {
 
@@ -1962,7 +1916,7 @@ func handleAlbums(w http.ResponseWriter, r *http.Request) {
 
 			temp, _ := template.ParseFiles("albumDetailTemplate.html")
 			if temp == nil {
-				fmt.Println("no template******************************************")
+				fmt.Println("no template album detail template")
 			}
 
 			temp.Execute(&doc, photoData)
@@ -2038,10 +1992,6 @@ func handleComments(w http.ResponseWriter, r *http.Request) {
 	comment := r.FormValue("comment")
 	picture := r.FormValue("pic")
 	cType := r.FormValue("cType")
-
-	fmt.Println("comment", comment)
-	fmt.Println("comment", picture)
-	fmt.Println("comment", cType)
 
 	session, _ := store.Get(r, "cookie")
 	user2 := session.Values["user"].(string)

@@ -30,7 +30,6 @@ func (m *MongoDBConn) connect() *mgo.Session {
 		panic(err)
 	}
 
-	fmt.Println("connect")
 	m.session = session
 	return m.session
 }
@@ -42,7 +41,6 @@ func (m *MongoDBConn) connectFlickr() *mgo.Session {
 		panic(err)
 	}
 
-	fmt.Println("connect")
 	m.session = session
 	return m.session
 }
@@ -193,7 +191,6 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	limit := 8
 	if cType == "location" {
 		if location != "" {
-			fmt.Println(location)
 			err := c1.Find(bson.M{"exifLocation": location}).Skip(start * limit).Limit(limit).All(&flickrImage)
 			if err != nil {
 				fmt.Println(err)
@@ -205,7 +202,6 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 				fmt.Println(err)
 			}
 		}
-		fmt.Println(len(flickrImage))
 
 		for i := range flickrImage {
 
@@ -215,7 +211,6 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 			flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
 			k := 0
 			for k < len(flickrImage[i].Keywords) {
-				fmt.Println(len(flickrImage[i].Keywords), "        ", k)
 				if strings.Contains(flickrImage[i].Keywords[k], "|") {
 					flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
 					k -= 1
@@ -281,7 +276,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 		flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
 		k := 0
 		for k < len(flickrImage[i].Keywords) {
-			fmt.Println(len(flickrImage[i].Keywords), "        ", k)
+
 			if strings.Contains(flickrImage[i].Keywords[k], "|") {
 				flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
 				k -= 1
@@ -328,7 +323,6 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 		flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
 		k := 0
 		for k < len(flickrImage[i].Keywords) {
-			fmt.Println(len(flickrImage[i].Keywords), "        ", k)
 			if strings.Contains(flickrImage[i].Keywords[k], "|") {
 				flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
 				k -= 1
@@ -354,7 +348,6 @@ func getNews(tag string, start int) []News {
 	if start == 0 && tag == "" {
 		records, _ := c.Find(bson.M{"source": "http://www.theguardian.com"}).Count()
 		start = rand.Intn(records - limit)
-		fmt.Println(start, "    images start")
 		err := c.Find(bson.M{"source": "http://www.theguardian.com"}).Skip(start).Limit(limit).All(&news)
 		if err != nil {
 			fmt.Println(err)
@@ -795,12 +788,10 @@ func getMapImages(user string) []MapImage {
 			fmt.Println("could not get map images from db")
 		}
 	} else {
-		fmt.Println(user)
 		err := sess1.DB(flickrDB).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
 		if err != nil {
 			fmt.Println("could not get map images for user from DB")
 		}
-		fmt.Println(pics)
 	}
 	defer sess1.Close()
 	return pics
