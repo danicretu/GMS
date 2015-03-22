@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 	//"time"
 	"math/rand"
 	"strings"
@@ -17,31 +18,29 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-//var db_name = "gmsTry"
+var db_name = "gmsTry"
 
-var db_name = "ugc"
+//var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("connect")
 	m.session = session
 	return m.session
 }
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("connect")
 	m.session = session
 	return m.session
 }
@@ -56,6 +55,51 @@ func add(user User) {
 	}
 
 	defer sess.Close()
+
+}
+
+func getRecommImages(userID string) []RecommendedPlace {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+	c := sess.DB(db_name).C("userRecommend")
+	var user RecommendedUser
+
+	err := c.Find(bson.M{"user": userID}).One(&user)
+	if err != nil {
+		fmt.Println("error while finding recommended places")
+	}
+	defer sess.Close()
+	return user.Recommend
+
+}
+
+func getTrendingImages(userID string) []TrendingPlace {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+	c := sess.DB(db_name).C("userTrending")
+	var user TrendingUser
+
+	err := c.Find(bson.M{"user": userID}).One(&user)
+	if err != nil {
+		fmt.Println("error while finding trending places")
+	}
+	defer sess.Close()
+	return user.Trending
+
+}
+
+func getTrendingAll() []TrendingAll {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+	c := sess.DB(db_name).C("ugcTrendingAll")
+	var pics []TrendingAll
+
+	err := c.Find(nil).All(&pics)
+	if err != nil {
+		fmt.Println("error while finding trending places")
+	}
+	defer sess.Close()
+	return pics
 
 }
 
@@ -170,7 +214,7 @@ func getFlickrMap() []FlickrImage1 {
 
 	var flickrImage []FlickrImage1
 
-	err := c.Find(bson.M{"exifLocation": ""}).All(&flickrImage)
+	err := c.Find(bson.M{"$and": []bson.M{bson.M{"latitude": bson.M{"$ne": 0}}, bson.M{"longitude": bson.M{"$ne": 0}}}}).All(&flickrImage)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -185,14 +229,13 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	dbConn := NewMongoDBConn()
 	sess1 := dbConn.connectFlickr()
 	c := sess1.DB(flickrDB).C("gmsFlickr1")
-	c1 := dbConn.session.DB(flickrDB).C("gmsFlickrCWGUpdated")
+	c1 := sess1.DB(flickrDB).C("gmsFlickrCWGUpdated")
 	//c1 := sess1.DB(flickrDB).C("flickrCWG")
 	var flickrImage []FlickrImage1
 
 	limit := 8
 	if cType == "location" {
 		if location != "" {
-			fmt.Println(location)
 			err := c1.Find(bson.M{"exifLocation": location}).Skip(start * limit).Limit(limit).All(&flickrImage)
 			if err != nil {
 				fmt.Println(err)
@@ -204,17 +247,24 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 				fmt.Println(err)
 			}
 		}
-		fmt.Println(len(flickrImage))
 
 		for i := range flickrImage {
+
 			date := strings.Split(flickrImage[i].TimeStamp, " ")
 			t := strings.Split(date[0], "/")
 			folderName := t[0] + "_" + t[1] + "_" + t[2]
 			flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
-
-			/*for tag := range flickrImage[i].Keywords{
-				if flickrImage[i].Keywords[tag]
-			}*/
+			k := 0
+			for k < len(flickrImage[i].Keywords) {
+				if strings.Contains(flickrImage[i].Keywords[k], "|") {
+					flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
+					k -= 1
+				} else {
+					k += 1
+				}
+			}
+			tim, _ := time.Parse("02/01/2006 15:04:05", flickrImage[i].TimeStamp)
+			flickrImage[i].TimeStamp = tim.Format("02/01/2006")
 		}
 		defer sess1.Close()
 		return flickrImage
@@ -264,13 +314,14 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 	}
 
 	for i := range flickrImage {
+
 		date := strings.Split(flickrImage[i].TimeStamp, " ")
 		t := strings.Split(date[0], "/")
 		folderName := t[0] + "_" + t[1] + "_" + t[2]
 		flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
 		k := 0
 		for k < len(flickrImage[i].Keywords) {
-			fmt.Println(len(flickrImage[i].Keywords), "        ", k)
+
 			if strings.Contains(flickrImage[i].Keywords[k], "|") {
 				flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
 				k -= 1
@@ -278,6 +329,8 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 				k += 1
 			}
 		}
+		tim, _ := time.Parse("02/01/2006 15:04:05", flickrImage[i].TimeStamp)
+		flickrImage[i].TimeStamp = tim.Format("02/01/2006")
 	}
 	defer sess1.Close()
 	return flickrImage
@@ -308,13 +361,13 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 	}
 
 	for i := range flickrImage {
+
 		date := strings.Split(flickrImage[i].TimeStamp, " ")
 		t := strings.Split(date[0], "/")
 		folderName := t[0] + "_" + t[1] + "_" + t[2]
 		flickrImage[i].URL = source + folderName + "/" + flickrImage[i].ImageName
 		k := 0
 		for k < len(flickrImage[i].Keywords) {
-			fmt.Println(len(flickrImage[i].Keywords), "        ", k)
 			if strings.Contains(flickrImage[i].Keywords[k], "|") {
 				flickrImage[i].Keywords = append(flickrImage[i].Keywords[:k], flickrImage[i].Keywords[k+1:]...)
 				k -= 1
@@ -322,6 +375,8 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 				k += 1
 			}
 		}
+		tim, _ := time.Parse("02/01/2006 15:04:05", flickrImage[i].TimeStamp)
+		flickrImage[i].TimeStamp = tim.Format("02/01/2006")
 	}
 	defer sess1.Close()
 	return flickrImage
@@ -338,7 +393,6 @@ func getNews(tag string, start int) []News {
 	if start == 0 && tag == "" {
 		records, _ := c.Find(bson.M{"source": "http://www.theguardian.com"}).Count()
 		start = rand.Intn(records - limit)
-		fmt.Println(start, "    images start")
 		err := c.Find(bson.M{"source": "http://www.theguardian.com"}).Skip(start).Limit(limit).All(&news)
 		if err != nil {
 			fmt.Println(err)
@@ -588,7 +642,7 @@ func updateMostViewed(photo Photo, video Video) {
 		}
 		return
 	} else if photo.PhotoId != "" {
-		if len(p.Photos) < 5 {
+		if len(p.Photos) < 8 {
 			flag := false
 			for m := range p.Photos {
 				if p.Photos[m].PhotoId == photo.PhotoId {
@@ -624,7 +678,7 @@ func updateMostViewed(photo Photo, video Video) {
 		}
 		err = c.Update(bson.M{"name": "views"}, bson.M{"$set": bson.M{"photos": p.Photos}})
 	} else {
-		if len(p.Videos) < 5 {
+		if len(p.Videos) < 8 {
 			flag := false
 			for m := range p.Videos {
 				if p.Videos[m].VideoId == video.VideoId {
@@ -696,7 +750,7 @@ func insertInMostRecent(photo Photo, video Video) {
 		return
 
 	} else if photo.PhotoId != "" {
-		if len(p.Photos) < 5 {
+		if len(p.Photos) < 8 {
 			fmt.Println(p.Photos)
 			p.Photos = append(p.Photos, photo)
 		} else {
@@ -705,7 +759,7 @@ func insertInMostRecent(photo Photo, video Video) {
 		}
 		err = c.Update(bson.M{"name": "recent"}, bson.M{"$set": bson.M{"photos": p.Photos}})
 	} else {
-		if len(p.Videos) < 5 {
+		if len(p.Videos) < 8 {
 			fmt.Println(p.Videos)
 			p.Videos = append(p.Videos, video)
 		} else {
@@ -779,12 +833,10 @@ func getMapImages(user string) []MapImage {
 			fmt.Println("could not get map images from db")
 		}
 	} else {
-		fmt.Println(user)
 		err := sess1.DB(flickrDB).C("locationDB").Find(bson.M{"user": bson.ObjectIdHex(user)}).All(&pics)
 		if err != nil {
 			fmt.Println("could not get map images for user from DB")
 		}
-		fmt.Println(pics)
 	}
 	defer sess1.Close()
 	return pics
