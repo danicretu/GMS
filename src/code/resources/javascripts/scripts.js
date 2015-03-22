@@ -262,10 +262,10 @@ function populateMap(cont, mapPoints) {
 		} else {
 			$('#'+container).html(mapContainer);
 		}
-	    var glasgowMap = new google.maps.LatLng(55.864237,-4.251806);
+	    var glasgowMap = new google.maps.LatLng(50.139535, 19.001192);
 		var options = {
 			center:glasgowMap,
-			zoom:12
+			zoom:4
 		}
 			    
 	}
@@ -330,16 +330,16 @@ function populateMap(cont, mapPoints) {
 				    return function() { 
 						
 				       if (mapPoints.TrendingMarker != null){
-							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarker[globalIndex].Name+' <br><b>Popularity: </b>'+mapPoints.TrendingMarker[globalIndex].Popularity);
+							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarker[globalIndex].Name+'<br><IMG WIDTH="400px" ALIGN="Left" SRC="'+mapPoints.TrendingMarker[globalIndex].URL+'">');
 					        infowindow.open(map, marker);
 					        infowindow.setOptions();
 						} else {
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
 							var url = "./resources/images/userUploaded/54e1cc23c1bae20ea5000003";
 							console.log(url);
-							//mapPoints.TrendingMarkerAll[globalIndex].URL = url;
+							mapPoints.TrendingMarkerAll[globalIndex].URL = url;
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
-							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG WIDTH="500" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
+							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG WIDTH="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
 					        infowindow.open(map, marker);
 					        infowindow.setOptions();
 						}

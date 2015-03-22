@@ -18,14 +18,14 @@ func NewMongoDBConn() *MongoDBConn {
 	return &MongoDBConn{}
 }
 
-//var db_name = "gmsTry"
+var db_name = "gmsTry"
 
-var db_name = "ugc"
+//var db_name = "ugc"
 var flickrDB = "gmsTry"
 
 func (m *MongoDBConn) connect() *mgo.Session {
-	session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://ugc:ugc_pass@imcdserv1.dcs.gla.ac.uk/ugc")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
@@ -35,8 +35,8 @@ func (m *MongoDBConn) connect() *mgo.Session {
 }
 
 func (m *MongoDBConn) connectFlickr() *mgo.Session {
-	session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
-	//session, err := mgo.Dial("127.0.0.1")
+	//session, err := mgo.Dial("mongodb://gms:rdm$248@imcdserv1.dcs.gla.ac.uk/gmsTry")
+	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}

@@ -198,6 +198,7 @@ type TrendingUser struct {
 type TrendingPlace struct {
 	Popularity string `bson:"pop"`
 	Name       string `bson:"locationName"`
+	URL        string `bson:"url"`
 	Lon        string `bson:"lon"`
 	Lat        string `bson:"lat"`
 }
