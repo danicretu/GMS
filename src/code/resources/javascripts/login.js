@@ -47,6 +47,38 @@ $(document).ready(function() {
 		document.getElementById('modalLabel').innerHTML='Register for an Account';
 	});
 	
+	$("#resetForm").submit(function() {
+		//document.getElementById('errorLabel').innerHTML('no error');
+		var email =$("input#email_reset").val();
+		var password=$("input#password_reset").val();
+		var password2=$("input#confirmPassword_reset").val();
+		
+		console.log(password);
+		console.log(password2);
+		
+		if (password != password2) {
+			document.getElementById("errorLabelReset").innerHTML="Passwords not identical";
+		} else {
+		
+			$.ajax({
+				type:"POST",
+				url:"/resetPass",
+				data:{"email" : email, "pass" : password},
+				success: function(html) {
+					if (html=='Yes') {
+						console.log("**********************")
+						setTimeout('go_to_userPage()', 500);
+					} else {
+						document.getElementById("errorLabelReset").innerHTML="E-mail address not registered. Please Register";
+					}
+				}
+			});
+			
+		}
+		
+		return false;
+	});
+	
 	$("#registerForm").submit(function() {
 		//document.getElementById('errorLabel').innerHTML('no error');
 		var email =$("input#email").val();
@@ -56,7 +88,7 @@ $(document).ready(function() {
 		var first=$("input#first").val();
 		
 		if (password != password2) {
-			document.getElementById("errorLabel").innerHTML="Passwords not identical";
+			document.getElementById("errorLabelRegister").innerHTML="Passwords not identical";
 		} else {
 		
 			$.ajax({

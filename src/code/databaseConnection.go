@@ -58,6 +58,51 @@ func add(user User) {
 
 }
 
+func getRecommImages(userID string) []RecommendedPlace {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+	c := sess.DB(db_name).C("userRecommend")
+	var user RecommendedUser
+
+	err := c.Find(bson.M{"user": userID}).One(&user)
+	if err != nil {
+		fmt.Println("error while finding recommended places")
+	}
+	defer sess.Close()
+	return user.Recommend
+
+}
+
+func getTrendingImages(userID string) []TrendingPlace {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+	c := sess.DB(db_name).C("userTrending")
+	var user TrendingUser
+
+	err := c.Find(bson.M{"user": userID}).One(&user)
+	if err != nil {
+		fmt.Println("error while finding trending places")
+	}
+	defer sess.Close()
+	return user.Trending
+
+}
+
+func getTrendingAll() []TrendingAll {
+	dbConnection = NewMongoDBConn()
+	sess := dbConnection.connect()
+	c := sess.DB(db_name).C("ugcTrendingAll")
+	var pics []TrendingAll
+
+	err := c.Find(nil).All(&pics)
+	if err != nil {
+		fmt.Println("error while finding trending places")
+	}
+	defer sess.Close()
+	return pics
+
+}
+
 func addTags(tags []string, photo Photo, video Video) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()

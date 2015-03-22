@@ -179,8 +179,8 @@
                <li class="dropdown">
                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Statistics <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
-                   <li><a href="/stat">Glasgow</a></li>
-                   <li class="active"><a href="/statScotland">Scotland</a></li>
+                   <li><a href="/statScotland">Flickr</a></li>
+                   <li class="active"><a href="#">UGC</a></li>
                  </ul>
                </li> 
 				<li id="loggedIn">
@@ -218,9 +218,9 @@
 	
   	<div class="col-md-3 collapse-group">
 	
-	<button id="menuButton" class="visible-xs btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
+	<button id="menuButton" class="visible-xs visible-sm visible-md btn submitButton" style="width:100%;" data-toggle="collapse" data-target=".sideMenu">View Menu</button>
 	<!--<a class="btn btn-default" data-toggle="collapse" data-target=".sideMenu">View Menu</a> -->
-	<div class="hidden-xs sideMenu">
+	<div class="hidden-xs hidden-sm hidden-md sideMenu">
       <ul  id = "main-nav" class="nav nav-pills nav-stacked">
 		<li><a href="#" class="scroll-link" data-id="map">Trending Locations</a></li>
         <li><a href="#"  class="scroll-link" data-id="images">User Images</a></li>
@@ -236,27 +236,26 @@
    <div class="col-md-9">
              <div class="panel mypanel">
                <div class="panel-heading">
-                 <h2 class="panel-title" style="font-size: 24px">GMS: Home</h2>
+                 <h2 class="panel-title" style="font-size: 24px">Citizen Memories Server</h2>
                </div>
       			<div class="panel-body headText">            	
-                  <p>Glasgow Memories Server (GMS) is a 12 months project, part of an ongoing ESRC funded Urban Big Data Centre (UBDC) project, which archives 12 months publicly
-                  available data about the Glasgow city from multiple sources, which includes (but is not limited to):                                   
+                  <p>The Citizen Memories Server (CMS) is a module of Glasgow Memories Server. CMS aims to provide a web as well as a mobile service to the users, which will allow them to upload and view their images and videos. 
+				Based upon the location of the images uploaded, we recommend some places to visit for a user.     
+				Additionally, it also contains images crawled from an image sharing website Flickr.
+				
+				In this page, you will be viewing:
 						<ol>
-  							<li>online news archives;</li>
-  							<li>social media posts from Twitter;</li>
-  							<li>user blogs from Tumblr;</li>
-  							<li>photographs from image sharing websites such as Flickr, and</li>
-  							<li> data from wearable sensors like Autographer and GPS devices.</li>
+  							<li>Heat map showing some of the trending locations</li>
+  							<li>Trending images and videos based upon the number of views</li>
+  							<li>Recently uploaded images and videos</li>
+  							<li>Commonwealth Games 2014 images from flickr</li>
+  							<li> Commonwealth Games 2014 news from flickr</li>
 						</ol>
 						</p> 
 					
                   <p>
-                  We are piloting with 100 Autographer units to capture lifelogs of user experiences about the Greater Glasgow area on a daily basis for around 12 months.
-                  This is a unique multi-modal data set about a city and encodes experiences from multiple user perspectives and has enormous potential in exploiting for public benefit.
-                  </p>
-                  <p>
-                  It is expected that in the nearby future, digitally active participants will capture personal experiences using lifeloggers and/or with smartphone apps and will share their experience through avenues like GMS.
-                  </p>	              	
+                  Please Register and Login using the Log In option in the topmost panel to take advantage of all the functionalities offered by our application
+				</p>	              	
                </div>
       			<!--</div>-->
                
@@ -377,12 +376,12 @@
 																					<div style="padding-top:5px; clear:both;">
 																						<form id="commentForm">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="logP" placeholder="Enter Comment..." />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="comment" placeholder="Enter Comment..." />
 																								<input type="hidden" id="cType" value="image" />
 																								<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP" value="submit" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																							</div>
 																						</form>
 																					</div>
@@ -498,11 +497,11 @@
 																					<div style="padding-top:5px; clear:both;">
 																						<form id="commentForm">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="logP" placeholder="Enter Comment..." />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="comment" placeholder="Enter Comment..." />
 																								<input type="hidden" id="pictureNumber" value="{{$element3.PhotoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element3.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP" value="submit" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																							</div>
 																						</form>
 																					</div>
@@ -626,12 +625,12 @@
 																					<div style="padding-top:5px; clear:both;">
 																						<form id="commentForm">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" name="logP" id="comment" placeholder="Enter Comment..." />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" name="comment" id="comment" placeholder="Enter Comment..." />
 																								<input type="hidden" id="cType" value="image" />
 																								<input type="hidden" id="pictureNumber" value="{{$element2.VideoId}}" />
 																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
 																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
-																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP" value="submit" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																							</div>
 																						</form>
 																					</div>
@@ -751,11 +750,11 @@
 																						<div style="padding-top:5px; clear:both;">
 																							<form id="commentForm">
 																								<div>
-																									<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="logP" placeholder="Enter Comment..." />
+																									<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="comment" placeholder="Enter Comment..." />
 																									<input type="hidden" id="pictureNumber" value="{{$element3.VideoId}}" />
 																									<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
 																									<input type="hidden" id="owner" value="{{$element3.Owner}}" />
-																									<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="logP"  value="submit" />
+																									<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit"  value="submit" />
 																								</div>
 																							</form>
 																						</div>
@@ -997,6 +996,9 @@
 	<script>
 			carousel();
 	</script>
+	<script>
+		initialiseMap();
+	</script>
 	
 	  
                   <script type="text/javascript">
@@ -1070,15 +1072,18 @@
 				             <input type="text" id="email_label" placeholder="Enter your name" value="" class="form-control login-field">
 						    	<input type="password" id="password_label" placeholder="Password" value="" class="form-control login-field">
 							<label id="errorLabel"></label>
-				            	<input style="color:white;" type="submit" name="submit" value="Login" class="btn modal-login-btn">
+				            	<input style="color:white;" type="submit" name="submitLogin" value="Login" class="btn modal-login-btn">
 						</form>
+						<div class="form-group modal-register-btn">
+	        				<button data-dismiss="modal" data-toggle="modal" data-target="#resetModal" id="" class="btn modal-login-btn" style="color:white;"> Forgot your password?</button>
+	        			</div>
 		        		</div>
 	        	
 		        		<div class='modal-body-right'>
 		        			<div class="modal-social-icons">
-		        				<a href='/authorizeFacebook' class="btn btn-default facebook"> <i class="fa fa-facebook modal-icons"></i> Sign In with Facebook </a>
-		        				<a href='/authorizeTwitter' class="btn btn-default twitter"> <i class="fa fa-twitter modal-icons"></i> Sign In with Twitter </a>
-		        				<a href='/authorizeGoogle' class="btn btn-default google"> <i class="fa fa-google-plus modal-icons"></i> Sign In with Google </a>
+		        				<a href='/authorizeFacebook' class="btn btn-default facebook"> <i class="fa fa-facebook modal-icons"> &nbsp;Sign In with Facebook</i> <p class="hidden-xs"></p> </a>
+		        				<a href='/authorizeTwitter' class="btn btn-default twitter"> <i class="fa fa-twitter modal-icons">&nbsp;Sign In with Twitter</i> <p class="hidden-xs"></p> </a>
+		        				<a href='/authorizeGoogle' class="btn btn-default google"> <i class="fa fa-google-plus modal-icons">&nbsp;Sign In with Google </i> <p class="hidden-xs"></p></a>
 		        			</div> 
 		        		</div>	
 
@@ -1109,8 +1114,33 @@
 						<input type="text" class="form-control login-field" id="last" style="margin-bottom:20px" placeholder="Last Name" required/>
 						<input type="password" class="form-control login-field" id="password" style="margin-bottom:20px" placeholder="Password" required/>
 						<input type="password" class="form-control login-field" id="confirmPassword" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
-						<label id="errorLabel"></label>
-						<input style="color:white;" type="submit" name="submit" value="Register" class="btn modal-login-btn">
+						<label id="errorLabelRegister"></label>
+						<input style="color:white;" type="submit" name="submitRegister" value="Register" class="btn modal-login-btn">
+						<button data-dismiss="modal" data-toggle="modal" data-target="#loginModal" id="" class="btn modal-login-btn" style="color:white;"> Go Back to Login</button>
+					</form>	
+				</div>	
+				</div>	        		
+		    </div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header login_modal_header">
+        	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        		<h2 class="modal-title" id="modalLabel">Reset Your Password</h2>
+      		</div>
+			<div id="modalBody" class="modal-body login-modal">
+		      	<div class="clearfix"></div>
+		      	<div id='social-icons-container'>
+					<form id="resetForm" class="loginDiv" >
+						<input type="text" class="form-control login-field" id="email_reset" style="margin-bottom:20px" placeholder="E-mail Address" required/>
+						<input type="password" class="form-control login-field" id="password_reset" style="margin-bottom:20px" placeholder="Password" required/>
+						<input type="password" class="form-control login-field" id="confirmPassword_reset" style="margin-bottom:20px" placeholder="ConfirmPassword" required/>
+						<label id="errorLabelReset"></label>
+						<input style="color:white;" type="submit" name="submitReset" value="Reset Password" class="btn modal-login-btn">
 						<button data-dismiss="modal" data-toggle="modal" data-target="#loginModal" id="" class="btn modal-login-btn" style="color:white;"> Go Back to Login</button>
 					</form>	
 				</div>	

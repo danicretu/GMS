@@ -1,0 +1,865 @@
+	
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="utf-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <meta name="description" content="">
+       <meta name="author" content="Md Sadek Ferdous" >
+	
+       <title>Stat Module for Flickr Data</title>
+	
+       <!-- Bootstrap core CSS -->
+       <link href="resources/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="resources/stylesheets/sticky-footer-navbar.css" rel="stylesheet">
+		<link href="resources/stylesheets/clndr.css" rel="stylesheet">
+		<link href="resources/stylesheets/cal.css" rel="stylesheet">
+		<link href="resources/stylesheets/selection.css" rel="stylesheet">
+		<link href="resources/stylesheets/arrow.css" rel="stylesheet">
+		<link href="resources/stylesheets/harvest-navbar.css" rel="stylesheet">
+		<link href="resources/stylesheets/simple-navbar.css" rel="stylesheet">
+		<link href="resources/stylesheets/my-navbar.css" rel="stylesheet">
+		<link href="resources/stylesheets/radio.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" media="all" href="resources/stylesheets/daterangepicker-bs3.css" />
+		<script src="resources/javascripts/ie-emulation-modes-warning.js"></script>
+	
+       <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+       <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+       <script src="resources/javascripts/ie-emulation-modes-warning.js"></script>
+	
+       <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+       <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+       <![endif]-->
+     </head>
+	
+     <body>
+       <div class="loader"></div>
+       <!-- Fixed navbar -->
+       <nav class="navbar navbar-my navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+
+					<a class="navbar-brand" href="/" style="font-size: 38px"> GMS:Glasgow Memories Server </a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse navbar-my-text">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="/">Home</a>
+						</li>
+						<li>
+							<a href="/today">Today</a>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">News <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>
+									<a href="#">BBC</a>
+								</li>
+								<li class="divider"></li>
+								<li>
+									<a href="#">Daily Record</a>
+								</li>
+								<li class="divider"></li>
+								<li>
+									<a href="#">The Scotsman</a>
+								</li>
+								<li class="divider"></li>
+								<li>
+									<a href="#">Evening Times</a>
+								</li>
+							</ul>
+						</li>
+						<!--<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Blog <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+						<li><a href="#">Blogger</a></li>
+						<li><a href="#">Wordpress</a></li>
+						</ul>
+						</li>-->
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Image <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>
+									<a href="#">flickr</a>
+								</li>
+							</ul>
+						</li>
+						<!--<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Video <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+						<li><a href="#">BBC</a></li>
+						<li><a href="#">Youtube</a></li>
+						</ul>
+						</li>-->
+						<!--<li><a href="#about">Twitter</a></li>-->
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Statistics <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>
+									<a href="/stat">Glasgow</a>
+								</li>
+								<li>
+									<a href="/statScotland">Scotland</a>
+								</li>
+								<li class="active">
+									<a href="/statFlickrScotland">FlickrScotland</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div><!--/.nav-collapse -->
+			</div>
+		</nav>
+	
+       <!-- Begin page content -->
+       <div class="container">
+         <div class="page-header">
+           <h1>Statistics for GMS: Flickr Data</h1>
+         </div>
+   <div class="row">
+           <div class="col-sm-4">
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h3 class="panel-title">Selection Criteria</h3>
+               </div>
+               <div class="panel-body">
+                   <div id="mini-clndr"></div>
+                 <script id="calendar-template" type="text/template">
+         <div class="controls">
+           <div class="clndr-previous-button">&lsaquo;</div><div class="month"><%= month %></div><div class="clndr-next-button">&rsaquo;</div>
+         </div>
+	
+         <div class="days-container">
+           <div class="days">
+             <div class="headers">
+               <% _.each(daysOfTheWeek, function(day) { %><div class="day-header"><%= day %></div><% }); %>
+             </div>
+             <% _.each(days, function(day) { %><div class="<%= day.classes %>" id="<%= day.id %>"><%= day.day %></div><% }); %>
+           </div>
+         </div>
+       </script>
+       <hr>
+       <div class="well">
+	
+                  <form class="form-horizontal">
+                    <fieldset>
+                     <div class="control-group">
+                       <div class="controls">
+                        <div class="input-prepend input-group">
+                          <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span><input type="text" style="width: 200px" name="reservation" id="reservation" class="form-control" value="06/01/2014 - 12/02/2014" /> 
+                        </div>
+                       </div>
+                     </div>
+                    </fieldset>
+                  </form>
+	
+               </div>
+       <hr>
+       <select id="soflow">
+     <!-- This method is nice because it doesn't require extra div tags, but it also doesn't retain the style across all browsers. -->
+     <option>Select a Source</option>
+     {{range $index, $element := .Sources}}
+         <option>{{$element}}</option>		
+     {{end}}  
+   </select>
+   <!--<hr>
+   <div style="background:white; padding:2px; width:100%">
+      <table>
+         <tr>
+            <td style="width:40%">
+               <input type="radio" name="radiog_dark" id="radio4" class="css-checkbox" />
+               <label for="radio4" class="css-label radGroup2">News Size</label>
+            </td>
+            <td style="width:20%"></td>
+            <td style="width:40%">
+               <input type="radio" name="radiog_dark" id="radio5" class="css-checkbox" checked="checked"/>
+               <label for="radio5" class="css-label radGroup2">Total Size</label>
+            </td>			
+         </tr>		
+      </table>
+   </div>-->     
+               </div>
+             </div>
+             
+           
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                                 <h3 class="panel-title" id="selectedMonth">Flickr Statistics for: {{.SelectedMonth}}</h3>
+               </div>
+               <div class="panel-body">	            	                   
+                  <h4 id="flickrMonthTotalNews" style="color: white">Total Images: {{.FlickrMonthTotalImages}}</h4>
+	    				
+                  <h4 id="flickrMonthTotalSize" style="color: white">Total Size (in MB): {{.FlickrMonthTotalSize}}</h4>	                      				                  	     
+               </div>
+             </div>
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h3 class="panel-title" id="selectedMonth">Flickr Statistics for All Data </h3>
+               </div>
+               <div class="panel-body">
+                  <h4 id="flickrMonthTotalNews" style="color: white">Total Images: {{.FlickrAllTotalImages}}</h4>
+	    				
+                  <h4 id="flickrMonthTotalSize" style="color: white">Total Size (in KB): {{.FlickrAllTotalSize}}</h4>         
+	     				
+               </div>
+             </div>          
+           </div>
+                    <div class="col-sm-8">
+             <div class="panel panel-default">
+               <div class="panel-heading">
+                 <h3 class="panel-title" id="flickrTimelineSize">Flickr Time-line: Total Size (in KB)</h3>
+               </div>
+               <div class="panel-body" >
+                  <canvas id="flickrSize" width="730" height="280"></canvas>
+	              	
+               </div>
+             </div>          
+           </div><!-- /.col-sm-4 -->
+	        
+           <div class="col-sm-8">
+             <div class="panel panel-default">
+  <div class="panel-heading">
+                 <h3 class="panel-title">Flickr Time-line: Total Number</h3>
+               </div>
+               <div class="panel-body">            	
+                  <canvas id="flickrNumber" width="730" height="280"></canvas>
+	              	
+               </div>
+             </div>          
+           </div>           		      
+         </div>
+
+         
+
+         
+         <!--<p class="lead">Pin a fixed-height footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added with <code>padding-top: 60px;</code> on the <code>body > .container</code>.</p>
+         <p>Back to <a href="../sticky-footer">the default sticky footer</a> minus the navbar.</p>-->
+       </div>
+	
+       <!--<footer class="footer">
+         <div class="container">
+           <p class="text-muted">Place sticky footer content here.</p>
+         </div>
+       </footer>-->
+	
+	
+       <!-- Bootstrap core JavaScript
+       ================================================== -->
+       <!-- Placed at the end of the document so the pages load faster -->
+       <!--<script src="resources/javascripts/jquery.min.js"></script>-->
+       <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+       <script src="resources/javascripts/bootstrap.min.js"></script>
+       <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+       <script src="resources/javascripts/ie10-viewport-bug-workaround.js"></script>
+     <script src="resources/javascripts/underscore.js"></script>
+     <script src= "resources/javascripts/moment.js"></script>
+     <script src="resources/javascripts/clndr.js"></script>
+     <script src="resources/javascripts/Chart.min.js"></script>
+     <script src="resources/javascripts/daterangepicker.js"></script>
+	  
+                  <script type="text/javascript">
+                  $(document).ready(function() {
+                     $('#reservation').daterangepicker(null, function(start, end, label) {
+                       console.log(start.toISOString(), end.toISOString(), label);
+                     });
+                     $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+                        window.location.href = "/statRangeScotland?startDate=" + picker.startDate.format('YYYY-MM-DD') + "&endDate=" + picker.endDate.format('YYYY-MM-DD') 
+                        console.log(picker.startDate.format('YYYY-MM-DD'));
+                        console.log(picker.endDate.format('YYYY-MM-DD'));
+                     });
+                  });                  
+                  </script>
+     <script>
+	  
+      var currentMonth = moment().format('YYYY-MM');
+     var nextMonth    = moment().add('month', 1).format('YYYY-MM');
+     var events = [
+       /*{ date: currentMonth + '-' + '10', title: 'Persian Kitten Auction', location: 'Center for Beautiful Cats' },
+       { date: currentMonth + '-' + '19', title: 'Cat Frisbee', location: 'Jefferson Park' },
+       { date: currentMonth + '-' + '23', title: 'Kitten Demonstration', location: 'Center for Beautiful Cats' },
+       { date: currentMonth + '-' + '24', title: 'Kitten Demonstration', location: 'Center for Beautiful Cats' },
+       { date: nextMonth + '-' + '07',    title: 'Small Cat Photo Session', location: 'Center for Cat Photography' }*/    
+       {{range $index, $element := .Dates}}
+         { date: '{{$element}}'},		
+       {{end}} 
+	    
+     ];
+		
+   $('#soflow').change(function() {
+  		var option = this.options[this.selectedIndex];  		
+  		var source = $(option).text()
+  		if(source == "BBC"){  			  						
+      	{{range $index, $element := .BBCTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .BBCTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: BBC")
+			$('#monthTotalNews').text("Total News:{{.BBCCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.BBCCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.BBCAverage}}")
+			} else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: BBC")
+			$('#monthTotalNews').text("Total News:{{.BBCCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.BBCCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.BBCAverage}}")
+			}
+													
+  		}
+  		if(source == "Guardian"){
+  			{{range $index, $element := .GuardTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .GuardTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+				$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Guardian")
+			$('#monthTotalNews').text("Total News:{{.GuardCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.GuardCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.GuardAverage}}")
+			}else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Guardian")
+			$('#monthTotalNews').text("Total News:{{.GuardCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.GuardCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.GuardAverage}}")
+			}
+			
+  		}
+  		if(source == "Scotsman"){
+  			{{range $index, $element := .ScotTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .ScotTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Scotsman")
+			$('#monthTotalNews').text("Total News:{{.ScotCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.ScotCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.ScotAverage}}")
+			}else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Scotsman")
+			$('#monthTotalNews').text("Total News:{{.ScotCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.ScotCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.ScotAverage}}")
+			}
+			
+  		}
+  		if(source == "Daily Record"){
+  			{{range $index, $element := .DRTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .DRTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Daily Record")
+			$('#monthTotalNews').text("Total News:{{.DRCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.DRCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.DRAverage}}")
+			}else {
+			$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Daily Record")
+			$('#monthTotalNews').text("Total News:{{.DRCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.DRCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.DRAverage}}")	
+			}
+			
+  		}
+  		if(source == "Independent"){
+  			{{range $index, $element := .IndiTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .IndiTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+				$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Independent")
+			$('#monthTotalNews').text("Total News:{{.IndiCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.IndiCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.IndiAverage}}")
+			} else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Independent")
+			$('#monthTotalNews').text("Total News:{{.IndiCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.IndiCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.IndiAverage}}")
+			}
+			
+  		}
+  		if(source == "Evening Times"){
+  			{{range $index, $element := .ETTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .ETTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Evening Times")
+			$('#monthTotalNews').text("Total News:{{.ETCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.ETCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.ETAverage}}")
+			}else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Evening Times")
+			$('#monthTotalNews').text("Total News:{{.ETCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.ETCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.ETAverage}}")
+			}
+			
+  		}
+  		if(source == "Express"){
+  			{{range $index, $element := .ExpressTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .ExpressTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Express")
+			$('#monthTotalNews').text("Total News:{{.ExpressCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.ExpressCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.ExpressAverage}}")
+			} else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Express")
+			$('#monthTotalNews').text("Total News:{{.ExpressCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.ExpressCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.ExpressAverage}}")
+			}
+			
+  		}
+  		if(source == "Evening Express"){
+  			{{range $index, $element := .EvExpressTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .EvExpressTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Evening Express")
+			$('#monthTotalNews').text("Total News:{{.EvExpressCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.EvExpressCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.EvExpressAverage}}")
+			}else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Evening Express")
+			$('#monthTotalNews').text("Total News:{{.EvExpressCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.EvExpressCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.EvExpressAverage}}")
+			}
+			
+  		}
+  		if(source == "Courier"){
+  			{{range $index, $element := .CourierTotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .CourierTotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			if (window.location.href.indexOf("statRange") > -1) {
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Courier")
+			$('#monthTotalNews').text("Total News:{{.CourierCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.CourierCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.CourierAverage}}")
+			} else {
+				$('#timelineSize').text('Time-line: Total Size (in KB)');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}, for: Courier")
+			$('#monthTotalNews').text("Total News:{{.CourierCountTotalNews}}")
+         $('#monthTotalSize').text("Total Size (in KB):{{.CourierCountTotalSize}}")
+         $('#monthAverageNews').text("Average Size (in KB):{{.CourierAverage}}")
+			}
+			
+  		}
+  		if(source == "Select a Source"){
+  			{{range $index, $element := .TotalNews}}							
+				myBarChart.datasets[0].bars[{{$index}}].value = {{$element}};						
+			{{end}}
+               					
+			myBarChart.update()
+			
+			{{range $index, $element := .TotalSize}}							
+				myLineChart.datasets[0].points[{{$index}}].value = {{$element}};
+						
+			{{end}}
+               					
+			myLineChart.update()
+			$('#timelineSize').text('Time-line: Total Size (in {{.Quantity}})');
+			
+			$('#selectedMonth').text("Statistics for:{{.SelectedMonth}}")
+			$('#monthTotalNews').text("Total News:{{.TotalWholeNews}}")
+         $('#monthTotalSize').text("Total Size (in {{.Quantity}}):{{.TotalWholeSize}}")
+         $('#monthAverageNews').text("Average Size (in {{.Quantity}}):{{.Average}}")
+  		}
+	});
+	            
+   $('#mini-clndr').clndr({
+       template: $('#calendar-template').html(),
+       startWithMonth: "{{.StartDate}}",
+       events: events,
+       clickEvents: {      
+         click: function(target) {                
+           if(target.events.length) {
+             var daysContainer = $('#mini-clndr').find('.days-container');
+             daysContainer.toggleClass('show-events', true);
+             $('#mini-clndr').find('.x-button').click( function() {
+               daysContainer.toggleClass('show-events', false);            
+             });          
+           }                
+         },
+         onMonthChange: function(month) {
+            window.location.href = "/statScotland?month=" + month.format('MM,YYYY')		
+            console.log('you just went to ' + month.format('MMMM, YYYY'));
+            /*$.get("/statHandlerMonth?month=" + month.format('MM'), "", function(data, status) {
+               $('#selectedMonth').text("Statistics for:" + data.SelectedMonth)
+               $('#monthTotalNews').text("Total News:" + data.TotalWholeNews)
+               $('#monthTotalSize').text("Total Size (in MB):"+ data.TotalWholeSize)
+               $('#monthAverageNews').text("Average Size (in MB):" + data.Average)
+					
+					
+               var events = [
+                  $.each( data.Dates, function( index, value ){
+                     date: '\''+ value + '\''    					
+                  })     	 				    
+               ];  					           				            			       							            										            			            		
+            });*/      	
+         }
+       },
+       adjacentDaysChangeMonth: true
+     });
+     </script>
+	  
+     <script>
+               // line chart data
+               var buyerData = {
+                   labels : [            	 
+                   {{range $element := .Labels}}
+                     "{{$element}}",		
+                   {{end}}
+                   ],                
+                   datasets : [
+                   {
+                       fillColor : "rgba(172,194,132,0.4)",
+                       strokeColor : "#ACC26D",
+                       pointColor : "#fff",
+                       pointStrokeColor : "#9DB86D",
+                       data : [
+                           {{range $element := .TotalSize}}
+                              {{$element}},		
+                           {{end}}
+                       ]
+                   }                
+               ]
+               }
+               // get line chart canvas
+               var buyers = document.getElementById('buyers').getContext('2d');
+               // draw line chart
+               /*new Chart(buyers).Line(buyerData);*/
+               var myLineChart = new Chart(buyers).Line(buyerData, {
+                  datasetFill : true
+               });
+               
+               // Line chart for Twitter Size....
+               var twitterSizeData = {
+                   labels : [            	 
+                   {{range $element := .Labels}}
+                     "{{$element}}",		
+                   {{end}}
+                   ],                
+                   datasets : [
+                   {
+                       fillColor : "rgba(172,194,132,0.4)",
+                       strokeColor : "#ACC26D",
+                       pointColor : "#fff",
+                       pointStrokeColor : "#9DB86D",
+                       data : [
+                           {{range $element := .TwitterEachDayTotalSize}}
+                              {{$element}},		
+                           {{end}}
+                       ]
+                   }                
+               ]
+               }
+               
+               var twitterSize = document.getElementById('twitterSize').getContext('2d');
+               // draw line chart               
+               var twitterSizeChart = new Chart(twitterSize).Line(twitterSizeData, {
+                  datasetFill : true
+               });
+               
+               
+      
+      
+           
+      
+      
+      
+                     // Line chart for Twitter Size....
+               var flickrSizeData = {
+                   labels : [            	 
+                   {{range $element := .Labels}}
+                     "{{$element}}",		
+                   {{end}}
+                   ],                
+                   datasets : [
+                   {
+                       fillColor : "rgba(172,194,132,0.4)",
+                       strokeColor : "#ACC26D",
+                       pointColor : "#fff",
+                       pointStrokeColor : "#9DB86D",
+                       data : [
+                           {{range $element := .FlickrEachDayTotalSize}}
+                              {{$element}},		
+                           {{end}}
+                       ]
+                   }                
+               ]
+               }
+               
+               var flickrSize = document.getElementById('flickrSize').getContext('2d');
+               // draw line chart               
+               var flickrSizeChart = new Chart(flickrSize).Line(flickrSizeData, {
+                  datasetFill : true
+               });
+      
+      
+      
+        
+               
+               
+               
+               
+               // pie chart data
+               /*var pieData = [
+                   {
+                       value: 20,
+                       color:"#878BB6"
+                   },
+                   {
+                       value : 40,
+                       color : "#4ACAB4"
+                   },
+                   {
+                       value : 10,
+                       color : "#FF8153"
+                   },
+                   {
+                       value : 30,
+                       color : "#FFEA88"
+                   }
+               ];
+               // pie chart options
+               var pieOptions = {
+                    segmentShowStroke : false,
+                    animateScale : true
+               }
+               // get pie chart canvas
+               var countries= document.getElementById("countries").getContext("2d");
+               // draw pie chart
+               new Chart(countries).Pie(pieData, pieOptions);*/            
+               var barData = {
+                   labels : [            	 
+                   {{range $element := .Labels}}
+                     "{{$element}}",		
+                   {{end}}
+                   ],
+                   datasets : [
+                       {
+                           fillColor: "rgba(151,187,205,0.5)",
+                           strokeColor: "rgba(151,187,205,0.8)",
+                           highlightFill: "rgba(151,187,205,0.75)",
+                           highlightStroke: "rgba(151,187,205,1)",
+                           data : [
+                              {{range $element := .TotalNews}}
+                                 {{$element}},		
+                              {{end}}
+                           ]
+                       },
+                       /*{
+                           fillColor: "rgba(151,187,205,0.5)",
+                           strokeColor: "rgba(151,187,205,0.8)",
+                           highlightFill: "rgba(151,187,205,0.75)",
+                           highlightStroke: "rgba(151,187,205,1)",
+                           data : [364,504,605,400,345,320]
+                       }*/
+                   ]
+               }
+               // get bar chart canvas
+               var income = document.getElementById("income").getContext("2d");
+               // draw bar chart
+               var myBarChart = new Chart(income).Bar(barData);
+               //Bar chart for Twitter Number
+               var twitterTweetData = {
+                   labels : [            	 
+                   {{range $element := .Labels}}
+                     "{{$element}}",		
+                   {{end}}
+                   ],
+                   datasets : [
+                       {
+                           fillColor: "rgba(151,187,205,0.5)",
+                           strokeColor: "rgba(151,187,205,0.8)",
+                           highlightFill: "rgba(151,187,205,0.75)",
+                           highlightStroke: "rgba(151,187,205,1)",
+                           data : [
+                              {{range $element := .TwitterEachDayTotalTweets}}
+                                 {{$element}},		
+                              {{end}}
+                           ]
+                       },                       
+                   ]
+               }
+               // get bar chart canvas
+               var twitterNumber = document.getElementById("twitterNumber").getContext("2d");
+               // draw bar chart
+               var twitterNumberChart = new Chart(twitterNumber).Bar(twitterTweetData);	    
+               
+               
+               
+               //Bar chart for Flickr Number
+               var flickrData = {
+                   labels : [            	 
+                   {{range $element := .Labels}}
+                     "{{$element}}",		
+                   {{end}}
+                   ],
+                   datasets : [
+                       {
+                           fillColor: "rgba(151,187,205,0.5)",
+                           strokeColor: "rgba(151,187,205,0.8)",
+                           highlightFill: "rgba(151,187,205,0.75)",
+                           highlightStroke: "rgba(151,187,205,1)",
+                           data : [
+                              {{range $element := .FlickrEachDayTotalImages}}
+                                 {{$element}},		
+                              {{end}}
+                           ]
+                       },                       
+                   ]
+               }
+               // get bar chart canvas
+               var flickrNumber = document.getElementById("flickrNumber").getContext("2d");
+               // draw bar chart
+               var flickrNumberChart = new Chart(flickrNumber).Bar(flickrData);	 
+               
+               
+               
+               
+               
+               
+               
+               
+               
+                       
+	            
+	            
+           </script>
+           <script type="text/javascript">
+               $(window).load(function() {
+                  $(".loader").fadeOut("slow");
+               })
+         </script>
+         <script src="resources/javascripts/jquery.easing.min.js"></script>
+		<script src="resources/javascripts/jquery.scrollTo.js"></script>
+		<script src="resources/javascripts/jquery.form.js"></script>
+		<script src="resources/javascripts/main.js"></script>
+		<script src="resources/javascripts/retina.js"></script>
+		<script src="resources/javascripts/waypoints.min.js"></script>
+		<script src="resources/javascripts/owl.carousel.min.js"></script>
+		<script src="resources/javascripts/nivo-lightbox.min.js"></script>
+     </body>
+   </html>
+	
