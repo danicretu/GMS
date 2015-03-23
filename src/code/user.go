@@ -422,7 +422,7 @@ func statScotlandHandlerByRange(w http.ResponseWriter, r *http.Request) {
 	session.SetMode(mgo.Monotonic, true) */
 
 	dbConnection = NewMongoDBConn()
-	session := dbConnection.connect()
+	session := dbConnection.connectFlickr()
 
 	c := session.DB("gmsTry").C("gmsNewsStatScotland")
 
@@ -1480,7 +1480,7 @@ func statHandlerScotland(w http.ResponseWriter, r *http.Request) {
 	//session.SetMode(mgo.Monotonic, true)
 
 	dbConnection = NewMongoDBConn()
-	session := dbConnection.connect()
+	session := dbConnection.connectFlickr()
 
 	c := session.DB("gmsTry").C("gmsNewsStatScotland")
 

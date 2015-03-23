@@ -337,7 +337,7 @@ function populateMap(cont, mapPoints) {
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
 							var url = "./resources/images/userUploaded/54e1cc23c1bae20ea5000003";
 							console.log(url);
-							mapPoints.TrendingMarkerAll[globalIndex].URL = url;
+							//mapPoints.TrendingMarkerAll[globalIndex].URL = url;
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
 							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG HEIGHT="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
 					        infowindow.open(map, marker);
