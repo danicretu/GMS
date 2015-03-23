@@ -183,6 +183,7 @@ type RecommendedUser struct {
 }
 
 type RecommendedPlace struct {
+	Vicinity   string `bson:"vicinity"`
 	Category   string `bson:"placeCategory"`
 	Popularity string `bson:"popularity"`
 	Lon        string `bson:"lon"`

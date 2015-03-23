@@ -337,7 +337,7 @@ function populateMap(cont, mapPoints) {
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
 							var url = "./resources/images/userUploaded/54e1cc23c1bae20ea5000003";
 							console.log(url);
-							//mapPoints.TrendingMarkerAll[globalIndex].URL = url;
+							mapPoints.TrendingMarkerAll[globalIndex].URL = url;
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
 							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG WIDTH="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
 					        infowindow.open(map, marker);
@@ -513,7 +513,7 @@ function populateMap(cont, mapPoints) {
 				google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
 				    return function() { 
 						console.log("global index "+obj[globalIndex]);
-				        infowindow.setContent('<b>Recommended Place</b><br><b>Name: </b>'+mapPoints.RecommendedMarker[globalIndex].Name+' <br><b>Popularity: </b>'+mapPoints.RecommendedMarker[globalIndex].Popularity);
+				        infowindow.setContent('<b>Recommended Place</b><br><b>Name: </b>'+mapPoints.RecommendedMarker[globalIndex].Name+' <br><b>Category: </b>'+mapPoints.RecommendedMarker[globalIndex].Category++' <br><b>Near To: </b>'+mapPoints.RecommendedMarker[globalIndex].Vicinity);
 				        infowindow.open(map, marker);
 				        infowindow.setOptions()
 				    }
