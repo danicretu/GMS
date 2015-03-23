@@ -263,15 +263,17 @@ function populateMap(cont, mapPoints) {
 			$('#'+container).html(mapContainer);
 		}
 		var glasgowMap;
+		var zoom;
 		if (cont == ""){
 		    glasgowMap = new google.maps.LatLng(50.139535, 19.001192);
-			
+			zoom:4;	
 		}else {
 			glasgowMap = new google.maps.LatLng(55.864237,-4.251806);
+			zoom:12;
 		}
 		var options = {
 			center:glasgowMap,
-			zoom:4
+			zoom:zoom
 		}
 			    
 	}
