@@ -513,7 +513,7 @@ function populateMap(cont, mapPoints) {
 				google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
 				    return function() { 
 						console.log("global index "+obj[globalIndex]);
-				        infowindow.setContent('<b>Recommended Place</b><br><b>Name: </b>'+mapPoints.RecommendedMarker[globalIndex].Name+' <br><b>Popularity: </b>'+mapPoints.RecommendedMarker[globalIndex].Popularity);
+				        infowindow.setContent('<b>Recommended Place</b><br><b>Name: </b>'+mapPoints.RecommendedMarker[globalIndex].Name+' <br><b>Category: </b>'+mapPoints.RecommendedMarker[globalIndex].Category++' <br><b>Near To: </b>'+mapPoints.RecommendedMarker[globalIndex].Vicinity);
 				        infowindow.open(map, marker);
 				        infowindow.setOptions()
 				    }
