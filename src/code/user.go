@@ -210,6 +210,7 @@ type TrendingAll struct {
 	Loc        string `bson:"loc"`
 	URL        string `bson:"url"`
 	Popularity string `bson:"popularity"`
+	StreetName string `bson:"streetName"`
 }
 
 type FlickrStatPage struct {
@@ -381,7 +382,7 @@ func main() {
 	authenticateTwitter()
 
 	http.Handle("/resources/flickr/", http.StripPrefix("/resources/flickr/", http.FileServer(http.Dir("/local/imcd1/gms/flickrData"))))
-	http.Handle("/resources/news/", http.StripPrefix("/resources/news/", http.FileServer(http.Dir("/local/imcd1/gms/gmsNewsImages"))))
+	http.Handle("/../uploads/", http.StripPrefix("/../uploads/", http.FileServer(http.Dir("/local/imcd1/gms/TeamProjectYear3/uploads"))))
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources"))))
 
 	http.Handle("/", router)
@@ -1184,7 +1185,7 @@ func statScotlandHandlerByRange(w http.ResponseWriter, r *http.Request) {
 
 	labels = nil
 
-	c = session.DB("gmsTry").C("statTest")
+	c = session.DB("gmsTry").C("flickrStats")
 
 	flickrResult := []FlickrStatPage{}
 	err = c.Find(bson.M{}).All(&flickrResult)
@@ -2135,7 +2136,7 @@ func statHandlerScotland(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	c = session.DB("gmsTry").C("statTest")
+	c = session.DB("gmsTry").C("flickrStats")
 	flickrResult := []FlickrStatPage{}
 	err = c.Find(bson.M{}).All(&flickrResult)
 
@@ -2337,23 +2338,27 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	var heat []FlickrImage1
 	var heatPhoto []Photo
 	var trendingAll []TrendingAll
+	var trendingLifelog []TrendingAll
 
 	if session.Values["user"] == nil {
 		//no
 		trendingAll = getTrendingAll()
 		heat = getFlickrMap()
+		trendingLifelog = getTrendingLifelog()
 
 		flickrData := struct {
 			//Heat []MapImage //replace with below
-			Heat              []FlickrImage1
-			TrendingMarker    []TrendingPlace
-			TrendingMarkerAll []TrendingAll
-			RecommendedMarker []RecommendedPlace
-			User              string
+			Heat                     []FlickrImage1
+			TrendingMarker           []TrendingPlace
+			TrendingMarkerAll        []TrendingAll
+			TrendingMarkerAllLifelog []TrendingAll
+			RecommendedMarker        []RecommendedPlace
+			User                     string
 		}{
 			heat,
 			trending,
 			trendingAll,
+			trendingLifelog,
 			recomm,
 			"no",
 		}
@@ -2363,24 +2368,30 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
+		fmt.Println("---data from lifelog---")
+		fmt.Println(trendingLifelog)
+
 		fmt.Fprintf(w, "%s", b)
 		return
 	} else if session.Values["user"].(string) == "" {
 		//no
 		trendingAll = getTrendingAll()
 		heat = getFlickrMap()
+		trendingLifelog = getTrendingLifelog()
 
 		flickrData := struct {
 			//Heat []MapImage //replace with below
-			Heat              []FlickrImage1
-			TrendingMarker    []TrendingPlace
-			TrendingMarkerAll []TrendingAll
-			RecommendedMarker []RecommendedPlace
-			User              string
+			Heat                     []FlickrImage1
+			TrendingMarker           []TrendingPlace
+			TrendingMarkerAll        []TrendingAll
+			TrendingMarkerAllLifelog []TrendingAll
+			RecommendedMarker        []RecommendedPlace
+			User                     string
 		}{
 			heat,
 			trending,
 			trendingAll,
+			trendingLifelog,
 			recomm,
 			"no",
 		}
@@ -2413,15 +2424,17 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 
 		flickrData := struct {
 			//Heat []MapImage //replace with below
-			Heat              []Photo
-			TrendingMarker    []TrendingPlace
-			TrendingMarkerAll []TrendingAll
-			RecommendedMarker []RecommendedPlace
-			User              string
+			Heat                     []Photo
+			TrendingMarker           []TrendingPlace
+			TrendingMarkerAll        []TrendingAll
+			TrendingMarkerAllLifelog []TrendingAll
+			RecommendedMarker        []RecommendedPlace
+			User                     string
 		}{
 			heatPhoto,
 			trending,
 			trendingAll,
+			trendingLifelog,
 			recomm,
 			"yes",
 		}
@@ -3085,7 +3098,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	pass := r.FormValue("pass")
 	c := find(email)
-	if c == nil {
+	if c == nil || email == "" {
 		defer sess.Close()
 		fmt.Fprintf(w, "No")
 	} else {

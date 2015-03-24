@@ -7,8 +7,6 @@ $(document).ready(function() {
 	$('#menuButton').on('click', function(event){
 						console.log("button pressed");
 						$('div.sideMenu').removeClass('hidden-xs');
-						$('div.sideMenu').removeClass('hidden-sm');
-						$('div.sideMenu').removeClass('hidden-md');
 					});
 	
 
@@ -97,20 +95,6 @@ $(document).ready(function() {
 		
 	});
 	
-	$("#passReminderButton").click(function(){
-		console.log("in test button");
-		$.ajax({
-			url:"/passReminder",
-			type:"POST",
-			success: function(html){			
-				console.log("password sent");
-			}
-		});
-		return false;
-		
-	});
-	
-	
 	$('.scroll-link').on('click', function(event){
 		event.preventDefault();
 		var sectionID = $(this).attr("data-id");
@@ -123,7 +107,6 @@ $(document).ready(function() {
 		var album=$("input#albumNumber").val();
 		var owner=$("input#owner").val();
 		var cType=$("input#cType").val();
-		console.log("in commentForm " +comment);
 		$.ajax({
 			type:"POST",
 			url:"/saveComment",
@@ -154,14 +137,13 @@ $(document).ready(function() {
 	}
 	
 	
-	
 	window.onpopstate = function(event) {
 		console.log(location.pathname,"  ", location.hash);
 		console.log(event.state);
 		var func = location.hash.substring(1);
 		var func_param = location.hash.substring(1).split("?");
 		var myFunc = window[func_param[0]];
-		if (func_param[1] != null && func_param[1].indexOf(",") > -1){
+		if (func_param[1].indexOf(",") > -1){
 			var args = func_param[1].split(',');
 			console.log(args);
 			myFunc.apply(this, args);
@@ -172,392 +154,6 @@ $(document).ready(function() {
 
 
 });
-
-function flickrCwgMap(){
-	console.log("in flickr cwg map");
-	setActive("flickrCWGMap");
-	$.ajax({
-			url:"/CWGmapImages",
-			type:"POST",
-			data:{"location":"", "start" : 0},
-			success: function(html){
-				console.log(html)
-				var obj = jQuery.parseJSON(html);
-				console.log(obj.length);
-				console.log(obj[0]);
-				$('div.sideMenu').removeClass('in');
-				$('panelHeader').html("Glasgow Commonwealth Games 2014 Map Overview");
-				mapContainer = document.createElement('div');
-				mapContainer.id='outerContainer';
-				mapContainer.style.height='710px';
-				mapContainer.style.border='5px solid';
-				
-				header = document.createElement('div');
-				header.className='panel-heading internalHeader';
-				header.id='mapHeader';
-				
-				title = document.createElement('h2');
-				title.className='panel-title';
-				title.style.fontSize = '24px';
-				title.innerHTML = 'Glasgow Commonwealth Games 2014 on Map';
-				$('#mapHeader').html(title);
-				$('#panelBodyContent').html(header);
-				
-				subtitle = document.createElement('h4');
-				subtitle.className='headText personalSubtitle';
-				subtitle.innerHTML='The Map below displays all the locations where Glasgow 2014 CWG events took place <br> Select one to view photos from that location';
-				
-				document.querySelector('#panelBodyContent').appendChild(subtitle);
-				
-				document.querySelector('#mapHeader').appendChild(title);
-				document.querySelector('#panelBodyContent').appendChild(mapContainer);
-				populateMap("outerContainer",obj)
-			}
-	});
-	
-}
-
-function getMoreMapImages(tag, start){
-	if (start != -1){
-		$.ajax({
-			url:"/CWGmapImages",
-			type:"POST",
-			data:{"location":tag, "start" : start},
-				success: function(html){
-				console.log(tag);
-				//console.log('#'+container);
-				//console.log(document.querySelector('#'+container));
-				var resultDiv = document.getElementById('resultDiv');
-				resultDiv.innerHTML = html;
-				var resultHeader = document.getElementById('header');
-				if (tag.indexOf("getTags") > -1){
-					resultHeader.innerHTML = "Pictures with tag <b>'"+tag.substring(8)+"'</b>";
-				} else {
-					var loc = tag.split("_").join(" ");
-					resultHeader.innerHTML = "Pictures from '"+loc+"'";
-				}
-				carousel();
-			}
-		});
-	}
-}
-
-function populateMap(cont, mapPoints) {
-	var container;
-	if (cont==""){
-		container = 'map_article';
-	}else {
-		container = cont;
-	}
-	
-	var mapContainer = document.getElementById('mapcontainer');
-	var c = document.getElementById(container);
-	if (mapContainer == null && c != null){
-		mapContainer = document.createElement('div');
-		mapContainer.id='mapcontainer';
-		mapContainer.style.height='700px';
-		var query = '#'+container;
-		if (cont == ""){
-			document.querySelector('#'+container).appendChild(mapContainer);
-		} else {
-			$('#'+container).html(mapContainer);
-		}
-		var glasgowMap;
-		var zoom;
-		if (cont == ""){
-		    glasgowMap = new google.maps.LatLng(50.139535, 19.001192);
-			zoom:4;	
-		}else {
-			glasgowMap = new google.maps.LatLng(55.864237,-4.251806);
-			zoom:12;
-		}
-		var options = {
-			center:glasgowMap,
-			zoom:zoom
-		}
-			    
-	}
-	
-	map = new google.maps.Map(document.getElementById('mapcontainer'), options);
-	
-	var marker;
-	var globalIndex = 0;
-	var infowindow = new google.maps.InfoWindow({disableAutoPan:true});
-	
-	var googlePoints=[];
-	var imageNum=10;
-	var index = 0;
-	var obj;
-	
-	if (cont==""){
-		if (mapPoints.TrendingMarker == null) {
-			obj = mapPoints.TrendingMarkerAll;
-		}
-		else {
-			obj = mapPoints.TrendingMarker;
-		}
-	} else {
-		obj = mapPoints;
-	}
-	
-	
-	if (cont != ""){
-		
-		
-		var circle = new google.maps.Circle({
-				  map: map,
-				  radius: 10000,    // metres
-				  fillColor: '#fff',
-    				fillOpacity: 0,
-					strokeColor: '#313131',
-				    strokeOpacity: 0,
-				    strokeWeight: 0,
-					center: new google.maps.LatLng(55.864237,-4.251806)
-				}); 
-				
-				var bounds = circle.getBounds();
-		
-	}
-	
-	if (obj != null) {
-		
-			
-		for (i=0; i<obj.length; i++){
-			
-			
-			if (cont==""){		
-			
-				marker = new google.maps.Marker({
-					icon:'http://thydzik.com/thydzikGoogleMap/markerlink.php?text=T&color=831F9C',
-					position : new google.maps.LatLng(obj[i].Lat,obj[i].Lon),
-					map:map,
-					title:obj[i].Name
-				});
-			
-				google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
-				    return function() { 
-						
-				       if (mapPoints.TrendingMarker != null){
-							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarker[globalIndex].Name+'<br><IMG WIDTH="400px" ALIGN="Left" SRC="'+mapPoints.TrendingMarker[globalIndex].URL+'">');
-					        infowindow.open(map, marker);
-					        infowindow.setOptions();
-						} else {
-							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
-							var url = "./resources/images/userUploaded/54e1cc23c1bae20ea5000003";
-							console.log(url);
-							//mapPoints.TrendingMarkerAll[globalIndex].URL = url;
-							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
-							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG WIDTH="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
-					        infowindow.open(map, marker);
-					        infowindow.setOptions();
-						}
-				    }
-				})(marker, globalIndex));
-			}else {
-								
-				var position = new google.maps.LatLng(obj[i].Lat,obj[i].Lon);
-				var icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-				
-				
-				// Log into the dev bar console whether the marker is inside or outside
-				if ( bounds.contains( position ) ){
-					
-					icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-				}
-				
-				marker = new google.maps.Marker({
-					icon:icon,
-					position : new google.maps.LatLng(obj[i].Lat,obj[i].Lon),
-					map:map,
-					title:obj[i].Name
-				});
-				
-				google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
-				    return function() { 
-						var content = "";
-						if (obj[globalIndex].Location!=null){
-							content+="<b>Location: </b>";
-							content+=obj[globalIndex].Location;
-							content+='<br>';
-						} 
-						if (obj[globalIndex].Events.length != 0){
-							content+="<b>Events: </b>";
-							for (var event in obj[globalIndex].Events){
-								content+=obj[globalIndex].Events[event];
-								content+='<br>';
-							}
-						}
-						if (obj[globalIndex].Photos != null){
-							content+="<b>Number of photos taken at this location: </b>";
-							content+=obj[globalIndex].Photos;
-							content+='<br>';
-							content+="Click to view photos taken at this location";
-						}
-						
-						
-						
-				        infowindow.setContent(content);
-				        infowindow.open(map, marker);
-				        infowindow.setOptions()
-				    }
-				})(marker, globalIndex)); 
-				
-				
-				google.maps.event.addListener(marker, 'click', (function(marker, globalIndex) {
-				    return function() { 
-						var loc = obj[globalIndex].Location;
-						if (loc.indexOf(" ")>-1){
-							loc = loc.split(" ").join("_");
-						}
-						
-						console.log(loc,"   location");
-						$.ajax({
-							url:"/CWGmapImages",
-							type:"POST",
-							data:{"location":loc, "start" : 0},
-							success: function(html){
-															
-								
-								var resultDiv = document.getElementById('resultDiv');
-								console.log(resultDiv);
-								if (resultDiv == null){
-									var result = document.createElement('div');
-									result.class='panel-heading sectionHeader';
-									result.id='headerDiv'
-									var header = document.createElement('h4');
-									header.id = 'header';
-									header.className='headText personalSubtitle'
-									//var inner = "Pictures from selected location"; 
-									header.innerHTML="Pictures from "+obj[globalIndex].Location;
-									
-									
-									
-									var div = document.createElement('div');
-									div.id='resultDiv';
-									div.innerHTML=html;
-									document.getElementById(container).appendChild(result);
-									document.getElementById('headerDiv').appendChild(header);
-									document.getElementById('headerDiv').className+="panel-heading sectionHeader";
-									document.getElementById('headerDiv').style.marginTop='2%';
-									
-									document.getElementById('header').style.fontSize='24px';
-									document.getElementById(container).appendChild(div);
-								} else {
-									resultDiv.innerHTML = html;
-									document.getElementById(container).appendChild(resultDiv);
-									console.log(document.getElementById('header'));
-									document.getElementById('header').innerHTML = "Pictures from "+obj[globalIndex].Location;
-								
-								}
-								carousel();
-							}
-						});
-						
-				    }
-				})(marker, globalIndex));
-			}
-			google.maps.event.addListener(marker, 'mouseout', function() {
-			    infowindow.close();
-			});
-					
-			marker.setMap(map)
-			globalIndex++;
-						
-			
-		}
-	}
-	
-	
-	if (cont==""){	
-			heat = mapPoints.Heat;
-			if (mapPoints.User == "no"){
-				for (i=0; i<heat.length; i++){
-					googlePoints.push(new google.maps.LatLng(heat[i].Latitude,heat[i].Longitude));
-				}
-			}else {
-				for (i=0; i<heat.length; i++){
-					googlePoints.push(new google.maps.LatLng(heat[i].Location.Latitude,heat[i].Location.Longitude));
-				}
-			}
-			
-			var pointArray = new google.maps.MVCArray(googlePoints);
-			var heatmap = new google.maps.visualization.HeatmapLayer({
-			    data: pointArray,
-			    maxIntensity: 3,  //adjust intensity according to number of points 
-			});
-			
-			heatmap.setMap(map);
-			var gradient = [
-			    'rgba(0, 255, 255, 0)',
-			    'rgba(0, 255, 255, 1)',
-			    'rgba(0, 191, 255, 1)',
-			    'rgba(0, 127, 255, 1)',
-			    'rgba(0, 63, 255, 1)',
-			    'rgba(0, 0, 255, 1)',
-			    'rgba(0, 0, 223, 1)',
-			    'rgba(0, 0, 191, 1)',
-			    'rgba(0, 0, 159, 1)',
-			    'rgba(0, 0, 127, 1)',
-			    'rgba(63, 0, 91, 1)',
-			    'rgba(127, 0, 63, 1)',
-			    'rgba(191, 0, 31, 1)',
-			    'rgba(255, 0, 0, 1)'
-			]
-			heatmap.set('gradient', heatmap.get('gradient') ? null : gradient); 
-
-		if (mapPoints.RecommendedMarker != null){
-			obj = mapPoints.RecommendedMarker;
-			globalIndex = 0;
-			if (obj != null) {
-			for (i=0; i<obj.length; i++){
-				console.log(obj[i]);
-				marker = new google.maps.Marker({
-					icon:'http://thydzik.com/thydzikGoogleMap/markerlink.php?text=R&color=088A08',
-					position : new google.maps.LatLng(obj[i].Lat,obj[i].Lon),
-					map:map,
-					title:obj[i].Name
-				});
-		
-				google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
-				    return function() { 
-						console.log("global index "+obj[globalIndex]);
-				        infowindow.setContent('<b>Recommended Place</b><br><b>Name: </b>'+mapPoints.RecommendedMarker[globalIndex].Name+' <br><b>Category: </b>'+mapPoints.RecommendedMarker[globalIndex].Category+' <br><b>Near To: </b>'+mapPoints.RecommendedMarker[globalIndex].Vicinity);
-				        infowindow.open(map, marker);
-				        infowindow.setOptions()
-				    }
-				})(marker, globalIndex));
-				globalIndex++;
-			}
-			}
-		}
-	}
-		
-	
-	
-	google.maps.event.trigger(map, 'resize');
-}
-
-function initialiseMap(){
-	
-	$.ajax({
-			url:"/mapImages",
-			type:"POST",
-			success: function(html){
-				var obj = jQuery.parseJSON(html);
-				console.log("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
-				console.log(obj);
-				console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
-				populateMap("", obj);
-				//points = obj;
-			}
-		});
-	
-	
-	
-	
-	console.log("in initialiseMap ");
-	
-}
 
 
 function onDelete(id, cType){
@@ -735,7 +331,6 @@ function uploadForm(){
 		success: function(html) {
 			getPictures('');
 			tagCloud('User');
-			tags.length = 0;
 		}
 	}); 
 	return false;
@@ -745,13 +340,10 @@ function uploadForm(){
 
 function getUpload(){
 	setActive("uploadMenu");
-	tags=[];
-	tags.length = 0;
-	
 	$.ajax({
 		type:"GET",
 		//url:"http://4e76fce3.ngrok.com/upload",
-		url:"http://mirugc.dcs.gla.ac.uk/upload",
+		url:"/upload",
 		success: function(html) {
 
 				$('div.sideMenu').removeClass('in');
@@ -960,6 +552,7 @@ function assignClass(data) {
 }
 
 function assign(data) {
+	console.log("in assign", data);
 	return function() {
 		document.getElementById(data).addEventListener("click",function(){ return upview(data);});
 		
@@ -1027,12 +620,8 @@ function flickrMenu(data, start, cType){
 				if (data=="start"){
 					document.getElementById('panelBodyContent').innerHTML=html;
 					document.getElementById('resultOr').style.visibility='hidden';
-					document.getElementById('resultOrHeader').style.visibility='hidden';
-					document.getElementById('resultAndHeader').innerHTML='Sample Images from the collection';
 				} else if(data.indexOf("getTags") > -1){
 							document.getElementById('resultOr').style.visibility='hidden';
-							document.getElementById('resultOrHeader').style.visibility='hidden';
-							
 							console.log("in else")
 							if (data.indexOf("getTags_") > -1){
 								console.log(data.substring(8));
@@ -1045,7 +634,6 @@ function flickrMenu(data, start, cType){
 								document.getElementById('cloudFlickr').style.visibility='visible';
 								document.getElementById('cloudHeader').style.visibility='visible';
 								document.getElementById('resultAnd').innerHTML=obj[1].Content;
-								document.getElementById('resultAndHeader').innerHTML='Images tagged with <b>'+data.substring(7)+'</b>';
 							} else {
 								document.getElementById('cloudFlickr').innerHTML=html;
 								document.getElementById('cloudFlickr').style.visibility='visible';
@@ -1053,8 +641,6 @@ function flickrMenu(data, start, cType){
 							}
 				} else {
 					var obj = jQuery.parseJSON(html);
-					document.getElementById('resultAndHeader').innerHTML="Images tagged with <b>'"+data+"'</b> AND with <b>'"+init+"'</b>";
-					document.getElementById('resultOrHeader').innerHTML="Images tagged with <b>'"+data+"'</b> OR with <b>'"+init+"'</b>";
 					
 					if (cType == "and" && obj[0].Content!=""){
 						document.getElementById('resultAnd').innerHTML=obj[0].Content;
@@ -1062,13 +648,11 @@ function flickrMenu(data, start, cType){
 					} else if (cType=="or" && obj[1].Content!="") {
 						document.getElementById('resultOr').innerHTML=obj[1].Content;
 						document.getElementById('resultOr').style.visibility='visible';
-						document.getElementById('resultOrHeader').style.visibility='visible';
 					}else{
 						document.getElementById('resultAnd').innerHTML=obj[0].Content;
 						document.getElementById('resultAnd').style.visibility='visible';
 						document.getElementById('resultOr').innerHTML=obj[1].Content;
 						document.getElementById('resultOr').style.visibility='visible';
-						document.getElementById('resultOrHeader').style.visibility='visible';
 					} 
 				}
 			carousel();
@@ -1092,6 +676,7 @@ function flickrNews(data, start, cType){
 				data:{"req" : data, "start" : start, "cType" : cType},
 				success: function(html) {
 					$('div.sideMenu').removeClass('in');
+					console.log(html);
 					if (data=="start"){
 						var obj = jQuery.parseJSON(html);
 						document.getElementById('panelBodyContent').innerHTML=obj[0].Content;
@@ -1100,6 +685,7 @@ function flickrNews(data, start, cType){
 						document.getElementById('cloudFlickr').style.visibility='visible';
 					} else {
 						var obj = jQuery.parseJSON(html);
+						console.log(obj+"            ***********")
 						
 							if (cType == "image" && obj[0].Content!=""){
 								document.getElementById('resultPhotos').innerHTML=obj[0].Content;
@@ -1117,7 +703,6 @@ function flickrNews(data, start, cType){
 							
 						
 					}
-					carousel();
 				}
 		});
 	}
@@ -1232,7 +817,6 @@ function getSimilarTag(t,start,cType,nModP, nModN){
 
 function populateCloud(data, cloud){
 	var tagMap = {};
-	var selectedTagMap={};
 	$('#cloud'+cloud).html("");
 	console.log("cloud "+data)
 	var t=data.split(',');
@@ -1311,7 +895,6 @@ function checkIfLoggedIn() {
 			type:"GET",
 			url:"/checkLogIn",
 			success: function(html) {
-				console.log("==================================", html);
 				var t=html.split(',');
 				if (t[0]=='Yes') {
 					$('#loggedIn').attr('class', 'dropdown');
@@ -1322,18 +905,16 @@ function checkIfLoggedIn() {
 					
 				} else {
 					document.getElementById('loggedIn').innerHTML='<a href="#" data-toggle="modal" data-target="#loginModal">Log In</a>';
-					var uls = document.getElementsByName('comment');
+					var uls = document.getElementsByName('logP');
 					for (var i = 0; i < uls.length; i++){
 						
-						uls[i].disabled = true;
+						uls[i].style.display='none';
 					}
-					
-					var uls = document.getElementsByName('submit');
-					for (var i = 0; i < uls.length; i++){
+					var uls1 = document.getElementsByName('logR');
+					for (var i = 0; i < uls1.length; i++){
 						
-						uls[i].disabled = true;
+						uls1[i].style.display='none';
 					}
-					
 					
 					var retrieveUsers = document.getElementsByName('logA');
 					for (var i=0; i<retrieveUsers.length; i++){
@@ -1370,10 +951,6 @@ function carousel() {
 				
 				var next1 = ul[m+1]
 				var prev1 = ul[ul.length-1]
-				
-				console.log(ul[m]);
-				console.log(ul[m].id);
-				
 				document.getElementById("next"+ul[m].id).setAttribute('data-target','#picModal'+next1.id);
 				document.getElementById("prev"+ul[m].id).setAttribute('data-target','#picModal'+prev1.id);
 				//document.getElementById("next"+ul[m].id).addEventListener("click",function(){ print(next1.id); });

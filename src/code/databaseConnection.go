@@ -58,6 +58,21 @@ func add(user User) {
 
 }
 
+func getTrendingLifelog() []TrendingAll {
+	session, err := mgo.Dial("mongodb://lifelog:password@imcdserv1.dcs.gla.ac.uk/lifelog")
+	c := sess.DB("lifelog").C("TrendingAllUsers")
+	var trending []TrendingAll
+
+	err = c.Find(nil).All(&trending)
+	if err != nil {
+		fmt.Println("error while getting from lifelog")
+	}
+
+	defer session.Close()
+	return trending
+
+}
+
 func getRecommImages(userID string) []RecommendedPlace {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()

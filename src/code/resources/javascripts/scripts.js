@@ -263,21 +263,16 @@ function populateMap(cont, mapPoints) {
 			$('#'+container).html(mapContainer);
 		}
 		var glasgowMap;
-		var zoom;
 		if (cont == ""){
 		    glasgowMap = new google.maps.LatLng(50.139535, 19.001192);
-			var options = {
-				center:glasgowMap,
-				zoom:4
-			}	
+			
 		}else {
 			glasgowMap = new google.maps.LatLng(55.864237,-4.251806);
-			var options = {
-				center:glasgowMap,
-				zoom:12
-			}
 		}
-		
+		var options = {
+			center:glasgowMap,
+			zoom:4
+		}
 			    
 	}
 	
@@ -350,7 +345,7 @@ function populateMap(cont, mapPoints) {
 							console.log(url);
 							//mapPoints.TrendingMarkerAll[globalIndex].URL = url;
 							console.log(mapPoints.TrendingMarkerAll[globalIndex].URL);
-							infowindow.setContent('<b>Trending Place</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG WIDTH="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
+							infowindow.setContent('<b>Trending Place from Citizen Memories Server</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Loc+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAll[globalIndex].Popularity+'<br><IMG WIDTH="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAll[globalIndex].URL+'">');
 					        infowindow.open(map, marker);
 					        infowindow.setOptions();
 						}
@@ -467,6 +462,29 @@ function populateMap(cont, mapPoints) {
 			globalIndex++;
 						
 			
+		}
+	}
+	
+	console.log("************************", mapPoints.TrendingMarkerAllLifelog);
+	
+	if (mapPoints.TrendingMarkerAllLifelog != null){
+		for (i=0; i<mapPoints.TrendingMarkerAllLifelog.length; i++){
+		marker = new google.maps.Marker({
+					icon:'http://thydzik.com/thydzikGoogleMap/markerlink.php?text=L&color=FFFF00',
+					position : new google.maps.LatLng(mapPoints.TrendingMarkerAllLifelog[i].Lat,mapPoints.TrendingMarkerAllLifelog[i].Lon),
+					map:map,
+					title:mapPoints.TrendingMarkerAllLifelog.StreetName
+				});
+			
+				google.maps.event.addListener(marker, 'mouseover', (function(marker, globalIndex) {
+				    return function() { 
+							console.log(mapPoints.TrendingMarkerAllLifelog[globalIndex].URL);
+							var url = "./resources/images/userUploaded/54e1cc23c1bae20ea5000003";
+							infowindow.setContent('<b>Trending Place from Lifelog</b><br><b>Name: </b>'+mapPoints.TrendingMarkerAllLifelog[globalIndex].StreetName+' <br><b>Popularity: </b>'+mapPoints.TrendingMarkerAllLifelog[globalIndex].Popularity+'<br><IMG WIDTH="400" ALIGN="Left" SRC="'+mapPoints.TrendingMarkerAllLifelog[globalIndex].URL+'">');
+					        infowindow.open(map, marker);
+					        infowindow.setOptions();
+				    }
+				})(marker, globalIndex));
 		}
 	}
 	

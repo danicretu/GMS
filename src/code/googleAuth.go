@@ -17,10 +17,16 @@ var (
 
 var oauthCfgG = &oauth.Config{
 	//TODO: put your project's Client Id here.  To be got from https://code.google.com/apis/console
-	ClientId: "635233175461-6r2tu8shk7jtn22pemesoued3c3d4qd9.apps.googleusercontent.com",
+	//test
+	//ClientId: "130664697580-a60mp6pvsqqdv56fc5lt2f95pvj9mj9e.apps.googleusercontent.com",
+
+	//actual
+	ClientId: "897632259258-iuj2e52itoltmah5uupgvroap7o6ocai.apps.googleusercontent.com",
 
 	//TODO: put your project's Client Secret value here https://code.google.com/apis/console
-	ClientSecret: "xZBmWyS6wpC51IrAnOcrBnb5",
+	//test
+	//ClientSecret: "VpGFHUx3W5Kfm9zzeIQHDooO",
+	ClientSecret: "4_DiICZJ8eMhK3xzbQz1oSFY",
 
 	//For Google's oauth2 authentication, use this defined URL
 	AuthURL: "https://accounts.google.com/o/oauth2/auth",
@@ -30,6 +36,8 @@ var oauthCfgG = &oauth.Config{
 
 	//To return your oauth2 code, Google will redirect the browser to this page that you have defined
 	//TODO: This exact URL should also be added in your Google API console for this project within "API Access"->"Redirect URIs"
+	//test
+	//RedirectURL: "http://localhost:8892/oauth2callback",
 	RedirectURL: "http://mirugc.dcs.gla.ac.uk/oauth2callback",
 
 	//This is the 'scope' of the data that you are asking the user's permission to access. For getting user's info, this is the url that Google has defined.

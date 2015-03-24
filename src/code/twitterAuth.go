@@ -51,7 +51,9 @@ func authenticateTwitter() {
 }
 
 func RedirectUserToTwitter(w http.ResponseWriter, r *http.Request) {
-	tokenUrl := fmt.Sprintf("http://%s/oauth2callbackT", r.Host)
+	tokenUrl := fmt.Sprintf("http://mirugc.dcs.gla.ac.uk/oauth2callbackT", r.Host)
+
+	//tokenUrl := fmt.Sprintf("http://localhost:8892/oauth2callbackT", r.Host)
 	token, requestUrl, err := c.GetRequestTokenAndUrl(tokenUrl)
 	if err != nil {
 		log.Fatal(err)
