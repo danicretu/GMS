@@ -465,6 +465,7 @@ function populateMap(cont, mapPoints) {
 		}
 	}
 	
+	globalIndex = 0;
 	console.log("************************", mapPoints.TrendingMarkerAllLifelog);
 	
 	if (mapPoints.TrendingMarkerAllLifelog != null){
