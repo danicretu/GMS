@@ -374,19 +374,17 @@
 																				</div>
 																				<div name=>
 																					<div style="padding-top:5px; clear:both;">
-																						<form id="commentForm">
+																						<form id="commentForm" onsubmit="return trendingCommentFormSubmit({{$element2.PhotoId}})">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="comment" placeholder="Enter Comment..." />
-																								<input type="hidden" id="cType" value="image" />
-																								<input type="hidden" id="pictureNumber" value="{{$element2.PhotoId}}" />
-																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
-																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment{{$element2.PhotoId}}" name="trendingComment" placeholder="Enter Comment..." />
+																								<input type="hidden" id="cType{{$element2.PhotoId}}" value="image" />
+																								<input type="hidden" id="pictureNumber{{$element2.PhotoId}}" value="{{$element2.PhotoId}}" />
 																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																							</div>
 																						</form>
 																					</div>
 																					<div class="commentBox">
-																						<ul class="commentList" id="commentList">
+																						<ul class="commentList" id="trendingCommentList{{$element2.PhotoId}}">
 																							{{if $element2.Comments}}
 																								{{range $indexComment, $elementComment := $element2.Comments}}
 																									{{if $elementComment.Body}}
@@ -495,18 +493,17 @@
 																				</div>
 																				<div name="logR">
 																					<div style="padding-top:5px; clear:both;">
-																						<form id="commentForm">
+																						<form id="commentForm" onsubmit="return recentCommentFormSubmit({{$element3.PhotoId}})">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="comment" placeholder="Enter Comment..." />
-																								<input type="hidden" id="pictureNumber" value="{{$element3.PhotoId}}" />
-																								<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
-																								<input type="hidden" id="owner" value="{{$element3.Owner}}" />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment{{$element3.PhotoId}}" name="trendingComment" placeholder="Enter Comment..." />
+																								<input type="hidden" id="cType{{$element3.PhotoId}}" value="image" />
+																								<input type="hidden" id="pictureNumber{{$element3.PhotoId}}" value="{{$element3.PhotoId}}" />
 																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																							</div>
 																						</form>
 																					</div>
 																					<div class="commentBox">
-																						<ul class="commentList" id="commentList">
+																						<ul class="commentList" id="recentCommentList{{$element3.PhotoId}}">
 																							{{if $element3.Comments}}
 																								{{range $indexComment1, $elementComment1 := $element3.Comments}}
 																									{{if $elementComment1.Body}}
@@ -623,19 +620,17 @@
 																				</div>
 																				<div name="logP">
 																					<div style="padding-top:5px; clear:both;">
-																						<form id="commentForm">
+																						<form id="commentForm" onsubmit="return trendingCommentFormSubmit({{$element2.VideoId}})">
 																							<div>
-																								<input type="text" class="comment" style="height:25px;border-radius:4px;" name="comment" id="comment" placeholder="Enter Comment..." />
-																								<input type="hidden" id="cType" value="image" />
-																								<input type="hidden" id="pictureNumber" value="{{$element2.VideoId}}" />
-																								<input type="hidden" id="albumNumber" value="{{$element2.AlbumId}}" />
-																								<input type="hidden" id="owner" value="{{$element2.Owner}}" />
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment{{$element2.VideoId}}" name="trendingComment" placeholder="Enter Comment..." />
+																								<input type="hidden" id="cType{{$element2.VideoId}}" value="video" />
+																								<input type="hidden" id="pictureNumber{{$element2.VideoId}}" value="{{$element2.VideoId}}" />
 																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
 																							</div>
 																						</form>
 																					</div>
 																					<div class="commentBox">
-																						<ul class="commentList" id="commentList">
+																						<ul class="commentList" id="trendingCommentList{{$element2.VideoId}}">
 																							{{if $element2.Comments}}
 																								{{range $indexComment, $elementComment := $element2.Comments}}
 																									{{if $elementComment.Body}}
@@ -748,18 +743,17 @@
 																					</div>
 																					<div name="logR">
 																						<div style="padding-top:5px; clear:both;">
-																							<form id="commentForm">
-																								<div>
-																									<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment" name="comment" placeholder="Enter Comment..." />
-																									<input type="hidden" id="pictureNumber" value="{{$element3.VideoId}}" />
-																									<input type="hidden" id="albumNumber" value="{{$element3.AlbumId}}" />
-																									<input type="hidden" id="owner" value="{{$element3.Owner}}" />
-																									<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit"  value="submit" />
-																								</div>
-																							</form>
+																							<form id="commentForm" onsubmit="return recentCommentFormSubmit({{$element3.VideoId}})">
+																							<div>
+																								<input type="text" class="comment" style="height:25px;border-radius:4px;" id="comment{{$element3.VideoId}}" name="trendingComment" placeholder="Enter Comment..." />
+																								<input type="hidden" id="cType{{$element3.VideoId}}" value="video" />
+																								<input type="hidden" id="pictureNumber{{$element3.VideoId}}" value="{{$element3.VideoId}}" />
+																								<input type="submit" class="btn submitButton" style="height:25px; padding-top:0;" name="submit" value="submit" />
+																							</div>
+																						</form>
 																						</div>
 																						<div class="commentBox">
-																							<ul class="commentList" id="commentList">
+																							<ul class="commentList" id="recentCommentList{{$element3.VideoId}}">
 																								{{if $element3.Comments}}
 																									{{range $indexComment1, $elementComment1 := $element3.Comments}}
 																										{{if $elementComment1.Body}}

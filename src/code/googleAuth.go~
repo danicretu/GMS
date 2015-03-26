@@ -95,7 +95,7 @@ func handleOAuth2CallbackG(w http.ResponseWriter, r *http.Request) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
 
-	fmt.Println(user, "   google")
+	fmt.Println(user)
 
 	var existing *User
 	sess.DB(db_name).C("user").Find(bson.M{"gId": user.Id}).One(&existing)

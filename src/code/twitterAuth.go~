@@ -25,12 +25,12 @@ func authenticateTwitter() {
 
 	var consumerKey *string = flag.String(
 		"consumerkey",
-		"JToYrmoWewyB8mQ0iY1xwCcsz",
+		"HWbeqMdUyIbwIPRPUu83U42oP",
 		"Consumer Key from Twitter. See: https://dev.twitter.com/apps/new")
 
 	var consumerSecret *string = flag.String(
 		"consumersecret",
-		"8LuxIuDC6wBl0QNf9j3tYFPQ0Kvo9kWAR5JTEPUKhoh6MfTbh2",
+		"lnKO1ncCiWaRKykbtyqbw9p2DPAB5S1dHrbNQkMZyrERxwDWA4",
 		"Consumer Secret from Twitter. See: https://dev.twitter.com/apps/new")
 
 	flag.Parse()

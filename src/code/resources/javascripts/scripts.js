@@ -146,6 +146,42 @@ $(document).ready(function() {
 		return false;
 	});
 	
+	
+	$("#trendingCommentForm").submit(function(){
+		console.log("in trending ")
+		var comment =$("input#trendingComment").val();
+		console.log("in trending "+ comment)
+		var picture=$("input#trendingPictureNumber").val();
+		console.log("in trending "+ picture)
+		var album=$("input#trendingAlbumNumber").val();
+		console.log("in trending "+ album)
+		var owner=$("input#trendingOwner").val();
+		console.log("in trending "+ owner)
+		var cType=$("input#trendingCType").val();
+		console.log("in commentForm " +comment);
+/*		return false;
+		$.ajax({
+			type:"POST",
+			url:"/saveComment",
+			data:{"comment" : comment, "pic" : picture, "album":album, "owner":owner, "cType":cType},
+			success: function(html) {
+				var t=html.split('_');
+				if (t[0]=='Yes') {
+					$('#comment').val("");
+					$('#commentList').prepend("<li>"+
+									"<div class='commentText'>"+
+									"<p>"+t[1]+"</p>"+
+									"<a class='user under' href='#getUser?"+t[2]+"'>"+t[2]+"</a>"+
+									"<span class='date under'> on "+t[3]+"</span>"+
+									"</div></li>");
+				} else {
+					
+				}
+			}
+		});
+		return false;*/
+	});
+	
 	var imgList = document.getElementsByName("lia");
 	for (var i = 0; i < imgList.length; i++)
 	{
@@ -465,7 +501,6 @@ function populateMap(cont, mapPoints) {
 		}
 	}
 	
-	globalIndex = 0;
 	console.log("************************", mapPoints.TrendingMarkerAllLifelog);
 	
 	if (mapPoints.TrendingMarkerAllLifelog != null){
@@ -813,6 +848,63 @@ function commentFormSubmit(inp){
 									"<div class='commentText'>"+
 									"<p>"+t[1]+"</p>"+
 									"<a class='user under' href='#getUser?"+t[2]+"'>"+t[2]+"</a>"+
+									"<span class='date under'> on "+t[3]+"</span>"+
+									"</div></li>");
+				} else {
+					
+				}
+			}
+		}); 
+		return false;
+}
+
+function trendingCommentFormSubmit(inp){
+	console.log("in comment form");
+	var comment =document.getElementById('comment'+inp).value;
+	var picture=$("input#pictureNumber"+inp).val();
+	var cType=$("input#cType"+inp).val();
+	console.log("in comment form"+comment+" "+picture+" "+cType);
+		$.ajax({
+			type:"POST",
+			url:"/saveComment",
+			data:{"comment" : comment, "pic" : picture, "cType":cType},
+			success: function(html) {
+				var t=html.split('_');
+				if (t[0]=='Yes') {
+					$('#comment').val("");
+					$('#trendingCommentList'+inp).prepend("<li>"+
+									"<div class='commentText'>"+
+									"<p>"+t[1]+"</p>"+
+									"<a class='user under' href='/retrieveUser?"+t[2]+"'>"+t[2]+"</a>"+
+									"<span class='date under'> on "+t[3]+"</span>"+
+									"</div></li>");
+				} else {
+					
+				}
+			}
+		}); 
+		return false;
+}
+
+function recentCommentFormSubmit(inp){
+	console.log("in comment form" + inp);
+	var comment =document.getElementById('comment'+inp).value;
+	console.log("in comment form" + comment);
+	var picture=$("input#pictureNumber"+inp).val();
+	var cType=$("input#cType"+inp).val();
+	console.log("in comment form"+comment+" "+picture+" "+cType);
+		$.ajax({
+			type:"POST",
+			url:"/saveComment",
+			data:{"comment" : comment, "pic" : picture, "cType":cType},
+			success: function(html) {
+				var t=html.split('_');
+				if (t[0]=='Yes') {
+					$('#comment').val("");
+					$('#recentCommentList'+inp).prepend("<li>"+
+									"<div class='commentText'>"+
+									"<p>"+t[1]+"</p>"+
+									"<a class='user under' href='/retrieveUser?"+t[2]+"'>"+t[2]+"</a>"+
 									"<span class='date under'> on "+t[3]+"</span>"+
 									"</div></li>");
 				} else {
