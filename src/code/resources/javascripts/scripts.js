@@ -12,11 +12,7 @@ $(document).ready(function() {
 					});
 	
 
-	$("#imgInp").change(function(){
-		//console.log("=====================================");
-	    //readURL(this);
-		//document.getElementById('submit').style.visibility = 'visible';
-	});
+
 	
 	$("#albumSubmit").click(function(){
 		var name =$("input#albumName").val();
@@ -97,6 +93,7 @@ $(document).ready(function() {
 		
 	});
 	
+	//handles the event for resetting password
 	$("#passReminderButton").click(function(){
 		console.log("in test button");
 		$.ajax({
@@ -182,6 +179,8 @@ $(document).ready(function() {
 		return false;*/
 	});
 	
+
+
 	var imgList = document.getElementsByName("lia");
 	for (var i = 0; i < imgList.length; i++)
 	{
@@ -190,7 +189,7 @@ $(document).ready(function() {
 	}
 	
 	
-	
+	//enables functionality of back button if everything is done through AJAX
 	window.onpopstate = function(event) {
 		console.log(location.pathname,"  ", location.hash);
 		console.log(event.state);
@@ -209,6 +208,7 @@ $(document).ready(function() {
 
 });
 
+//function that changes content on CWG page, headers..subheaders...images
 function flickrCwgMap(){
 	console.log("in flickr cwg map");
 	setActive("flickrCWGMap");
@@ -253,6 +253,7 @@ function flickrCwgMap(){
 	
 }
 
+//called on pressing 'next' button in CWG view
 function getMoreMapImages(tag, start){
 	if (start != -1){
 		$.ajax({
@@ -278,6 +279,10 @@ function getMoreMapImages(tag, start){
 	}
 }
 
+//populates map with heatmap and markers
+//or
+//populates map with CWG mrkers, depending on the container set as parameter
+//if "", it populates with hashmap
 function populateMap(cont, mapPoints) {
 	var container;
 	if (cont==""){
@@ -334,7 +339,7 @@ function populateMap(cont, mapPoints) {
 		obj = mapPoints;
 	}
 	
-	
+	//set center in Glasgow, to change color of markers to green
 	if (cont != ""){
 		
 		
@@ -361,6 +366,8 @@ function populateMap(cont, mapPoints) {
 			
 			if (cont==""){		
 			
+				//create trending markers
+
 				marker = new google.maps.Marker({
 					icon:'http://thydzik.com/thydzikGoogleMap/markerlink.php?text=T&color=831F9C',
 					position : new google.maps.LatLng(obj[i].Lat,obj[i].Lon),
@@ -388,7 +395,9 @@ function populateMap(cont, mapPoints) {
 				    }
 				})(marker, globalIndex));
 			}else {
-								
+					
+				//create CWG markers
+							
 				var position = new google.maps.LatLng(obj[i].Lat,obj[i].Lon);
 				var icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
 				
@@ -436,7 +445,7 @@ function populateMap(cont, mapPoints) {
 				    }
 				})(marker, globalIndex)); 
 				
-				
+				//add listener to get images on click
 				google.maps.event.addListener(marker, 'click', (function(marker, globalIndex) {
 				    return function() { 
 						var loc = obj[globalIndex].Location;
@@ -501,8 +510,8 @@ function populateMap(cont, mapPoints) {
 		}
 	}
 	
-	console.log("************************", mapPoints.TrendingMarkerAllLifelog);
 	
+	//creates markers from lifelog, if sent as parameter
 	if (mapPoints.TrendingMarkerAllLifelog != null){
 		for (i=0; i<mapPoints.TrendingMarkerAllLifelog.length; i++){
 		marker = new google.maps.Marker({
@@ -525,6 +534,7 @@ function populateMap(cont, mapPoints) {
 	}
 	
 	
+	//creates heat map
 	if (cont==""){	
 			heat = mapPoints.Heat;
 			if (mapPoints.User == "no"){
@@ -562,6 +572,7 @@ function populateMap(cont, mapPoints) {
 			]
 			heatmap.set('gradient', heatmap.get('gradient') ? null : gradient); 
 
+		//creates recommended markers
 		if (mapPoints.RecommendedMarker != null){
 			obj = mapPoints.RecommendedMarker;
 			globalIndex = 0;
@@ -601,9 +612,6 @@ function initialiseMap(){
 			type:"POST",
 			success: function(html){
 				var obj = jQuery.parseJSON(html);
-				console.log("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
-				console.log(obj);
-				console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
 				populateMap("", obj);
 				//points = obj;
 			}
@@ -616,7 +624,7 @@ function initialiseMap(){
 	
 }
 
-
+//handles deletion of content
 function onDelete(id, cType){
 	console.log("delete button was pressed");
 		console.log("delete button was pressed"+id);
@@ -641,7 +649,7 @@ function onDelete(id, cType){
 	return false;
 }
 
-
+// call to get content belonging to an album
 function getAlbumDetails(album,start,cType,nModP, nModN){
 	//console.log(data);
 	if (start != -1) {
@@ -694,7 +702,7 @@ function createNewAlbum(name){
 	
 }
 
-
+//function sends raw image/video file after checking the radio buttons and then loads the upload form
 function contentForm(){
 		
 		file=$('#imgInp')[0].files[0];
@@ -768,6 +776,8 @@ function unbind(){
 		});
 }
 
+
+//parses and sends upload form request back to server
 function uploadForm(){
 	var imageURL =$("input#imageURL").val();
 	var caption=$("input#caption").val();
@@ -780,11 +790,6 @@ function uploadForm(){
 	var locality=$("input#locality").val();
 	var formatted_address=$("input#formatted_address").val();
 	var tags=$("input#tagList").val();
-	console.log(imageURL);
-	console.log(location+" location");
-	console.log(lng+" lng");
-	console.log(lat+" lat");
-	console.log(locality+" locality");
 	$.ajax({
 		type:"POST",
 		url:"/uploadPic",
@@ -800,6 +805,7 @@ function uploadForm(){
 	
 }
 
+//loads upload screen
 function getUpload(){
 	setActive("uploadMenu");
 	tags=[];
@@ -830,6 +836,7 @@ function getUpload(){
 	return false;
 }
 
+//submits comment form
 function commentFormSubmit(inp){
 	console.log("in comment form");
 	var comment =document.getElementById('comment'+inp).value;
@@ -917,18 +924,18 @@ function recentCommentFormSubmit(inp){
 
 
 
-
+//adds tag to tag list on screen
 function addTag(t, tagDiv) {
 	var x = document.getElementById(tagDiv);
 	for (var tag in t){
 		var tagId = "tag"+tagNo++;
-		console.log("in add tag t", t[tag])
 		option = createElement(t[tag], tagDiv, tagId);
 
 		x.appendChild(option);
 	}
 }
 
+//creates new tag to be added to one of the lists (selected / suggested)
 function createElement(tag, tagDiv, tagId){
 	var option = document.createElement("a");
 	option.text = tag;
@@ -950,6 +957,7 @@ function createElement(tag, tagDiv, tagId){
 		return option;
 }
 
+//removes a tag from the list of selected tags
 function removeTag(list) {
 
 	var text = $(event.target).text();
@@ -963,6 +971,7 @@ function removeTag(list) {
 	}
 }
 
+//adds tag to main list of tags, from suggested list
 function addToMainList(tag, id) {
 
 	var x = document.getElementById("displayTags");
@@ -977,18 +986,12 @@ function addToMainList(tag, id) {
 	option.setAttribute('onClick', function(event){removeTag("displayTags");});
 	option.onclick = function() {removeTag("displayTags");};
 	tags.push(tag);
-	console.log("in add to main list", tags)
 	updateTagList();
 	x.appendChild(option);
 }
 
-function test(data){
-	//var data =$("input#srch-term").val();
-	console.log("in test"+data);
-	return false;
-	//document.getElementById('test').innerHTML = html;
-}
 
+//gets videos
 function getVideos(data){
 	console.log("in get Videos");
 	setActive("videoMenu");
@@ -999,7 +1002,7 @@ function getVideos(data){
 			data:{"req" : data},
 			success : function(html){
 				var obj = jQuery.parseJSON(html);
-				console.log(obj[0].Name+"            ***********")
+				
 				if (obj[0].Name=="ownVideos") {
 					$('div.sideMenu').removeClass('in');
 					console.log("in ok");
@@ -1007,10 +1010,10 @@ function getVideos(data){
 					//document.getElementById('panelBodyContent').innerHtml = "Hello";
 					if (obj[0].Content != ""){
 						$('#panelBodyContent').html(obj[0].Content);
-						console.log(document.getElementById('panelBodyContent').innerHtml);
+						
 						
 						var uls = document.getElementsByName("lia")
-						console.log(uls.length);
+						
 						if (uls.length >= 1) {
 							jQuery.each(uls, function(index, value) {
 							    console.log(uls.length);
@@ -1026,6 +1029,7 @@ function getVideos(data){
 	}
 }
 
+//gets images from the server
 function getPictures(data){
 	if (data!="-1"){
 	console.log("in get Pictures");
@@ -1036,16 +1040,12 @@ function getPictures(data){
 			data:{"req" : data},
 			success: function(html) {
 				var obj = jQuery.parseJSON(html);
-				console.log(obj[0].Name+"            ***********")
 				if (obj[0].Name=="ownPictures") {		
 					$('div.sideMenu').removeClass('in');
 					if (obj[0].Content != "") {		
-					console.log("in ok");
-					console.log(document.getElementById('panelBodyContent').id);
 					//document.getElementById('panelBodyContent').innerHtml = "Hello";
 					$('#panelBodyContent').html(obj[0].Content);
 					var uls = document.getElementsByName("lia")
-					console.log(uls.length);
 					if (uls.length >= 1) {
 						jQuery.each(uls, function(index, value) {
 						    
@@ -1053,7 +1053,6 @@ function getPictures(data){
 					      
 					   	});
 					}
-					console.log(document.getElementById('panelBodyContent').innerHtml);
 					carousel();
 				}
 			}
@@ -1063,6 +1062,7 @@ function getPictures(data){
 	}
 }
 
+//assigns 'own' class so as not to count views
 function assignClass(data) {
 
 	return function() {
@@ -1084,6 +1084,7 @@ function setClass(id) {
 	$('#'+ data).attr('name','liaOwn');
 }
 
+//sets menu item active
 function setActive(lid){
 	var lis = document.getElementsByName("menuItem")
 	jQuery.each(lis, function(index, value) {
@@ -1096,8 +1097,8 @@ function setActive(lid){
 	}); 
 }
 
+//gets album details from server
 function getAlbums(data){
-	console.log("in get Albums ", data);
 	
 	setActive("albumMenu");
 	if (data == "") {
@@ -1107,25 +1108,21 @@ function getAlbums(data){
 			data:{"req" : data},
 			success: function(html) {
 				$('div.sideMenu').removeClass('in');
-				console.log("in success"+html);
 				var obj = jQuery.parseJSON(html);
-				console.log(obj[0].Name+"            ***********")
 				if (obj[0].Name=="ownAlbums") {
-					console.log("in ok");
-					console.log(document.getElementById('panelBodyContent').id);
 					//document.getElementById('panelBodyContent').innerHtml = "Hello";
 					$('#panelBodyContent').html(obj[0].Content);
-					console.log(document.getElementById('panelBodyContent').innerHtml);
 				}
 				
 			}, error: function(data) {
-                console.log(data);
             }
 	});
 	return false;
 	}
 }
 
+//gets images related to Scotland
+//toggles content appropriately, if next or prev is pressed
 function flickrMenu(data, start, cType){
 	if (data=="getTags"){
 		data +=$("input#srch-term").val();
@@ -1192,6 +1189,7 @@ function flickrMenu(data, start, cType){
 	return false;
 }
 
+//gets CWG related content from server
 function flickrNews(data, start, cType){
 	if (data=="getTags"){
 		data +=$("input#srch-term").val();
@@ -1267,7 +1265,7 @@ function flickrRelatedTags(tag) {
             }
     });
 }
-
+//processes flickr tags, to add them to the suggested tags list
 function processFlickrTags(tags) {
 	var indivTags = tags.split(',');
 	indivTags.pop();
@@ -1300,6 +1298,7 @@ function readURL(input) {
         }
     }
     
+//gets and displays tag cloud
 function tagCloud(cloud) {
 	
 	
@@ -1307,7 +1306,6 @@ function tagCloud(cloud) {
         url: "/tagCloud",
         type: "GET",
         success: function (data) {
-			console.log(data);
 			populateCloud(data, cloud);			
         },
             error: function(data) {
@@ -1316,6 +1314,8 @@ function tagCloud(cloud) {
     });	
 }
 
+
+//gets tagged content from server
 function getSimilarTag(t,start,cType,nModP, nModN){
 	console.log(t);
 	setActive("tags");
@@ -1344,11 +1344,12 @@ function getSimilarTag(t,start,cType,nModP, nModN){
     });
 }
 
+
+//function to populate tag cloud, either user generated, or CWG tag cloud
 function populateCloud(data, cloud){
 	var tagMap = {};
 	var selectedTagMap={};
 	$('#cloud'+cloud).html("");
-	console.log("cloud "+data)
 	var t=data.split(',');
 	
 	if (cloud=="Flickr2"){
@@ -1363,7 +1364,6 @@ function populateCloud(data, cloud){
 		var split=t[i].split(' ');
 		tagMap[split[0]]=parseInt(split[1]);
 	}
-	console.log(tagMap+"      "+max);
 	
 	for (var m in tagMap){
 		if(tagMap[m] > 0){
@@ -1382,6 +1382,7 @@ function populateCloud(data, cloud){
 	}
 }
 
+//gets content of selected user
 function getUser(u,start,cType,nModP, nModN){
 	setActive("users");
 	$.ajax({
@@ -1419,6 +1420,9 @@ function scrollToID(id, speed){
 	}
 }
 
+
+//function to check if user is logged in
+//if he is, add a new menu in the drop down list, to go to profile or log out
 function checkIfLoggedIn() {
 	console.log("in check login");
 	$.ajax({
@@ -1465,7 +1469,7 @@ function checkIfLoggedIn() {
 		});
 }
 
-
+//creates carousel display
 function carousel() {
 	var ul = document.getElementsByName("lia");
 	if (ul.length > 1) {
@@ -1550,6 +1554,8 @@ function addListener(element, next, prev){
 	}
 }
 
+
+//function to record upview of content
 function upview(id) {
 		var picId =$("input#picId"+id).val();
 		var albumId=$("input#picAlbumId"+id).val();

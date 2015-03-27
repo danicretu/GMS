@@ -118,6 +118,8 @@ func getTrendingAll() []TrendingAll {
 
 }
 
+
+//adds tags, both in tag collection and updates the photo/video collection
 func addTags(tags []string, photo Photo, video Video) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
@@ -238,6 +240,7 @@ func getFlickrMap() []FlickrImage1 {
 	return flickrImage
 }
 
+//handles retrieval of images with one tag, two tags, or random images to be displayed at the start of the interaction
 func getFlickrMain(tag string, tag2 string, start int, cType string, location string) []FlickrImage1 {
 
 	source := "/resources/flickr/"
@@ -328,6 +331,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 
 	}
 
+	//parse date of image to get folder
 	for i := range flickrImage {
 
 		date := strings.Split(flickrImage[i].TimeStamp, " ")
@@ -352,6 +356,7 @@ func getFlickrMain(tag string, tag2 string, start int, cType string, location st
 
 }
 
+//get CWG images
 func getFlickrImages(tag string, start int) []FlickrImage {
 	source := "/resources/flickr/"
 	dbConn := NewMongoDBConn()
@@ -375,6 +380,7 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 		}
 	}
 
+	//parse date to get folder location of image
 	for i := range flickrImage {
 
 		date := strings.Split(flickrImage[i].TimeStamp, " ")
@@ -397,6 +403,7 @@ func getFlickrImages(tag string, start int) []FlickrImage {
 	return flickrImage
 }
 
+//get CWG news
 func getNews(tag string, start int) []News {
 	dbConn := NewMongoDBConn()
 	sess1 := dbConn.connectFlickr()
@@ -470,6 +477,7 @@ func createAlbum(name string, uId string, uName string) string {
 	return album.AlbumId
 }
 
+//deletes content from trending and recently uploaded
 func deleteFromDisplay(content string, cType string) {
 	var p DisplayPhotos
 	dbConnection = NewMongoDBConn()
@@ -531,6 +539,7 @@ func deleteFromDisplay(content string, cType string) {
 
 }
 
+//deletes from tag collection
 func deleteFromTag(content string, cType string) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
@@ -586,6 +595,8 @@ func deleteFromOthers(content string, cType string) {
 
 }
 
+
+//updates tag db with comment or view
 func updateTagDB(photo Photo, video Video) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
@@ -633,6 +644,7 @@ func updateTagDB(photo Photo, video Video) {
 	defer sess.Close()
 }
 
+//updates most viewed with comment or view for content that has changed (if present)
 func updateMostViewed(photo Photo, video Video) {
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()

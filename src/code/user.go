@@ -1452,6 +1452,8 @@ func isLeap(year int) bool {
 	return year%4 == 0 && (year%100 != 0 || year%400 == 0)
 }
 
+
+//function to handle statistics
 func statHandlerScotland(w http.ResponseWriter, r *http.Request) {
 	flag := false
 	for key := range r.URL.Query() {
@@ -2253,6 +2255,9 @@ func renderStatScotlandTemplate(w http.ResponseWriter, tmpl string, p *ScotlandS
 
 }
 
+
+//function to handle display of CWG images on the map. 
+//also handles display of images after clicking on a marker on the map
 func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	s := ""
@@ -2266,6 +2271,7 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(location)
 
+	//display markers
 	if location == "" {
 
 		var pics []CwgImage
@@ -2277,6 +2283,7 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprintf(w, "%s", b)
 	} else {
+		//display images if user clicked in one tag attached to an image
 		if strings.HasPrefix(location, "getTags_") {
 			tag := location[8:]
 			pics = getFlickrMain(tag, "", start, "location", "")
@@ -2299,7 +2306,7 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 			t.Execute(&doc, data)
 
 		} else {
-
+			//display images after clicking on a marker
 			loc := strings.Replace(location, "_", " ", -1)
 			fmt.Println("in else " + loc)
 			pics = getFlickrMain("", "", start, "location", loc)
@@ -2331,6 +2338,7 @@ func handleCWGMapImages(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles display of the heat map and the trending / recommended markers
 func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	var trending []TrendingPlace
@@ -2340,6 +2348,7 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	var trendingAll []TrendingAll
 	var trendingLifelog []TrendingAll
 
+	//if user is not logged in
 	if session.Values["user"] == nil {
 		//no
 		trendingAll = getTrendingAll()
@@ -2405,8 +2414,7 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 		return
 
 	} else {
-		//recomm = getRecommImages("550b107abc2e8b25cc000132")
-		//trending = getTrendingImages("550b107abc2e8b25cc000132")
+		//if user is logged in
 
 		recomm = getRecommImages(session.Values["user"].(string))
 		trending = getTrendingImages(session.Values["user"].(string))
@@ -2449,6 +2457,7 @@ func handleMapImages(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles deletion of content
 func handleDelete(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
@@ -2457,6 +2466,7 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	//owner := r.FormValue("owner")
 	cType := r.FormValue("cType")
 
+	//deletes from tag collection and recent/trending collections
 	deleteFromOthers(picture, cType)
 
 	dbConnection = NewMongoDBConn()
@@ -2488,6 +2498,8 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, resp)
 
 }
+
+//populates template with CWG images
 func flickrHelper(flickr string, start int) string {
 	s := ""
 	var doc bytes.Buffer
@@ -2509,6 +2521,7 @@ func flickrHelper(flickr string, start int) string {
 	return s
 }
 
+//populates template with CWG news
 func newsHelper(guardian string, start int) string {
 	s := ""
 	var doc bytes.Buffer
@@ -2530,11 +2543,13 @@ func newsHelper(guardian string, start int) string {
 	return s
 }
 
+//handles Scotland content display
 func getImages(request string, init string, temp string, start int, cType string) string {
 	s := ""
 	var doc bytes.Buffer
 	var doc1 bytes.Buffer
 
+	//display 8 random images
 	if request == "start" {
 
 		photos := getFlickrMain("", "", start, cType, "")
@@ -2550,6 +2565,9 @@ func getImages(request string, init string, temp string, start int, cType string
 		t.Execute(&doc, data)
 
 	} else if strings.HasPrefix(request, "getTags") {
+		//user has searched for a tag
+		//get 8 random images with that tag
+		//parse tag lists to create suggested tags list
 		response := make([]Response, 2)
 		input := ""
 		if strings.HasPrefix(request, "getTags_") {
@@ -2582,6 +2600,7 @@ func getImages(request string, init string, temp string, start int, cType string
 			t.Execute(&doc, data)
 			s = doc.String()
 
+			//parse tag lists of images
 			tags := photos[0].Keywords
 			tagString := ""
 			if len(tags) < 15 {
@@ -2640,8 +2659,14 @@ func getImages(request string, init string, temp string, start int, cType string
 		}
 
 	} else {
-		response := make([]Response, 2)
 
+		
+		//user has selected one of the suggested tags
+		//first, function checks if any images are displayed. If so, it means the user has clicked next or previous
+
+		response := make([]Response, 2)
+		
+		//user clicked next or prev
 		if cType == "and" {
 			photos := getFlickrMain(request, init, start, cType, "")
 			if len(photos) > 0 {
@@ -2686,6 +2711,8 @@ func getImages(request string, init string, temp string, start int, cType string
 			}
 		} else if cType == "or" {
 
+			//user clicked next or prev
+
 			photos := getFlickrMain(request, init, start, cType, "")
 			if len(photos) > 0 {
 
@@ -2729,6 +2756,12 @@ func getImages(request string, init string, temp string, start int, cType string
 			}
 
 		} else {
+
+			//user has selected one of the suggested tags
+			//retrieve images with both tags
+			//retrieve images with one of the tags
+			//return to user
+	
 			photos := getFlickrMain(request, init, start, "and", "")
 			sAnd := ""
 			sOr := ""
@@ -2809,6 +2842,9 @@ func getImages(request string, init string, temp string, start int, cType string
 	return s
 }
 
+
+//handles CWG content display
+
 func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	request := r.FormValue("req")
@@ -2842,6 +2878,8 @@ func handleFlickrGeneral(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles CWG content
+//delegates template population to the 2 functios above
 func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	request := r.FormValue("req")
@@ -2858,7 +2896,10 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 		start, _ = strconv.Atoi(st)
 	}
 
+
 	if request == "start" {
+
+		//generate tag cloud
 
 		t, _ := template.ParseFiles("flickrNews.html")
 		t.Execute(&doc, nil)
@@ -2878,6 +2919,9 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", b)
 
 	} else {
+
+		//user has selected one of the tags -> display content		
+
 		flickr := ""
 		guardian := ""
 
@@ -2922,6 +2966,8 @@ func handleFlickrNews(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+//display videos -> also handles 'next' 'prev'
 func handleVideos(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
@@ -2985,6 +3031,7 @@ func handleVideos(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//handle home page
 func handleCms(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	u := &User{}
@@ -2998,6 +3045,8 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 
 	dbConnection = NewMongoDBConn()
 	sess := dbConnection.connect()
+
+	//get recent, trending content
 
 	var p DisplayPhotos
 	c := sess.DB(db_name).C("displayPhotos")
@@ -3037,6 +3086,9 @@ func handleCms(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+//handles upvote of content
+//also updates tag collection and recent / trending if content is present
 func handleUpvote(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
@@ -3090,6 +3142,7 @@ func handleUpvote(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//handle user login
 func handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	dbConnection = NewMongoDBConn()
@@ -3116,6 +3169,8 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+//handle user authentication
 func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
@@ -3146,6 +3201,7 @@ func handleAuthenticated(w http.ResponseWriter, r *http.Request) {
 	authenticated.Execute(w, photoData)
 }
 
+//run tag recommendation algorithm
 func tagAlgo(u string) string {
 	grepCmd, err := exec.Command("/bin/sh", "run.sh", u).Output()
 	if err != nil {
@@ -3156,6 +3212,8 @@ func tagAlgo(u string) string {
 	return string(grepCmd)
 }
 
+
+//handle index page
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	if session.Values["user"] == nil {
@@ -3168,6 +3226,8 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+//go to user profile from Home page
 func handleMainUser(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
@@ -3214,6 +3274,8 @@ func handleMainUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+//go to CWG section from Home page
 func handleMainFlickr(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
@@ -3250,6 +3312,9 @@ func handleMainFlickr(w http.ResponseWriter, r *http.Request) {
 	authenticated.Execute(w, data)
 }
 
+
+//handle user profile
+//also handles next, prev
 func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t := r.FormValue("user")
@@ -3274,13 +3339,12 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	s := ""
 
 	if t == "" {
-		sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(0).Limit(3).All(&photos)
-		sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(0).Limit(3).All(&videos)
+		sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(0).Limit(8).All(&photos)
+		sess.DB(db_name).C("videos").Find(bson.M{"owner": t}).Skip(0).Limit(8).All(&videos)
 		sti = 0
 		stv = 0
 
 	} else {
-
 		if cType == "" {
 			err := sess.DB(db_name).C("photos").Find(bson.M{"owner": t}).Skip(st * limit).Limit(limit).All(&photos)
 			if err != nil {
@@ -3371,6 +3435,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//handles creation of new album
 func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
@@ -3386,6 +3451,7 @@ func handleCreateAlbum(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, albumId)
 }
 
+//handles saving the image in the file system
 func handleSaveImage(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
@@ -3415,13 +3481,14 @@ func handleSaveImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//open file to decode metadata
 	f, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Fprintf(w, "Yes_"+fileName+"_nil_nil")
 		return
 	}
-
+	//decode metadata
 	x, err := exif.Decode(f)
 	if err != nil {
 		fmt.Println(err)
@@ -3434,7 +3501,7 @@ func handleSaveImage(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Yes_"+fileName+"_nil_nil")
 
 	} else {
-
+		//if metadata present, get location
 		lat, long, err := x.LatLong()
 		if err != nil {
 			fmt.Println(err)
@@ -3447,6 +3514,8 @@ func handleSaveImage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+//handles logout
 func handleLogout(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "cookie")
@@ -3460,6 +3529,8 @@ func handleLogout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/cmsHome", http.StatusFound)
 }
 
+
+//function to check if user is logged in
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 
@@ -3473,6 +3544,8 @@ func checkLoggedIn(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+//handles creation of tag cloud
 func createTagCloud(w http.ResponseWriter, r *http.Request) {
 	result := getAllTags()
 	var tags string
@@ -3480,6 +3553,8 @@ func createTagCloud(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(len(result), "   length of result")
 
+	//limit to 30 tags
+	//sort to get most popular
 	if len(result) > 30 {
 		for i := len(result); i > 0; i-- {
 			for j := 0; j < i-1; j++ {
@@ -3516,6 +3591,8 @@ func createTagCloud(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+//handles display of content with same tag
 func handleTag(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	t := r.FormValue("tag")
@@ -3540,6 +3617,9 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	sess := dbConnection.connect()
 
 	tagStruct := findByTag(t)
+
+	//the next section check to see if next has been pressed, and for what type of content. This way, only a section of the page is updated to display 
+	//additional content
 
 	if cType == "" {
 		if len(tagStruct.Photos) < limit {
@@ -3648,6 +3728,8 @@ func handleTag(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, s)
 }
 
+
+//go to tagged content from Home page
 func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie")
 	currentUser := session.Values["user"].(string)
@@ -3701,6 +3783,7 @@ func handleMainTag(w http.ResponseWriter, r *http.Request) {
 	authenticated.Execute(w, photoData)
 }
 
+//calls flickr api to get suggested tags
 func handleFlickr(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	url1 := r.FormValue("url1")
@@ -3737,6 +3820,7 @@ func handleFlickr(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	//if no tags returned, call tag algo
 	if tags == "" {
 		tags = tagAlgo(tag)
 	}
@@ -3745,6 +3829,7 @@ func handleFlickr(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//handles registration of users
 func handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()

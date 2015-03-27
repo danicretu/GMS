@@ -60,7 +60,7 @@ func add(user User) {
 
 func getTrendingLifelog() []TrendingAll {
 	session, err := mgo.Dial("mongodb://lifelog:password@imcdserv1.dcs.gla.ac.uk/lifelog")
-	c := sess.DB("lifelog").C("TrendingAllUsers")
+	c := session.DB("lifelog").C("TrendingAllUsers")
 	var trending []TrendingAll
 
 	err = c.Find(nil).All(&trending)
